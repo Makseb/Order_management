@@ -1,132 +1,128 @@
-import { StyleSheet, TextInput, View, Pressable, Text, Image } from 'react-native';
+import { StyleSheet, TextInput, View, Text, Image, TouchableOpacity } from 'react-native';
 import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import Toast from "react-native-toast-message";
+import Toast from 'react-native-toast-message/';
 
 import { login } from '../../../shared/slices/Auth/AuthService';
-import { Logo } from '../../../images/exports';
-import { useForm } from "react-hook-form"
-
+import { Logo } from '../../../assets/images/exports';
 
 export default function Login() {
 
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const navigation = useNavigation()
-    // const { register, handleSubmit } = useForm()
 
-
-
-    const submit = async (data) => {
-        //console.log(email);
+    const submit = async () => {
+        console.log(email);
+        console.log(password);
         if (email && password) {
             await login({ email, password }).then(res => {
-                navigation.navigate('Home')
+                res.user.stores > 1 ? navigation.navigate('SelectStore') : navigation.navigate('SelectStore')
             }).catch(err => {
-                // console.log(err.response?.data?.user_id)
-                // if (err.response?.data?.user_id) {
-                //     navigation.navigate('Verification', {
-                //         user_id: err.response?.data?.user_id,
-                //         isSignup: true,
-                //     });
-                // }
             });
         }
     }
     return (
         <>
             <View style={styles.container}>
+                <Image source={Logo} style={styles.image} />
 
-                <Image source={Logo} style={styles.logo}
-                />
-                <Text style={styles.textEmailAndPassword}>Email</Text>
-                <TextInput
-                    onChangeText={(text) => setEmail(text)}
-                    value={email}
-                    placeholder="Type email"
-                    autoComplete={'email'}
-                    style={styles.inputEmailAndPassword}
-                />
-                <Text style={styles.textEmailAndPassword}>Password</Text>
-                <TextInput
+                <View style={styles.containerEmailInput}>
+                    <TextInput
+                        style={styles.emailInput}
+                        placeholder="E-mail"
+                        autoComplete={'email'}
+                        onChangeText={e => setEmail(e)}
+                        placeholderTextColor="#716D6D"
+                        value={email}
+                    />
+                </View>
 
-                    onChangeText={(text) => setPassword(text)}
-                    value={password}
-                    placeholder="Type password"
-                    autoComplete={'password'}
-                    secureTextEntry={true}
-                    style={styles.inputEmailAndPassword}
+                <View style={styles.containerPasswordInput}>
+                    <TextInput
+                        style={styles.passwordInput}
+                        value={password}
+                        placeholder="Password"
+                        onChangeText={e => setPassword(e)}
+                        autoComplete={'password'}
+                        secureTextEntry={true}
+                        placeholderTextColor="#716D6D"
+                    />
+                </View>
 
-                />
-                <Text style={styles.forgotPassword}>Forgot password?</Text>
-                <Pressable
-                    style={styles.pressable}
-                    onPress={() => submit()}>
-                    <Text style={styles.textInsideLogin}>LOGIN</Text>
-                </Pressable>
+                <View style={styles.containerButton}>
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={() => submit()}>
+                        <Text style={styles.textButton}>Login</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
             <Toast />
-
 
         </>
     );
 }
 const styles = StyleSheet.create({
-    logo: {
-        height: '25%', aspectRatio: 1, alignSelf: 'center', marginBottom: '10%'
-    },
     container: {
-        backgroundColor: 'white',
         flex: 1,
-        flexDirection: 'column', // vertical
-        justifyContent: 'center', // main axis column (it means y)
-        // alignItems: 'center' // secondary axis (it means x for horizantal)
-    },
-    textEmailAndPassword: {
-        letterSpacing: 0.25,
-        
-        marginLeft: '10%',
-        marginRight: '10%',
-        marginBottom: '3%',
-        color: 'black'
-    },
-    inputEmailAndPassword: {
-        borderColor: '#D8D8D8',
-        borderWidth: 1,
-        borderRadius: 8,
-
-        paddingVertical: '3%',
-        paddingLeft: 15,
-
-        backgroundColor: '#F2F2F2',
-        marginLeft: '10%',
-        marginRight: '10%',
-        marginBottom: '5%'
-    },
-    forgotPassword: {
-        letterSpacing: 0.25,
-
-        marginLeft: '10%',
-        marginRight: '10%',
-
-        marginBottom: '5%',
-        color: '#ff5500',
-    },
-    pressable: {
-        alignItems: 'center',
+        backgroundColor: 'white',
+        flexDirection: 'column',
         justifyContent: 'center',
-        marginRight: '10%',
-        marginLeft: '10%',
-        paddingVertical: '4%',
-        borderRadius: 4,
-        backgroundColor: '#ff5500',
-        marginBottom: '5%',
+        alignItems: 'center'
     },
-    textInsideLogin: {
-        letterSpacing: 0.25,
-        fontSize: 20,
+    image: {
+        width: '70%',
+        resizeMode: "contain"
+    },
+    containerEmailInput: {
+        width: '70%',
+        height: 55,
+        marginTop: '10%'
+    },
+    emailInput: {
+        backgroundColor: 'white',
+        color: '#7f7f7f',
+        justifyContent: 'center',
+        fontFamily: 'Montserrat-Light',
+        borderColor: '#ddd',
+        borderWidth: 1,
+        borderRadius: 24,
+        textAlign: 'center',
+        fontSize: 14
+    },
+    containerPasswordInput: {
+        width: '70%',
+        marginTop: '2%',
+        height: 55
+    },
+    passwordInput: {
+        backgroundColor: 'white',
+        color: '#7f7f7f',
+        justifyContent: 'center',
+        fontFamily: 'Montserrat-Light',
+        borderColor: '#ddd',
+        borderWidth: 1,
+        borderRadius: 24,
+        textAlign: 'center',
+        fontSize: 14
+    },
+    containerButton: {
+        width: '70%',
+        marginTop: '4%'
+    },
+    button: {
+        backgroundColor: '#df8f17',
+        borderRadius: 24,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: 55
+    },
+    textButton: {
+        fontFamily: 'Montserrat-Regular', // here it should be with font family font weight bold, i use Montserrat-Regular instead of Montserrat-Light to be bold...
+        //fontWeight: 'bold',
         color: 'white',
-    },
-
-
-})
+        fontSize: 18,
+    }
+});

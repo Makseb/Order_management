@@ -4,7 +4,6 @@ import { ActivityIndicator, Modal, StyleSheet, View } from 'react-native';
 import { store } from '../../shared';
 import { setRootLoading } from '../../shared/slices/rootSlice';
 const Loader = (Props) => {
-    //console.log("loader");
     return (
         <>
             {Props.isLoading && (
@@ -18,7 +17,7 @@ const Loader = (Props) => {
                     }}>
                     <View style={styles.modalBackground}>
                         <View style={[styles.container, styles.horizontal]}>
-                            <ActivityIndicator size="large" color="blue" />
+                            <ActivityIndicator size="large" color="#df8f17" />
                         </View>
                     </View>
                 </Modal>

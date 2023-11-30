@@ -1,1 +1,1 @@
-export {default as Logo} from '../images/logo.png'
+export {default as Logo} from '../assets/exports/images/eatorder-logo.png'

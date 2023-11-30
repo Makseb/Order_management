@@ -11,14 +11,13 @@ export const login = (data) => {
         isSilent: false,
         successFun: (data) => {
             // console.log(data)
-            //saveUserData(data);
-            //saveToken(data);
+            saveUserData(data);
+            saveToken(data);
         },
         withErrorToast: true,
         withSuccessToast: false,
     });
 };
-
 
 const saveUserData = (data) => {
     store.dispatch(setLoggedInUser(data));
@@ -28,4 +27,19 @@ const saveUserData = (data) => {
 const saveToken = (data) => {
     store.dispatch(setToken(data));
 }
+
+export const getStoresNameAndIdByUserId = (userId) => {
+    return Executor({
+        method: 'get',
+        url: BaseUrl + '/owner/getstoresnameandidbyuserid/' + userId,
+        isSilent: false,
+        successFun: (data) => {
+            
+        },
+        withErrorToast: false,
+        withSuccessToast: false,
+    });
+};
+
+
 
