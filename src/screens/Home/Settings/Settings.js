@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
     },
     title: {
         marginLeft: '5%',
-        marginBottom: '5%',
+        marginBottom: '2%',
         color: '#030303',
         fontSize: 20,
         fontFamily: 'Montserrat-Regular'
