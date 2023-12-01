@@ -1,1 +1,0 @@
-export {default as Logo} from '../assets/exports/images/eatorder-logo.png'

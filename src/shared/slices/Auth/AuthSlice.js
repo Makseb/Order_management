@@ -15,7 +15,13 @@ export const authentificationSlice = createSlice({
     reducers: {
         setLoggedInUser: (state, action) => {
             state.isLoggedIn = true;
-            state.loggedInUser = action.payload.user;
+
+            // here i will delete password from user object
+            const user = action.payload.user
+            delete user.password
+
+            state.loggedInUser = user;
+
             state.userId = action.payload.user._id;
         },
         setToken: (state, action) => {

@@ -5,7 +5,7 @@ export const getAllOrdersByStroreId = (storeSelected) => {
     return Executor({
         method: 'get',
         url: BaseUrl + '/client/orders/'+storeSelected,
-        isSilent: true,
+        isSilent: false,
         successFun: () => {
             // saveUserData(data);
             // saveToken(data);

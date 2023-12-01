@@ -48,16 +48,16 @@ export default function SelectStore() {
                             borderRadius: 24,
                             backgroundColor: 'white',
                             borderColor: '#ddd',
-                            
+
                         }}
                         dropdownTextStyles={{
                             color: '#202020',
-                            fontFamily : 'Montserrat-Light',
-                            fontSize : 16
+                            fontFamily: 'Montserrat-Light',
+                            fontSize: 16
                         }}
                         inputStyles={{
-                            fontFamily : 'Montserrat-Light',
-                            fontSize : 16,
+                            fontFamily: 'Montserrat-Light',
+                            fontSize: 16,
                             color: '#202020'
                         }}
                         setSelected={(val) => setSelectedStore(val)}
@@ -71,8 +71,13 @@ export default function SelectStore() {
                     onPress={
                         () => {
                             if (selectedStore) {
-                                store.dispatch(setStoreSelected(selectedStore))
-                                navigation.navigate('Home')
+                                for (let i = 0; i < stores.length; i++) {
+                                    if (stores[i]._id == selectedStore) {
+                                        store.dispatch(setStoreSelected(stores[i]))
+                                        navigation.navigate('Home')
+                                    }
+                                }
+
                             }
                         }
                     }>
@@ -98,13 +103,13 @@ const styles = StyleSheet.create({
         width: '70%',
         resizeMode: "contain",
     },
-    containerSelectListAndButton:{
+    containerSelectListAndButton: {
         marginTop: '10%',
         width: '100%',
         justifyContent: 'center',
         alignItems: 'center',
     },
-    containerSelectList:{
+    containerSelectList: {
         width: '60%',
         zIndex: 2,
         position: 'absolute',
@@ -120,9 +125,9 @@ const styles = StyleSheet.create({
         borderRadius: 24,
         zIndex: 1,
     },
-    textButton : {
+    textButton: {
         color: 'white',
-        fontFamily : 'Montserrat-Regular',
+        fontFamily: 'Montserrat-Regular',
         // fontWeight: 'bold',
         fontSize: 14
     }
