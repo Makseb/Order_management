@@ -58,6 +58,9 @@
 		<string>Roboto-Bold.ttf</string>
 		<string>Roboto-Light.ttf</string>
 		<string>Roboto-Regular.ttf</string>
+		<string>Inconsolata-Regular.ttf</string>
+		<string>Inconsolata-Bold.ttf</string>
+		<string>Inconsolata-SemiBold.ttf</string>
 	</array>
 </dict>
 </plist>

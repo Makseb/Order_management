@@ -1,95 +1,32 @@
 import { StyleSheet, Text, TouchableWithoutFeedback, View } from "react-native";
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useState } from "react";
 
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
-import { format } from 'date-fns';
 
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
-
-import { getAllOrdersByStroreId } from "../../../shared/slices/Orders/OrdersService";
-import { useSelector } from "react-redux";
 import { Pendding, OnProgress, Ready } from "../../exports";
-
-// import { Skeleton } from '@rneui/themed';
-// import LinearGradient from 'react-native-linear-gradient';
-
-
+import { useSelector } from "react-redux";
+import { setOnProgressToClicked } from "../../../shared/slices/Orders/OrdersSlice";
+import { store } from "../../../shared";
 
 
 export default function Orders() {
-    function reducer(state, action) {
-        switch (action.type) {
-            case "setOrders": {
-                let data = []
-                for (let i = 0; i < action.payload.length; i++) {
-                    const dateTime = new Date(action.payload[i].createdAt);
-                    const dateWithoutTime = format(dateTime, 'yyyy-MM-dd')
-                    const timeWithoutSeconds = format(dateTime, 'HH:mm')
-                    data[i] = {
-                        id: action.payload[i]._id,
-                        name: action.payload[i].client_first_name + " " + action.payload[i].client_last_name,
-                        client_email : action.payload[i].client_email,
-                        deliveryAdress : action.payload[i].deliveryAdress,
-                        status: action.payload[i].status,
-                        date: dateWithoutTime,
-                        time: timeWithoutSeconds,
-                        price: action.payload[i].price_total,
-                        type: action.payload[i].type,
-                        currency: currency,
-                        items : action.payload[i].items,
-                    }
-                }
-                return {
-                    ...state,
-                    orders: data
-                }
-            }
-            case "updateState": {
-                let data = state.orders
-                data[action.payload.index].status = action.payload.action
-                console.log(data[action.payload.index]);
-                return {
-                    ...state,
-                    orders: data
-                }
-            }
-            default: return state
-
-        }
-    }
-
-    // get store selected
-    const storeSelected = useSelector((state) => state.authentification.storeSelected._id)
-
-    // get the currency of store selected
-    const currency = useSelector((state) => state.authentification.storeSelected.currency)
-
-    // manage data of orders in reducer function above
-    const [state, dispatch] = useReducer(reducer, { orders : null });
-
-    useEffect(() => {
-
-        // this function will get all the orders that was related to the store choosen from login step
-        const fetchAllOrdersByStroreId = async () => {
-            // console.log(storeSelected);
-            await getAllOrdersByStroreId(storeSelected).then(res => {
-                dispatch({ type: 'setOrders', payload: res.orders })
-            }).catch(err => {
-
-            })
-        }
-
-        fetchAllOrdersByStroreId()
-
-    }, [])
 
     // Switch between pending onprogress and ready
     const [switchButton, setSwitchButton] = useState("Pending")
     const SwitchBetweenPendingOnProgressReady = (event) => {
+        if (event === "OnProgress") {
+            store.dispatch(setOnProgressToClicked())
+        }
         setSwitchButton(event)
     }
 
+    // get the orders that were in progress
+    const ordersOnProgress = useSelector((state) => state.orders.onprogress)
+
+    console.log(ordersOnProgress.some(order => order.isClicked === false))
     return (
         <View style={styles.containerTitle}>
             <Text style={styles.title}>
@@ -117,7 +54,14 @@ export default function Orders() {
                             // { backgroundColor: 'blue' }
                         ]}>
                             <View style={styles.barrHeader} />
-                            <FontAwesome6 name="spinner" size={24} color={switchButton === "OnProgress" ? '#df8f17' : '#b7b7b7'} style={{ paddingLeft: '3%' }} />
+                            <View>
+                                {/* this for showing badge to tell the user there is an order in on progress */}
+                                {ordersOnProgress.some(order => order.isClicked === false) && <MaterialCommunityIcons name="bell-badge" size={20} style={{
+                                    position: 'absolute', top: -15, right: -10, color: '#df8f17'
+                                }} />}
+                                <FontAwesome6 name="spinner" size={24} color={switchButton === "OnProgress" ? '#df8f17' : '#b7b7b7'} style={{ paddingLeft: '3%' }} />
+                            </View>
+
                             <Text style={[styles.pendingHeaderText, { color: switchButton === 'OnProgress' ? '#df8f17' : '#b7b7b7' }]}>On progress</Text>
                         </View>
                     </TouchableWithoutFeedback>
@@ -138,7 +82,7 @@ export default function Orders() {
 
             {/* second part */}
             {
-                switchButton === "Pending" ? <Pendding state={state} dispatch={dispatch} /> :
+                switchButton === "Pending" ? <Pendding /> :
                     switchButton === "OnProgress" ? <OnProgress /> : <Ready />
             }
 
@@ -218,7 +162,5 @@ const styles = StyleSheet.create({
         color: '#b7b7b7',
         paddingLeft: '2%'
     },
-
-    /* second part (container) */
 
 })

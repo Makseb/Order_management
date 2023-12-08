@@ -2,6 +2,18 @@
   "migIndex": 1,
   "data": [
     {
+      "path": "src/assets/fonts/Inconsolata-Bold.ttf",
+      "sha1": "d261bc37f283fc4e9104100750d2fc4c65c6cf74"
+    },
+    {
+      "path": "src/assets/fonts/Inconsolata-Regular.ttf",
+      "sha1": "ea94cf4a11361f33027dd6dce513ea53fdda16d2"
+    },
+    {
+      "path": "src/assets/fonts/Inconsolata-SemiBold.ttf",
+      "sha1": "a15a41aee641ef37a9f15f1b7b519175ce0ee575"
+    },
+    {
       "path": "src/assets/fonts/Montserrat-Light.ttf",
       "sha1": "9dfbddad5025d8d224b4939e54c1a4ac8ac6015b"
     },

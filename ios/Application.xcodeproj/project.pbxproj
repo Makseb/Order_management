@@ -19,6 +19,9 @@
 		87580DE0E8814A9A996A3093 /* Roboto-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 56C9CA49DCD64C17A941941F /* Roboto-Bold.ttf */; };
 		44F1C53E03604517B5BE845E /* Roboto-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DAF240B804504FBB8E859776 /* Roboto-Light.ttf */; };
 		8626D0C1BB164E58BE407A5E /* Roboto-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D4EE706553844A109C65C35E /* Roboto-Regular.ttf */; };
+		FDEB814C4B1F4EF383742B45 /* Inconsolata-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D974EFD4536941CBB83F361C /* Inconsolata-Regular.ttf */; };
+		DAE1C06E87F34012A4B7C7CE /* Inconsolata-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AA3A360AEEDD4ED6B5549183 /* Inconsolata-Bold.ttf */; };
+		3103C0F3FFEB4C4B859F61C8 /* Inconsolata-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4FD251B219B74372AEEF48CC /* Inconsolata-SemiBold.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,6 +57,9 @@
 		56C9CA49DCD64C17A941941F /* Roboto-Bold.ttf */ = {isa = PBXFileReference; name = "Roboto-Bold.ttf"; path = "../src/assets/fonts/Roboto-Bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		DAF240B804504FBB8E859776 /* Roboto-Light.ttf */ = {isa = PBXFileReference; name = "Roboto-Light.ttf"; path = "../src/assets/fonts/Roboto-Light.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		D4EE706553844A109C65C35E /* Roboto-Regular.ttf */ = {isa = PBXFileReference; name = "Roboto-Regular.ttf"; path = "../src/assets/fonts/Roboto-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		D974EFD4536941CBB83F361C /* Inconsolata-Regular.ttf */ = {isa = PBXFileReference; name = "Inconsolata-Regular.ttf"; path = "../src/assets/fonts/Inconsolata-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		AA3A360AEEDD4ED6B5549183 /* Inconsolata-Bold.ttf */ = {isa = PBXFileReference; name = "Inconsolata-Bold.ttf"; path = "../src/assets/fonts/Inconsolata-Bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		4FD251B219B74372AEEF48CC /* Inconsolata-SemiBold.ttf */ = {isa = PBXFileReference; name = "Inconsolata-SemiBold.ttf"; path = "../src/assets/fonts/Inconsolata-SemiBold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -167,6 +173,9 @@
 				56C9CA49DCD64C17A941941F /* Roboto-Bold.ttf */,
 				DAF240B804504FBB8E859776 /* Roboto-Light.ttf */,
 				D4EE706553844A109C65C35E /* Roboto-Regular.ttf */,
+				D974EFD4536941CBB83F361C /* Inconsolata-Regular.ttf */,
+				AA3A360AEEDD4ED6B5549183 /* Inconsolata-Bold.ttf */,
+				4FD251B219B74372AEEF48CC /* Inconsolata-SemiBold.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -273,6 +282,9 @@
 				87580DE0E8814A9A996A3093 /* Roboto-Bold.ttf in Resources */,
 				44F1C53E03604517B5BE845E /* Roboto-Light.ttf in Resources */,
 				8626D0C1BB164E58BE407A5E /* Roboto-Regular.ttf in Resources */,
+				FDEB814C4B1F4EF383742B45 /* Inconsolata-Regular.ttf in Resources */,
+				DAE1C06E87F34012A4B7C7CE /* Inconsolata-Bold.ttf in Resources */,
+				3103C0F3FFEB4C4B859F61C8 /* Inconsolata-SemiBold.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

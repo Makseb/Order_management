@@ -1,10 +1,10 @@
-import { BaseUrl, store } from "../..";
+import { BaseUrl } from "../..";
 import { Executor } from "../../Executor";
 
 export const getAllOrdersByStroreId = (storeSelected) => {
     return Executor({
         method: 'get',
-        url: BaseUrl + '/client/orders/'+storeSelected,
+        url: BaseUrl + '/client/orders/' + storeSelected,
         isSilent: false,
         successFun: () => {
             // saveUserData(data);
@@ -14,4 +14,19 @@ export const getAllOrdersByStroreId = (storeSelected) => {
         withSuccessToast: false,
     });
 };
+
+export const updateOrderStatus = (data) => {
+    return Executor({
+        method: 'put',
+        data,
+        url: BaseUrl + '/client/order/updatestatus',
+        isSilent: false,
+        successFun: () => {
+            // saveUserData(data);
+            // saveToken(data);
+        },
+        withErrorToast: false,
+        withSuccessToast: false,
+    });
+}
 
