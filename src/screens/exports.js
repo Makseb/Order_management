@@ -7,10 +7,10 @@ export { default as SelectStore } from './Authentification/SelectStrore/SelectSt
 export { default as Header } from './Home/Header/Header'
 export { default as Footer } from './Home/Footer/Footer'
 
-export { default as Pendding } from './Home/Orders/Pending/Pending'
-export { default as OnProgress } from './Home/Orders/OnProgress/OnProgress'
-export { default as Ready } from './Home/Orders/Ready/Ready'
+export { default as All } from './Home/Orders/Stages/All/All'
+export { default as InProgress } from './Home/Orders/Stages/InProgress/InProgress'
+export { default as Ready } from './Home/Orders/Stages/Ready/Ready'
 
-export { default as OrderDetailed } from './Home/Orders/orderDetailed/OrderDetailed'
+export { default as OrderDetailed } from './Home/Orders/OrderDetailed/OrderDetailed'
 
 

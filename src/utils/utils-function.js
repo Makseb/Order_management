@@ -19,3 +19,40 @@ export function getDifference(startTimeParam) {
     return difference
 
 }
+
+// reformulate items in order schema 
+export function reformulateItems(items) {
+    let data = []
+    for (let i = 0; i < items.length; i++) {
+        const optionsGroup = []
+        for (let j = 0; j < items[i].options.length; j++) {
+            const option = {
+                _id: items[i].options[j]._id,
+                id: items[i].options[j].id,
+                name: items[i].options[j].name,
+                price: items[i].options[j].price,
+            }
+            const idExistsIndex = optionsGroup.findIndex(item => item.optionGroupeId === items[i].options[j].optionGroupeId);
+            if (idExistsIndex === -1) {
+                optionsGroup.push({
+                    optionGroupeId: items[i].options[j].optionGroupeId,
+                    optionGroupeName: items[i].options[j].optionGroupeName,
+                    options: [option]
+                });
+            } else {
+                optionsGroup[idExistsIndex].options.push(option);
+            }
+        }
+        data.push({
+            id: items[i].id,
+            _id: items[i]._id,
+            name: items[i].name,
+            description: items[i].description,
+            price: items[i].price,
+            quantity: items[i].quantity,
+            tax: items[i].tax,
+            optionsGroup: optionsGroup
+        })
+    }
+    return data
+}

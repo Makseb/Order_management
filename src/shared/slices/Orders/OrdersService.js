@@ -4,7 +4,7 @@ import { Executor } from "../../Executor";
 export const getAllOrdersByStroreId = (storeSelected) => {
     return Executor({
         method: 'get',
-        url: BaseUrl + '/client/orders/' + storeSelected,
+        url: BaseUrl + '/client/order/allorders/' + storeSelected,
         isSilent: false,
         successFun: () => {
             // saveUserData(data);
@@ -30,3 +30,16 @@ export const updateOrderStatus = (data) => {
     });
 }
 
+export const getAcceptedOrdersByStroreId = (storeSelected) => {
+    return Executor({
+        method: 'get',
+        url: BaseUrl + '/client/order/acceptedorders/' + storeSelected,
+        isSilent: false,
+        successFun: () => {
+            // saveUserData(data);
+            // saveToken(data);
+        },
+        withErrorToast: false,
+        withSuccessToast: false,
+    });
+};

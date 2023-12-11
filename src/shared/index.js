@@ -12,6 +12,7 @@ export const BaseUrl = 'http://10.0.2.2:8000';
 const persistConfig = {
     key: 'root',
     storage: AsyncStorage,
+    whitelist: ['root', 'authentification'],
 };
 
 const rootReducer = combineReducers({

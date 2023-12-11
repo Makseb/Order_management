@@ -1,99 +1,78 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { format } from 'date-fns';
-// import { getDifference } from '../../../utils/utils-function';
+import { reformulateItems } from '../../../utils/utils-function';
 export const OrdersState = {
-    orders: [],
-    onprogress: []
-    // counterPending: []
+    all: [],
+    inprogress: [],
 };
 
-function extractItems(items) {
-    let data = []
-    for (let i = 0; i < items.length; i++) {
-        const optionsGroup = []
-        for (let j = 0; j < items[i].options.length; j++) {
-            const option = {
-                _id: items[i].options[j]._id,
-                id: items[i].options[j].id,
-                name: items[i].options[j].name,
-                price: items[i].options[j].price,
-            }
-            const idExistsIndex = optionsGroup.findIndex(item => item.optionGroupeId === items[i].options[j].optionGroupeId);
-            if (idExistsIndex === -1) {
-                optionsGroup.push({
-                    optionGroupeId: items[i].options[j].optionGroupeId,
-                    optionGroupeName: items[i].options[j].optionGroupeName,
-                    options: [option]
-                });
-            } else {
-                optionsGroup[idExistsIndex].options.push(option);
-            }
-        }
-        data.push({
-            id: items[i].id,
-            _id: items[i]._id,
-            name: items[i].name,
-            description: items[i].description,
-            price: items[i].price,
-            quantity: items[i].quantity,
-            tax: items[i].tax,
-            optionsGroup: optionsGroup
-        })
-    }
-    return data
-}
 export const ordersSlice = createSlice({
     name: 'orders',
     initialState: OrdersState,
     reducers: {
         setOrders: (state, action) => {
-            let data = []
-            for (let i = 0; i < action.payload.orders.length; i++) {
+            let data = action.payload.orders
+            for (let i = 0; i < data.length; i++) {
                 const dateTime = new Date(action.payload.orders[i].createdAt);
                 const dateWithoutTime = format(dateTime, 'yyyy-MM-dd')
-                const timeWithoutSeconds = format(dateTime, 'HH:mm:ss')
+                const timeWithoutSeconds = format(dateTime, 'HH:mm')
                 data[i] = {
-                    id: action.payload.orders[i]._id,
-                    name: action.payload.orders[i].client_first_name + " " + action.payload.orders[i].client_last_name,
-                    client_email: action.payload.orders[i].client_email,
-                    client_phone: action.payload.orders[i].client_phone,
-                    deliveryAdress: action.payload.orders[i].deliveryAdress,
-                    status: action.payload.orders[i].status,
-                    date: dateWithoutTime,
-                    time: timeWithoutSeconds,
-                    price_total: action.payload.orders[i].price_total,
-                    type: action.payload.orders[i].type,
-                    currency: action.payload.currency,
-                    items: extractItems(action.payload.orders[i].items),
-                    table: action.payload.orders[i].table,
-                    source: action.payload.orders[i].source
+                    ...data[i],
+                    ...{
+                        name: data[i].client_first_name + " " + data[i].client_last_name,
+                        createdAt: {
+                            date: dateWithoutTime,
+                            time: timeWithoutSeconds,
+                        },
+                        currency: action.payload.currency,
+                        items: reformulateItems(data[i].items),
+                    }
                 }
+                delete data[i].client_first_name
+                delete data[i].client_last_name
             }
-            state.orders = data
+            switch (action.payload.stage) {
+                case "all": state.all = data
+                case "inprogress": state.inprogress = data
+            }
         },
         updateState: (state, action) => {
-            let data = state.orders
-            data[action.payload.index].status = action.payload.action
-            state.orders = data
-        },
-        setOnProgress: (state, action) => {
-            // change the status to accept
-            let order = action.payload.order;
-            let updatedOrder = { ...order, status: "accepted" };
-
-            state.onprogress.push({
-                order: updatedOrder,
-                // I store this index to the screen orderDetailed..
-                indexFromAllOrders: action.payload.indexFromAllOrders,
-                // this boolean to hsow a counter in onprogress
-                isClicked: false
-            })
-        },
-        setOnProgressToClicked: (state) => {
-            for (let i = 0; i < state.onprogress.length; i++) {
-                state.onprogress[i].isClicked = true
+            const dateTime = new Date(action.payload.updatedAt);
+            const dateWithoutTime = format(dateTime, 'yyyy-MM-dd')
+            const timeWithoutSeconds = format(dateTime, 'HH:mm')
+            switch (action.payload.stage) {
+                case "all": {
+                    let data = state.all
+                    let newData = {
+                        status: action.payload.action,
+                        updatedAt: {
+                            date: dateWithoutTime,
+                            time: timeWithoutSeconds
+                        },
+                    }
+                    if (action.payload.preparationTime) newData[preparationTime] = action.payload.preparationTime
+                    data[action.payload.index] = {
+                        ...data[action.payload.index],
+                        ...newData
+                    }
+                    console.log(data[action.payload.index]);
+                    state.all = data
+                    // hnee
+                }
+                case "inprogress": {
+                    let data = state.inprogress
+                    data[action.payload.index] = {
+                        ...data[action.payload.index],
+                        status: action.payload.action,
+                        updatedAt: {
+                            date: dateWithoutTime,
+                            time: timeWithoutSeconds
+                        },
+                    };
+                    state.inprogress = data
+                }
             }
-        }
+        },
         // decrementCounter: (state, action) => {
 
         //     let index = state.counterPending.findIndex(item => item.id === action.payload.id)
@@ -117,5 +96,5 @@ export const ordersSlice = createSlice({
 
 
 
-export const { setOrders, updateState, setOnProgress, setOnProgressToClicked } = ordersSlice.actions;
+export const { setOrders, updateState } = ordersSlice.actions;
 // decrementCounter

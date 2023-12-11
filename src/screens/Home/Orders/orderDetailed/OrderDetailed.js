@@ -6,17 +6,18 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 import { store } from "../../../../shared";
-import { updateState, setOnProgress } from "../../../../shared/slices/Orders/OrdersSlice";
+import { updateState } from "../../../../shared/slices/Orders/OrdersSlice";
 
 import { updateOrderStatus } from "../../../../shared/slices/Orders/OrdersService";
+import { AcceptModal } from "../../../../Components/exports";
 
 
 export default function OrderDetailed({ route }) {
-    const { index } = route.params
+    const { index, stage } = route.params
 
-    // get order
-    const order = useSelector((state) => state.orders.orders)[index]
-
+    // get the order according to stage :"all" or "inprogress"
+    const order = stage === "all" ? useSelector((state) => state.orders.all)[index] :
+        useSelector((state) => state.orders.inprogress)[index]
 
     // open the detail of each title example (client details, fulfillment)
     const [expandeds, setExpandeds] = useState(null);
@@ -24,13 +25,14 @@ export default function OrderDetailed({ route }) {
     // get currency
     const currency = useSelector((state) => state.authentification.storeSelected.currency)
 
+    // show AcceptModal
+    const [toggleModal, setToggleModal] = useState(false)
 
     const handlePress = (index) => {
         const newData = [...expandeds];
         newData[index] = !newData[index];
         setExpandeds(newData);
     }
-
     useEffect(() => {
         const initData = () => {
             let data = [];
@@ -47,11 +49,7 @@ export default function OrderDetailed({ route }) {
         initData(); // Call the initialization function directly inside useEffect
     }, [])
 
-
-
-
     return (
-
         expandeds != null && <View style={styles.container}>
             <Header />
             <ScrollView>
@@ -64,7 +62,7 @@ export default function OrderDetailed({ route }) {
                         flexDirection: 'row',
                         justifyContent: 'space-between'
                     }}>
-                        <Text style={styles.orderIdText}>Order ID : {order.id.substring(order.id.length - 4)}</Text>
+                        <Text style={styles.orderIdText}>Order ID : {order._id.substring(order._id.length - 4)}</Text>
 
                         <View style={{
                             flexDirection: 'row',
@@ -75,13 +73,13 @@ export default function OrderDetailed({ route }) {
                                         {order.status.charAt(0).toUpperCase() + order.status.slice(1)}</Text>
                                 </View>
                             )}
-                            <Text style={styles.textDateAndTime}>{order.date} {order.time}</Text>
+                            <Text style={styles.textDateAndTime}>{order.createdAt.date} {order.createdAt.time}</Text>
+                            {/* <Text style={styles.textDateAndTime}>{order.updatedAt.toString()}</Text> */}
                         </View>
                     </View>
 
                     {/* mapping product with options and without... */}
                     <View style={{
-                        marginTop: '0.5%',
                         padding: '5%',
                         borderColor: 'gray',
                         elevation: 2,
@@ -126,6 +124,7 @@ export default function OrderDetailed({ route }) {
                                                             color: '#424242',
                                                             fontStyle: 'italic'
                                                         }}>{option.price} {currency}</Text>
+
                                                     </View>
                                                 ))}
                                             </React.Fragment>
@@ -146,6 +145,7 @@ export default function OrderDetailed({ route }) {
                                 fontSize: 24,
                                 color: '#424242',
                             }}>Total : {order.price_total} {currency}</Text>
+
                         </View>
                     </View>
 
@@ -206,34 +206,23 @@ export default function OrderDetailed({ route }) {
                         </List.Accordion>
                     </List.Section>
 
-                    {/* Button reject and accept exist when order pending */}
+                    <View style={{ marginBottom: order.status !== "pending" && "3%" }} />
 
+                    {/* Button reject and accept exist when order is pending */}
                     {
                         order.status === "pending" &&
                         <View style={styles.acceptRejectContainer}>
-                            <TouchableOpacity onPress={() => {
-                                // update status in backend to accepted
-                                const updateOrderStatusToAccepted = async () => {
-                                    await updateOrderStatus({ status: "accepted", _id: order.id }).then(res => {
-                                        store.dispatch(updateState({ index, action: "accepted" }))
-                                        // i add this to send data to onProgress
-                                        store.dispatch(setOnProgress({ order: order, indexFromAllOrders: index }))
-                                    }).catch(err => {
-
-                                    })
-                                }
-                                updateOrderStatusToAccepted()
-                            }}
-                                style={styles.acceptButton}>
+                            <TouchableOpacity style={styles.acceptButton} onPress={() => { setToggleModal(true) }}>
                                 <Text style={styles.textAcceptButton}>Accept</Text>
                             </TouchableOpacity>
+
                             <TouchableOpacity onPress={() => {
                                 // update status in backend to rejected
                                 const updateOrderStatusToRejected = async () => {
-                                    await updateOrderStatus({ status: "rejected", _id: order.id }).then(res => {
-                                        store.dispatch(updateState({ index, action: "rejected" }))
+                                    await updateOrderStatus({ status: "rejected", _id: order._id }).then(res => {
+                                        store.dispatch(updateState({ index, action: "rejected", stage: stage, updatedAt: res.order.updatedAt }))
                                     }).catch(err => {
-                                        console.log(order.id);
+                                        console.log(order._id);
                                         console.log(err);
                                     })
                                 }
@@ -244,8 +233,19 @@ export default function OrderDetailed({ route }) {
                             </TouchableOpacity>
                         </View>
                     }
-
+                    {toggleModal && (
+                        <AcceptModal
+                            modalProps={{
+                                toggleModal,
+                                setToggleModal,
+                                stage,
+                                index,
+                                orderId: order._id
+                            }}
+                        />
+                    )}
                 </View>
+
             </ScrollView>
 
         </View>
@@ -276,17 +276,17 @@ const styles = StyleSheet.create({
     textDateAndTime: {
         color: '#030303',
         fontFamily: 'Montserrat-Light',
-        fontSize: 14
+        fontSize: 16
     },
     acceptRejectContainer: {
         alignSelf: 'center',
         flexDirection: 'row',
         justifyContent: 'center',
-        marginVertical: '5%'
+        marginVertical: '3%'
     },
     acceptButton: {
-        height: 30,
-        width: 130,
+        height: 40,
+        width: 150,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#5cd964',
@@ -295,11 +295,11 @@ const styles = StyleSheet.create({
     textAcceptButton: {
         color: 'white',
         fontFamily: 'Montserrat-Regular',
-        fontSize: 14,
+        fontSize: 16,
     },
     rejectButton: {
-        height: 30,
-        width: 130,
+        height: 40,
+        width: 150,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#ff3b30',
@@ -309,6 +309,6 @@ const styles = StyleSheet.create({
     textRejectButton: {
         color: 'white',
         fontFamily: 'Montserrat-Regular',
-        fontSize: 14,
+        fontSize: 16,
     }
 })
