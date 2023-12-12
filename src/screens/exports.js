@@ -13,4 +13,4 @@ export { default as Ready } from './Home/Orders/Stages/Ready/Ready'
 
 export { default as OrderDetailed } from './Home/Orders/OrderDetailed/OrderDetailed'
 
-
+export { default as AcceptModal } from './Home/Orders/OrderDetailed/AcceptModal/AcceptModal'

@@ -1,61 +1,38 @@
 import Modal from "react-native-modal";
 import { View, Text, StyleSheet, TextInput, TouchableWithoutFeedback, TouchableOpacity } from "react-native"
 import AntDesign from "react-native-vector-icons/AntDesign"
-import { } from "react-native";
 import { useState } from "react";
-import { updateOrderStatus } from "../../shared/slices/Orders/OrdersService";
-import { updateState } from "../../shared/slices/Orders/OrdersSlice";
-import { store } from "../../shared";
+import { updateState } from "../../../../../shared/slices/Orders/OrdersSlice";
+import { updateOrderStatus } from "../../../../../shared/slices/Orders/OrdersService";
+import { store } from "../../../../../shared";
 
 export default function AcceptModal({ modalProps }) {
-    const { toggleModal, setToggleModal, stage, index, orderId } = modalProps;
+    const { toggleModal, setToggleModal, stage, index, orderId, preparedAt } = modalProps;
 
     const [minutes, setMinutes] = useState();
     const handleMinutesChange = (input) => {
         const numericInput = input.replace(/[^0-9]/g, '');
-
         const limitedInput = numericInput.slice(0, 2);
-
         setMinutes(limitedInput);
     };
-
-    const [version, setVersion] = useState(false)
     return (
         <Modal
             isVisible={toggleModal}
             onBackdropPress={() => setToggleModal(false)}
-            style={{ justifyContent: 'flex-end', margin: 0 }}
-        >
+            style={{ justifyContent: 'flex-end', margin: 0 }}>
             <View
-                style={{
-                    flexDirection: 'column',
-                    backgroundColor: 'white',
-                    alignItems: 'center',
-                    borderTopLeftRadius: 10,
-                    borderTopRightRadius: 10,
-                }}>
+                style={styles.container}>
                 <TouchableWithoutFeedback onPress={() => setToggleModal(!toggleModal)}>
                     <AntDesign
-                        style={{
-                            alignSelf: 'flex-start',
-                            paddingTop: '1.5%',
-                            paddingLeft: '1.5%',
-                            fontFamily: 'Montserrat-Light',
-                            color: '#030303'
-                        }}
+                        style={styles.iconClock}
                         name="arrowleft"
                         size={20}
                     />
                 </TouchableWithoutFeedback>
-                <Text style={{
-                    color: '#030303',
-                    fontFamily: 'Montserrat-Light',
-                    fontSize: 14,
-                    marginBottom: '1%'
-                }}>{version ? "Demandée retrait time" : "Retrait time"}</Text>
+                <Text style={styles.text}>{preparedAt ? "Request for preparing at" : "Prepared at"}</Text>
 
 
-                {!version && <View style={styles.inputContainer}>
+                {!preparedAt && <View style={styles.inputContainer}>
                     <AntDesign name="clockcircleo" size={20} style={{ color: '#716D6D', position: 'absolute', zIndex: 2, left: 10 }} />
                     <TextInput
                         style={styles.input}
@@ -66,31 +43,22 @@ export default function AcceptModal({ modalProps }) {
                         onChangeText={handleMinutesChange}
                     />
                 </View>}
-                {version && <View style={{
-                    flexDirection: 'row',
-                    justifyContent: 'center',
-                    alignItems: 'center'
-                }}>
-                    <Text style={{
-                        backgroundColor: '#F7F7F7',
-                        color: '#030303',
-                        fontFamily: 'Montserrat-Regular',
-                        borderRadius: 24,
-                        fontSize: 14,
-                        textAlign: 'center',
-                        lineHeight: 45,
-                        width: '22%',
-                    }}>jeu. 14 déc. - 16:00</Text>
+                {preparedAt && <View style={styles.containerPreparation}>
+                    <Text style={styles.textPreparation}>{preparedAt.date} {preparedAt.time}</Text>
                 </View>
                 }
                 <View style={styles.acceptContainer}>
                     <TouchableOpacity style={styles.acceptButton} onPress={() => {
                         // update status in backend to accepted
                         const updateOrderStatusToAccepted = async () => {
-                            await updateOrderStatus({ status: "accepted", _id: orderId, preparationtime: minutes }).then(res => {
-                                store.dispatch(updateState({ index, action: "accepted", stage: stage, updatedAt: res.order.updatedAt, preparationTime: res.order.preparationtime }))
-                            }).catch(err => {
-                            })
+                            !preparedAt ? (await updateOrderStatus({ status: "accepted", _id: orderId, preparationTime: minutes }).then(res => {
+                                store.dispatch(updateState({ index, action: "accepted", stage: stage, updatedAt: res.order.updatedAt, preparedAt: res.order.preparedAt }))
+                            }).catch(err => { })
+                            ) : (
+                                await updateOrderStatus({ status: "accepted", _id: orderId }).then(res => {
+                                    store.dispatch(updateState({ index, action: "accepted", stage: stage, updatedAt: res.order.updatedAt }))
+                                }).catch(err => { })
+                            )
                         }
                         updateOrderStatusToAccepted()
                         setToggleModal(false)
@@ -100,17 +68,52 @@ export default function AcceptModal({ modalProps }) {
                 </View>
 
             </View>
-        </Modal>
+        </Modal >
     )
 
 }
 
-styles = StyleSheet.create({
+const styles = StyleSheet.create({
+    container: {
+        flexDirection: 'column',
+        backgroundColor: 'white',
+        alignItems: 'center',
+        borderTopLeftRadius: 10,
+        borderTopRightRadius: 10,
+    },
+    iconClock: {
+        alignSelf: 'flex-start',
+        paddingTop: '1.5%',
+        paddingLeft: '1.5%',
+        fontFamily: 'Montserrat-Light',
+        color: '#030303'
+    },
+    text: {
+        color: '#030303',
+        fontFamily: 'Montserrat-Light',
+        fontSize: 14,
+        marginBottom: '1%'
+    },
     inputContainer: {
         width: '20%',
         height: 45,
         flexDirection: 'row',
         alignItems: 'center',
+    },
+    containerPreparation: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    textPreparation: {
+        backgroundColor: '#F7F7F7',
+        color: '#030303',
+        fontFamily: 'Montserrat-Light',
+        borderRadius: 24,
+        fontSize: 16,
+        textAlign: 'center',
+        lineHeight: 45,
+        width: '22%',
     },
     input: {
         backgroundColor: 'white',
@@ -144,6 +147,4 @@ styles = StyleSheet.create({
         fontFamily: 'Montserrat-Regular',
         fontSize: 18,
     },
-
-
 })

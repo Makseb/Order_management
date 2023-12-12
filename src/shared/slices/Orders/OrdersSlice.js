@@ -13,20 +13,26 @@ export const ordersSlice = createSlice({
         setOrders: (state, action) => {
             let data = action.payload.orders
             for (let i = 0; i < data.length; i++) {
-                const dateTime = new Date(action.payload.orders[i].createdAt);
-                const dateWithoutTime = format(dateTime, 'yyyy-MM-dd')
-                const timeWithoutSeconds = format(dateTime, 'HH:mm')
+                let newData = {
+                    name: data[i].client_first_name + " " + data[i].client_last_name,
+                    createdAt: {
+                        date: format(new Date(action.payload.orders[i].createdAt), 'yyyy-MM-dd'),
+                        time: format(new Date(action.payload.orders[i].createdAt), 'HH:mm'),
+                    },
+                    currency: action.payload.currency,
+                    items: reformulateItems(data[i].items),
+                }
+                if (data[i].preparedAt) data[i].preparedAt = {
+                    date: format(new Date(data[i].preparedAt), 'yyyy-MM-dd'),
+                    time: format(new Date(data[i].preparedAt), 'HH:mm'),
+                }
+                if (data[i].updatedAt) data[i].updatedAt = {
+                    date: format(new Date(data[i].updatedAt), 'yyyy-MM-dd'),
+                    time: format(new Date(data[i].updatedAt), 'HH:mm'),
+                }
                 data[i] = {
                     ...data[i],
-                    ...{
-                        name: data[i].client_first_name + " " + data[i].client_last_name,
-                        createdAt: {
-                            date: dateWithoutTime,
-                            time: timeWithoutSeconds,
-                        },
-                        currency: action.payload.currency,
-                        items: reformulateItems(data[i].items),
-                    }
+                    ...newData
                 }
                 delete data[i].client_first_name
                 delete data[i].client_last_name
@@ -37,40 +43,38 @@ export const ordersSlice = createSlice({
             }
         },
         updateState: (state, action) => {
-            const dateTime = new Date(action.payload.updatedAt);
-            const dateWithoutTime = format(dateTime, 'yyyy-MM-dd')
-            const timeWithoutSeconds = format(dateTime, 'HH:mm')
             switch (action.payload.stage) {
                 case "all": {
                     let data = state.all
                     let newData = {
                         status: action.payload.action,
                         updatedAt: {
-                            date: dateWithoutTime,
-                            time: timeWithoutSeconds
+                            date: format(new Date(action.payload.updatedAt), 'yyyy-MM-dd'),
+                            time: format(new Date(action.payload.updatedAt), 'HH:mm')
                         },
                     }
-                    if (action.payload.preparationTime) newData[preparationTime] = action.payload.preparationTime
+                    if (action.payload.preparedAt) newData.preparedAt = {
+                        date: format(new Date(action.payload.preparedAt), 'yyyy-MM-dd'),
+                        time: format(new Date(action.payload.preparedAt), 'HH:mm')
+                    }
                     data[action.payload.index] = {
                         ...data[action.payload.index],
                         ...newData
                     }
-                    console.log(data[action.payload.index]);
                     state.all = data
-                    // hnee
                 }
-                case "inprogress": {
-                    let data = state.inprogress
-                    data[action.payload.index] = {
-                        ...data[action.payload.index],
-                        status: action.payload.action,
-                        updatedAt: {
-                            date: dateWithoutTime,
-                            time: timeWithoutSeconds
-                        },
-                    };
-                    state.inprogress = data
-                }
+                // case "inprogress": {
+                //     let data = state.inprogress
+                //     data[action.payload.index] = {
+                //         ...data[action.payload.index],
+                //         status: action.payload.action,
+                //         updatedAt: {
+                //             date: dateWithoutTime,
+                //             time: timeWithoutSeconds
+                //         },
+                //     };
+                //     state.inprogress = data
+                // }
             }
         },
         // decrementCounter: (state, action) => {
