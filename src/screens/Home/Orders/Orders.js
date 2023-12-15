@@ -102,6 +102,7 @@ const styles = StyleSheet.create({
         // THIS STYLE FOR SHADOW BOTTOM AND RIGHT
     },
     containerHeader: {
+        // marginBottom : 1, // 
         marginHorizontal: '5%',
         backgroundColor: '#fff',
         flexDirection: 'row',

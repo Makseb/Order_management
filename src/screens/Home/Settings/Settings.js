@@ -1,4 +1,4 @@
-import { StyleSheet, TouchableOpacity, View, Text } from "react-native";
+import { StyleSheet, TouchableOpacity, View, Text, TouchableWithoutFeedback } from "react-native";
 import React from "react";
 import Icon from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
@@ -7,6 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 
 import { store } from "../../../shared";
 import { disconnect } from "../../../shared/slices/Auth/AuthSlice";
+import { useSelector } from "react-redux";
 
 
 
@@ -23,15 +24,28 @@ export default function Settings() {
                 <Text style={styles.textBesideIcon}>Languages</Text>
             </View>
 
-            <View style={styles.containerIconAndText}>
-                <MaterialIcons name="event-available" size={24} color={'#333'} />
-                <Text style={styles.textBesideIcon}>Availablility</Text>
-            </View>
+            <TouchableWithoutFeedback onPress={() => {
+                navigation.navigate("Availability")
+            }}>
+                <View style={styles.containerIconAndText}>
+                    <MaterialIcons name="event-available" size={24} color={'#333'} />
+                    <Text style={styles.textBesideIcon}>Availability</Text>
+                </View>
+            </TouchableWithoutFeedback>
 
-            <View style={[styles.containerIconAndText, { marginBottom: 0 }]}>
+            <View style={styles.containerIconAndText}>
                 <Icon name="print" size={24} color={'#333'} />
                 <Text style={styles.textBesideIcon}>Printing Settings</Text>
             </View>
+
+            <TouchableWithoutFeedback onPress={() => {
+                navigation.navigate("Login")
+            }}>
+                <View style={[styles.containerIconAndText, { marginBottom: 0 }]}>
+                    <Icon name="log-out" size={24} color={'#333'} />
+                    <Text style={styles.textBesideIcon}>Logout</Text>
+                </View>
+            </TouchableWithoutFeedback>
         </View>
     );
 }

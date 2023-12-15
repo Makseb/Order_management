@@ -6,7 +6,7 @@ import { setLoggedInUser, setToken } from "./AuthSlice";
 export const login = (data) => {
     return Executor({
         method: 'post',
-        url: BaseUrl + '/client/login-',
+        url: BaseUrl + '/owner/login-',
         data,
         isSilent: false,
         successFun: (data) => {
@@ -34,12 +34,25 @@ export const getStoresNameAndIdByUserId = (userId) => {
         url: BaseUrl + '/owner/getstoresnameandidbyuserid/' + userId,
         isSilent: false,
         successFun: (data) => {
-            
+
         },
         withErrorToast: false,
         withSuccessToast: false,
     });
 };
 
+// change store status
+export const changeStoreStatus = (data) => {
+    return Executor({
+        method: 'put',
+        data,
+        url: BaseUrl + '/owner/store/changestatus',
+        isSilent: false,
+        successFun: () => {
+        },
+        withErrorToast: false,
+        withSuccessToast: true,
+    });
+};
 
 

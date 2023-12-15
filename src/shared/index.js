@@ -5,9 +5,10 @@ import { persistStore, persistReducer } from 'redux-persist';
 import { rootSlice } from "./slices/rootSlice"
 import { authentificationSlice } from "./slices/Auth/AuthSlice";
 import { ordersSlice } from "./slices/Orders/OrdersSlice";
+import { availabilitySlice } from "./slices/Availability/AvailabilitySlice";
 
 export const BaseUrl = 'http://10.0.2.2:8000';
-
+// https://api.eatorder.fr
 
 const persistConfig = {
     key: 'root',
@@ -18,7 +19,8 @@ const persistConfig = {
 const rootReducer = combineReducers({
     root: rootSlice.reducer,
     authentification: authentificationSlice.reducer,
-    orders: ordersSlice.reducer
+    orders: ordersSlice.reducer,
+    availability: availabilitySlice.reducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

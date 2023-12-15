@@ -10,23 +10,21 @@ export default function Order({ order }) {
                 <Text style={styles.name}>{order.name}</Text>
                 <View style={styles.containerTakeIconWithHerStatus}>
                     <MaterialIcons name={
-                        (order.status === "accepted") ? 'done' :
+                        (order.status === "accepted" || order.status === "ready") ? 'done' :
                             (order.status === "rejected") ? 'close' :
-                                (order.status === "pending") ? 'more-horiz' :
-                                    'close'
+                                'more-horiz'
                     }
                         size={16} style={{
                             color:
-                                order.status === "accepted" ? "#5cd964" :
+                                (order.status === "accepted" || order.status === "ready") ? "#5cd964" :
                                     order.status === "rejected" ? "#ff3b30" :
-                                        order.status === "pending" ? "#fc0" :
-                                            "#ff3b30",
+                                        "#fc0"
                         }}
                     />
                     <Text style={
-                        (order.status === "accepted") ? [styles.status, { color: '#5cd964' }] :
+                        (order.status === "accepted" || order.status === "ready") ? [styles.status, { color: '#5cd964' }] :
                             (order.status === "rejected") ? [styles.status, { color: '#ff3b30' }] :
-                                (order.status === "missed") ? [styles.status, { color: '#ff3b30' }] :
+                                // (order.status === "missed") ? [styles.status, { color: '#ff3b30' }] :
                                     styles.status
                     }>{order.status.charAt(0).toUpperCase() + order.status.slice(1)}</Text>
                     {/* order.status.charAt(0).toUpperCase() + order.status.slice(1) */}
@@ -45,7 +43,7 @@ export default function Order({ order }) {
 const styles = StyleSheet.create({
     containerOrder: {
         // backgroundColor : 'black',
-        paddingVertical : '1%',
+        paddingVertical: '1%',
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',

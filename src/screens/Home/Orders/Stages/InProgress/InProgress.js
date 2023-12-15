@@ -1,6 +1,6 @@
 import { View, ScrollView, TouchableWithoutFeedback, StyleSheet } from "react-native";
 
-import { useSelector } from "react-redux";
+import { shallowEqual, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { Order } from "../../../../../Components/exports";
 import { useEffect } from "react";
@@ -37,7 +37,6 @@ export default function InProgress() {
     // get the all orders in progress
     const orders = useSelector((state) => state.orders.inprogress)
 
-
     return (
         <ScrollView>
             {
@@ -48,7 +47,6 @@ export default function InProgress() {
                                 {/* mapping orders */}
                                 <Order order={order} />
                             </View>
-
                         </TouchableWithoutFeedback>
                         {/* bar that separate orders */}
                         < View style={styles.barSeparateOrder} />
@@ -59,38 +57,8 @@ export default function InProgress() {
         </ScrollView >
 
     );
-
 }
-
 const styles = StyleSheet.create({
-    viewButton: {
-        height: 30,
-        width: 130,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#7f7f7f',
-        borderRadius: 24,
-    },
-    textViewButton: {
-        color: 'white',
-        fontFamily: 'Montserrat-Regular',
-        fontSize: 14,
-    },
-    rejectButton: {
-        height: 30,
-        width: 130,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#ff3b30',
-        borderRadius: 24,
-        marginLeft: '2%',
-        marginBottom: '1%'
-    },
-    textRejectButton: {
-        color: 'white',
-        fontFamily: 'Montserrat-Regular',
-        fontSize: 14,
-    },
     barSeparateOrder: {
         borderBottomColor: '#f0f0f0',
         borderBottomWidth: 3,
