@@ -10,6 +10,9 @@ export { default as InProgress } from './Home/Orders/Stages/InProgress/InProgres
 export { default as Ready } from './Home/Orders/Stages/Ready/Ready'
 export { default as OrderDetailed } from './Home/Orders/OrderDetailed/OrderDetailed'
 export { default as AcceptModal } from './Home/Orders/OrderDetailed/AcceptModal/AcceptModal'
-export { default as Availability } from './Home/Settings/Availability/Availablility'
+export { default as Category } from './Home/Settings/Availability/Category/Category'
+export { default as CategoryModal } from './Home/Settings/Availability/Category/CategoryModal/CategoryModal'
 
-export { default as AvailabilityModal } from './Home/Settings/Availability/AvailabilityModal/AvailabilityModal'
+export { default as Product } from './Home/Settings/Availability/Category/Product/Product'
+
+export { default as ProductModal } from './Home/Settings/Availability/Category/Product/ProductModal/ProductModal'

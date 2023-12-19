@@ -1,7 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 export const AvailabilityInitialState = {
-    categories: []
+    categories: [],
+    products: []
 };
 
 export const availabilitySlice = createSlice({
@@ -10,8 +11,11 @@ export const availabilitySlice = createSlice({
     reducers: {
         setCategories: (state, action) => {
             state.categories = action.payload.categories
+        },
+        setProducts: (state, action) => {
+            state.products = action.payload.products
         }
     },
 });
 
-export const { setCategories } = availabilitySlice.actions;
+export const { setCategories,setProducts } = availabilitySlice.actions;

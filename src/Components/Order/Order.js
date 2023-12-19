@@ -11,21 +11,21 @@ export default function Order({ order }) {
                 <View style={styles.containerTakeIconWithHerStatus}>
                     <MaterialIcons name={
                         (order.status === "accepted" || order.status === "ready") ? 'done' :
-                            (order.status === "rejected") ? 'close' :
-                                'more-horiz'
+                            (order.status === "rejected") ? 'close' : (order.status === "pending") ? "more-horiz" :
+                                'close'
                     }
                         size={16} style={{
                             color:
                                 (order.status === "accepted" || order.status === "ready") ? "#5cd964" :
-                                    order.status === "rejected" ? "#ff3b30" :
-                                        "#fc0"
+                                    order.status === "rejected" ? "#ff3b30" : order.status === "pending" ? "#fc0" :
+                                        "#ff3b30"
                         }}
                     />
                     <Text style={
                         (order.status === "accepted" || order.status === "ready") ? [styles.status, { color: '#5cd964' }] :
                             (order.status === "rejected") ? [styles.status, { color: '#ff3b30' }] :
-                                // (order.status === "missed") ? [styles.status, { color: '#ff3b30' }] :
-                                    styles.status
+                                (order.status === "missed") ? [styles.status, { color: '#ff3b30' }] :
+                                styles.status
                     }>{order.status.charAt(0).toUpperCase() + order.status.slice(1)}</Text>
                     {/* order.status.charAt(0).toUpperCase() + order.status.slice(1) */}
                 </View>

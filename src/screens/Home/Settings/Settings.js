@@ -25,7 +25,7 @@ export default function Settings() {
             </View>
 
             <TouchableWithoutFeedback onPress={() => {
-                navigation.navigate("Availability")
+                navigation.navigate("Category")
             }}>
                 <View style={styles.containerIconAndText}>
                     <MaterialIcons name="event-available" size={24} color={'#333'} />

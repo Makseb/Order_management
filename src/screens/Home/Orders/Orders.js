@@ -22,8 +22,6 @@ export default function Orders() {
             <Text style={styles.title}>
                 Orders
             </Text>
-
-
             <View style={{ overflow: 'hidden' }}>
                 <View style={styles.containerHeader}>
                     {/* All */}

@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 
 
 import { Loader } from "./src/Components/exports"
-import { Login, Home, SelectStore, OrderDetailed, Availability } from "./src/screens/exports"
+import { Login, Home, SelectStore, OrderDetailed, Category, Product } from "./src/screens/exports"
 
 
 const Stack = createNativeStackNavigator();
@@ -24,7 +24,8 @@ export default function App() {
                         <Stack.Screen name="Home" component={Home} />
                         <Stack.Screen name="SelectStore" component={SelectStore}  />
                         <Stack.Screen name="OrderDetailed" component={OrderDetailed} />
-                        <Stack.Screen name="Availability" component={Availability} />
+                        <Stack.Screen name="Category" component={Category} />
+                        <Stack.Screen name="Product" component={Product} />
                     </Stack.Group>
                 </Stack.Navigator>
             </NavigationContainer>
