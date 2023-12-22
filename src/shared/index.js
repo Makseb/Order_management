@@ -6,21 +6,23 @@ import { rootSlice } from "./slices/rootSlice"
 import { authentificationSlice } from "./slices/Auth/AuthSlice";
 import { ordersSlice } from "./slices/Orders/OrdersSlice";
 import { availabilitySlice } from "./slices/Availability/AvailabilitySlice";
+import { PrinterSlice } from "./slices/Printer/PrinterSlice";
 
-export const BaseUrl = 'http://10.0.2.2:8000';
+export const BaseUrl = 'http://192.168.1.43:8000';
 // https://api.eatorder.fr
 
 const persistConfig = {
     key: 'root',
     storage: AsyncStorage,
-    whitelist: ['root', 'authentification'],
+    whitelist: ['root', 'authentification', 'printer'],
 };
 
 const rootReducer = combineReducers({
     root: rootSlice.reducer,
     authentification: authentificationSlice.reducer,
     orders: ordersSlice.reducer,
-    availability: availabilitySlice.reducer
+    availability: availabilitySlice.reducer,
+    printer: PrinterSlice.reducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

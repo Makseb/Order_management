@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
         lineHeight: 45,
     },
     containerRadioButton: {
-        marginBottom: '5%',
+        marginBottom: '10%',
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center'

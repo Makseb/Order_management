@@ -104,7 +104,9 @@ android {
 }
 
 dependencies {
-    // The version of react-native is set by the React Native Gradle Plugin
+    // config printer
+    // implementation(":react-native-lanscan")
+
     implementation("com.facebook.react:react-android")
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}")
@@ -124,3 +126,4 @@ dependencies {
 apply from:("../../node_modules/react-native-vector-icons/fonts.gradle");
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
+

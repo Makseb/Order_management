@@ -14,7 +14,7 @@ export default function ToggleSwitch({ isEnabled, toggleSwitch }) {
             backgroundActive={'white'} // #e7e7e7
             backgroundInactive={'white'}
             circleActiveColor={'#df8f17'}
-            circleInActiveColor={'#df8f17'} //#df8f17
+            circleInActiveColor={'#7f7f7f'} //#df8f17
             // renderInsideCircle={() => <CustomComponent />} // custom component to render inside the Switch circle (Text, Image, etc.)
             changeValueImmediately={true} // if rendering inside circle, change state immediately or wait for animation to complete
             innerCircleStyle={{ alignItems: "center", justifyContent: "center", borderWidth: 0 }} // style for inner animated circle for what you (may) be rendering inside the circle
@@ -22,7 +22,7 @@ export default function ToggleSwitch({ isEnabled, toggleSwitch }) {
             containerStyle={
                 {
                     borderWidth: 1,
-                    borderColor: '#df8f17'
+                    borderColor: isEnabled ? '#df8f17' : '#7f7f7f'
                 }
             }
             renderActiveText={false}

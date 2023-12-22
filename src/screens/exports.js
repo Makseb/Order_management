@@ -12,7 +12,8 @@ export { default as OrderDetailed } from './Home/Orders/OrderDetailed/OrderDetai
 export { default as AcceptModal } from './Home/Orders/OrderDetailed/AcceptModal/AcceptModal'
 export { default as Category } from './Home/Settings/Availability/Category/Category'
 export { default as CategoryModal } from './Home/Settings/Availability/Category/CategoryModal/CategoryModal'
-
 export { default as Product } from './Home/Settings/Availability/Category/Product/Product'
-
 export { default as ProductModal } from './Home/Settings/Availability/Category/Product/ProductModal/ProductModal'
+export { default as PrintingSetting } from './Home/Settings/PrintingSettings/PrintingSetting'
+export { default as PrintingSettingsModal } from './Home/Settings/PrintingSettings/PrintingSettingsModal/PrintingSeetingsModal'
+export { default as SearchPrinter } from './Home/Settings/PrintingSettings/SearchPrinter/PrinterSearch'

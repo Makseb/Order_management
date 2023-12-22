@@ -9,7 +9,6 @@ import { updateOrderStatus } from "../../../../shared/slices/Orders/OrdersServic
 import { AcceptModal } from "../../../../screens/exports";
 import { ListSection } from "../../../../Components/exports";
 
-
 export default function OrderDetailed({ route }) {
     const { index, stage } = route.params
 
@@ -26,6 +25,8 @@ export default function OrderDetailed({ route }) {
 
     // show AcceptModal
     const [toggleModal, setToggleModal] = useState(false)
+
+
 
     const handlePress = (index) => {
         const newData = [...expandeds];
@@ -75,14 +76,13 @@ export default function OrderDetailed({ route }) {
                     marginHorizontal: '5%',
                     flexDirection: 'column',
                 }}>
-
                     <View style={{
                         flexDirection: 'row',
                         // justifyContent: 'space-between'
                     }}>
                         <Text style={[styles.orderIdText, { marginRight: '1%' }]}>Order ID : {order._id.substring(order._id.length - 4)}</Text>
                         <View style={[styles.tag, {
-                            backgroundColor: (order.status === "accepted" || order.status === "ready") ? "#5cd964" : (order.status === "rejected") ? "#ff3b30" : "#fc0"
+                            backgroundColor: (order.status === "accepted" || order.status === "ready") ? "#5cd964" : (order.status === "rejected") ? "#ff3b30" : (order.status === "missed") ? "#ff3b30" : "#fc0"
                         }]}>
                             <Text style={styles.textStatus}>
                                 {order.status.charAt(0).toUpperCase() + order.status.slice(1)}</Text>

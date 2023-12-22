@@ -33,10 +33,15 @@ export default function Settings() {
                 </View>
             </TouchableWithoutFeedback>
 
-            <View style={styles.containerIconAndText}>
-                <Icon name="print" size={24} color={'#333'} />
-                <Text style={styles.textBesideIcon}>Printing Settings</Text>
-            </View>
+            <TouchableWithoutFeedback onPress={() => {
+                navigation.navigate("PrintingSetting")
+            }}>
+                <View style={styles.containerIconAndText}>
+                    <Icon name="print" size={24} color={'#333'} />
+                    <Text style={styles.textBesideIcon}>Printing Settings</Text>
+                </View>
+            </TouchableWithoutFeedback>
+
 
             <TouchableWithoutFeedback onPress={() => {
                 navigation.navigate("Login")
