@@ -1,21 +1,28 @@
 import { useRoute } from "@react-navigation/native";
-import { Header } from "../../../../exports";
-import { View, Text, TouchableOpacity, Image } from "react-native";
+import { CheckBoxModal, Header } from "../../../../exports";
 import { store } from "../../../../../shared";
 import { useSelector } from "react-redux";
-import { setConfig } from "../../../../../shared/slices/Printer/PrinterSlice";
+import { setLan } from "../../../../../shared/slices/Printer/PrinterSlice";
 import { useState } from "react";
-import { BleManager } from 'react-native-ble-plx';
+import { View, Text, TouchableOpacity, Image, NativeModules, StyleSheet } from "react-native";
+import { setRootLoading } from "../../../../../shared/slices/rootSlice";
+import CheckBox from '@react-native-community/checkbox';
+
 
 export default function SearchPrinter() {
     const route = useRoute();
     const { title, description, img } = route.params;
 
-    const config = useSelector((state) => state.printer.config)
-    console.log(config);
+    const lan = useSelector((state) => state.printer.lan)
 
-    // use this to show or not logo of bluetooth and description
+    // use this to show or not logo and description
     const [state, setState] = useState(false)
+
+
+    const [toggleModal, setToggleModal] = useState({
+        state : false,
+        value : null
+    })
     return (
         <View style={{
             backgroundColor: 'white',
@@ -31,11 +38,12 @@ export default function SearchPrinter() {
             }}>{title}</Text>
 
             {state === false && <View style={{
-                // justifyContent: 'center',
                 alignItems: 'center'
             }}>
                 <Image source={img} style={{
                     marginHorizontal: '5%',
+                    width: '99%',
+                    resizeMode: "contain"
                 }} />
 
                 <Text style={{
@@ -49,13 +57,42 @@ export default function SearchPrinter() {
             </View>}
             {
                 state && (
-                    <View>
-
+                    <View style={{
+                        marginHorizontal: '5%',
+                    }}>
+                        {
+                            lan.map((item) => (
+                                <View style={styles.container} key={item.ip}>
+                                    <CheckBox
+                                        value={false}
+                                        onValueChange={(newValue) => {
+                                            // console.log(newValue);
+                                            setToggleModal({
+                                                state : true,
+                                                value : item
+                                            })
+                                        }}
+                                        style={styles.checkbox}
+                                    />
+                                    <View style={styles.textContainer}>
+                                        <Text style={{
+                                            fontFamily: 'Roboto-Regular',
+                                            fontSize: 16,
+                                            color: '#030303'
+                                        }}>{item.hostname}</Text>
+                                        <Text style={{
+                                            fontFamily: 'Roboto-Regular',
+                                            fontSize: 12,
+                                            color: '#030303'
+                                        }}>{item.ip}</Text>
+                                    </View>
+                                </View>
+                            ))
+                        }
                     </View>
                 )
             }
-
-
+            {toggleModal && <CheckBoxModal modalProps={{ toggleModal, setToggleModal }} />}
             <View style={{
                 flex: 1,
                 flexDirection: 'column',
@@ -63,8 +100,11 @@ export default function SearchPrinter() {
                 alignItems: 'center',
                 marginBottom: '5%',
             }}>
-                <TouchableOpacity onPress={() => {
-                    // store.dispatch(setConfig({ config: "192.168.1.192" }))
+                <TouchableOpacity onPress={async () => {
+                    store.dispatch(setRootLoading(true));
+                    const scanNetwork = await NativeModules.MyNativeModule.scanNetwork()
+                    store.dispatch(setRootLoading(false))
+                    store.dispatch(setLan({ lan: scanNetwork }))
                     setState(true)
                 }
                 } style={{
@@ -87,3 +127,18 @@ export default function SearchPrinter() {
         </View>
     )
 }
+
+
+const styles = StyleSheet.create({
+    container: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 10,
+    },
+    checkbox: {
+        marginRight: 10,
+    },
+    textContainer: {
+        flex: 1,
+    },
+});

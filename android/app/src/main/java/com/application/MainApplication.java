@@ -12,6 +12,7 @@ import java.util.List;
 
 // config printer
 // import com.odinvt.lanscan.LANScanReactModule;
+import com.myproject.MyNativePackage;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -27,8 +28,8 @@ public class MainApplication extends Application implements ReactApplication {
           @SuppressWarnings("UnnecessaryLocalVariable")
           List<ReactPackage> packages = new PackageList(this).getPackages();
 
-          // config printer
-          // packages.add(new LANScanReactModule());
+          // scan
+          packages.add(new MyNativePackage());
           
           return packages;
         }

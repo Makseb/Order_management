@@ -17,3 +17,5 @@ export { default as ProductModal } from './Home/Settings/Availability/Category/P
 export { default as PrintingSetting } from './Home/Settings/PrintingSettings/PrintingSetting'
 export { default as PrintingSettingsModal } from './Home/Settings/PrintingSettings/PrintingSettingsModal/PrintingSeetingsModal'
 export { default as SearchPrinter } from './Home/Settings/PrintingSettings/SearchPrinter/PrinterSearch'
+export { default as CheckBoxModal } from './Home/Settings/PrintingSettings/SearchPrinter/CheckBoxModal/CheckBoxModal'
+

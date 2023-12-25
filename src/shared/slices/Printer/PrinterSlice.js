@@ -1,17 +1,37 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 export const PrinterInitialState = {
-    config: null
+    lan: [],
+    lanreceipt: [],
+    lankitchen: [],
 };
 
 export const PrinterSlice = createSlice({
     name: 'printer',
     initialState: PrinterInitialState,
     reducers: {
-        setConfig: (state, action) => {
-            state.config = action.payload.config
+        setLan: (state, action) => {
+            state.lan = action.payload.lan
+        },
+        setLanKitchen: (state, action) => {
+            let data = [];
+            if (!data.some(printer => printer?.ip === action.payload.lankitchen?.ip)) {
+                data.push(action.payload.lankitchen);
+            }
+            console.log("kitchen "+  data);
+            state.lankitchen = data;
+        },
+        setLanReceipt: (state, action) => {
+            let data = [];
+            if (!data.some(printer => printer?.ip === action.payload.lanreceipt?.ip)) {
+                data.push(action.payload.lanreceipt);
+            }
+            console.log("Receipt "+  data);
+
+            state.lanreceipt = data;
+            console.log(state.lanreceipt);
         },
     },
 });
 
-export const { setConfig } = PrinterSlice.actions;
+export const { setLan, setLanKitchen, setLanReceipt } = PrinterSlice.actions;

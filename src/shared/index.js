@@ -14,7 +14,7 @@ export const BaseUrl = 'http://192.168.1.43:8000';
 const persistConfig = {
     key: 'root',
     storage: AsyncStorage,
-    whitelist: ['root', 'authentification', 'printer'],
+    whitelist: ['root', 'authentification'],
 };
 
 const rootReducer = combineReducers({
