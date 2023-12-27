@@ -4,20 +4,20 @@ import { View } from "react-native";
 import { List, Text } from 'react-native-paper';
 import { useSelector } from "react-redux";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-import ThermalPrinterModule from 'react-native-thermal-printer';
-import escPosConvert from "../../utils/utils-function";
+import { PrintModal } from "../../screens/exports";
 
 
 export default function ListSection({ listProps }) {
     const { order, expandeds, handlePress } = listProps;
     // get currency
     const currency = useSelector((state) => state.authentification.storeSelected.currency)
-    const logoStore = useSelector((state) => state.authentification.storeSelected.logo)
 
-
+    const [toggleModal, setToggleModal] = useState(false)
 
     return (
         <View>
+            {/* call print modal */}
+            {toggleModal && <PrintModal modalProps={{ toggleModal, setToggleModal, order }} />}
             {/* order detail */}
             <List.Section >
                 {/* items detail */}
@@ -44,58 +44,7 @@ export default function ListSection({ listProps }) {
                         }}>
                             <View />
                             <MaterialCommunityIcons name="printer" size={30} color="#424242" onPress={async () => {
-                                try {
-                                    await ThermalPrinterModule.printTcp({
-                                        ip: '192.168.1.192',
-                                        port: 9100,
-                                        payload: escPosConvert(order,currency,logoStore),
-                                        timeout: 30000, // in milliseconds 
-                                    });
-                                } catch (err) {
-                                    //error handling
-                                    console.log(err.message);
-                                }
-                                // try {
-                                //     const networkInfo = await LanPortScanner.getNetworkInfo();
-                                //     console.log(networkInfo);
-                                //     let k = 0
-                                //     let tab = []
-                                //     for (let i = 1; i <= 254; i++) {
-                                //         setTimeout(async () => {
-                                //             let result = await LanPortScanner.scanHost('192.168.1.' + i.toString(), 9100, 1000);
-                                //             if (result && result.ip && result.port) {
-                                //                 tab[k] = result
-                                //                 k++
-                                //             }
-                                //         }, 1)
-                                //     }
-                                // } catch (err) {
-
-                                // }
-                                // console.log(tab);
-                                // let config2 = {
-                                //     ipRange: ipRange, //If you provide this params then it will only scan provided ipRange.
-                                //     ports: [9100], //Specify port here
-                                //     timeout: 1000, //Timeout for each thread in ms
-                                //     threads: 150, //Number of threads
-                                // };
-                                // const cancelScanHandle = LanPortScanner.startScan(
-                                //     config2, //or config2
-                                //     (totalHosts, hostScanned) => {
-                                //         // console.log(hostScanned / totalHosts); //Show progress
-                                //     },
-                                //     (result) => {
-                                //         console.log(result); //This will call after new ip/port found.
-                                //     },
-                                //     (results) => {
-                                //         // console.log(results); // This will call after scan end.
-                                //     }
-                                // );
-
-                                // setTimeout(() => {
-                                //     cancelScanHandle();
-                                // }, 5000);
-
+                                setToggleModal(!toggleModal)
                             }} style={{
                                 paddingTop: 8,
                                 marginBottom: -10,
@@ -241,45 +190,4 @@ export default function ListSection({ listProps }) {
             </List.Section>
         </View>
     )
-}
-function test() {
-
-    const App = () => {
-        const [devices, setDevices] = useState([]);
-
-        useEffect(() => {
-            const scanLocalNetwork = async () => {
-                try {
-                    const results = await NetworkScanner.scan();
-                    const devicesWithHostnames = await Promise.all(
-                        results.map(async (device) => {
-                            try {
-                                const hostname = await DnsLookup.lookup(device.ip);
-                                return { ...device, hostname };
-                            } catch (error) {
-                                // Handle DNS lookup error
-                                console.error(`Failed to get hostname for ${device.ip}`, error);
-                                return device;
-                            }
-                        })
-                    );
-                    setDevices(devicesWithHostnames);
-                } catch (error) {
-                    // Handle network scanning error
-                    console.error("Network scanning failed", error);
-                }
-            };
-
-            scanLocalNetwork();
-        }, []);
-
-        return (
-            <View>
-                <Text>Devices on the local network:</Text>
-                {devices.map((device) => (
-                    <Text key={device.ip}>{`${device.hostname || device.ip}`}</Text>
-                ))}
-            </View>
-        );
-    };
 }

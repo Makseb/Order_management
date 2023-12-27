@@ -97,7 +97,7 @@ export default function Category() {
                                         <View style={{ paddingLeft: '8%' }}>
                                             <Text style={{
                                                 fontFamily: "Roboto-Light",
-                                                color: "black",
+                                                color: "#030303",
                                                 fontSize: 18
                                             }}>{category.name}</Text>
                                             <Text style={{
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
     },
     textTitle: {
         fontFamily: "Montserrat-Regular",
-        color: "black",
+        color: "#030303",
         fontSize: 18,
     },
     containerArrowRight: {

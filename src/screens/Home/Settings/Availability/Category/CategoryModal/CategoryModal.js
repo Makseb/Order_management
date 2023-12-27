@@ -88,6 +88,7 @@ export default function CategoryModal({ modalProps }) {
                 <Text style={styles.textOutOfStock}>Out of stock</Text>
                 <View style={styles.containerRadioButton}>
                     <RadioButton.Item
+                        color="#df8f17"
                         label="Available"
                         value="available"
                         labelStyle={styles.radioButton}
@@ -114,6 +115,7 @@ export default function CategoryModal({ modalProps }) {
                         }
                     />
                     <RadioButton.Item
+                        color="#df8f17"
                         label="Not available"
                         labelStyle={styles.radioButton}
                         value="notavailable"

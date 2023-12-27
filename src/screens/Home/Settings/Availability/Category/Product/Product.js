@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
     },
     textTitle: {
         fontFamily: "Montserrat-Regular",
-        color: "black",
+        color: "#030303",
         fontSize: 18,
     },
     containerArrowRight: {

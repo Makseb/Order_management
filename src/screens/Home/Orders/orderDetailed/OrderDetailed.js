@@ -26,8 +26,6 @@ export default function OrderDetailed({ route }) {
     // show AcceptModal
     const [toggleModal, setToggleModal] = useState(false)
 
-
-
     const handlePress = (index) => {
         const newData = [...expandeds];
         newData[index] = !newData[index];

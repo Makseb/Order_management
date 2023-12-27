@@ -5,13 +5,13 @@ import AntDesign from "react-native-vector-icons/AntDesign"
 import { RadioButton } from "react-native-paper"
 import { useSelector } from "react-redux";
 import { store } from "../../../../../../shared";
-import { setLanKitchen, setLanReceipt } from "../../../../../../shared/slices/Printer/PrinterSlice";
-import { useState } from "react";
+import { removeLanKitchen, removeLanReceipt, setLanKitchen, setLanReceipt } from "../../../../../../shared/slices/Printer/PrinterSlice";
 
-export default function CheckboxModal({ modalProps }) {
+export default function LanModal({ modalProps }) {
     const { setToggleModal, toggleModal } = modalProps
     const lankitchen = useSelector((state) => state.printer.lankitchen)
     const lanreceipt = useSelector((state) => state.printer.lanreceipt)
+
     return (
         <Modal
             isVisible={toggleModal.state}
@@ -42,35 +42,35 @@ export default function CheckboxModal({ modalProps }) {
                 }}>
                     <View style={styles.containerRadioButton}>
                         <RadioButton.Item
+                            color="#df8f17"
                             label="Receipt printer"
                             value="Receipt printer"
                             labelStyle={styles.radioButton}
 
-                            status={!!lanreceipt?.find(printer => printer?.ip === toggleModal.value?.ip) ? 'checked' : 'unchecked'}
+                            status={lanreceipt?.find(printer => printer?.ip === toggleModal.value?.ip) ? 'checked' : 'unchecked'}
                             onPress={async () => {
+                                store.dispatch(removeLanKitchen({ ip: toggleModal.value.ip }))
                                 store.dispatch(setLanReceipt({ lanreceipt: toggleModal.value }))
                             }
                             }
-
                         />
                         <RadioButton.Item
+                            color="#df8f17"
                             label="Kitchen printer"
                             labelStyle={styles.radioButton}
                             value="Kitchen printer"
-                            status={!!lankitchen?.find(printer => printer?.ip === toggleModal.value?.ip) ? 'checked' : 'unchecked'}
+                            status={lankitchen?.find(printer => printer?.ip === toggleModal.value?.ip) ? 'checked' : 'unchecked'}
                             onPress={async () => {
+                                store.dispatch(removeLanReceipt({ ip: toggleModal.value.ip }))
                                 store.dispatch(setLanKitchen({ lankitchen: toggleModal.value }))
                             }
                             }
                         />
                     </View>
-
-
                 </View>
             </View>
         </Modal>
     )
-
 }
 const styles = StyleSheet.create({
     container: {

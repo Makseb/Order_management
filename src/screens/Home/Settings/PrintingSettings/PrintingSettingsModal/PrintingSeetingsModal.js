@@ -33,41 +33,23 @@ export default function PrintingSeetingsModal({ modalProps }) {
                     marginBottom: '3%'
                 }}>
                     <TouchableWithoutFeedback onPress={() => {
-                        navigation.navigate("SearchPrinter", { title: "Wired or wifi network", description: "Make sure the printer and this device are connected to the same network.",img : Lanwifi })
+                        navigation.navigate("SearchPrinter", { title: "Wired or wifi network", description: "Make sure the printer and this device are connected to the same network.", img: Lanwifi })
                         setToggleModal(false)
 
                     }} style={{
                         justifyContent: 'center',
                         alignItems: 'center',
                     }}>
-                        <Text style={{
-                            paddingHorizontal: '3%',
-                            backgroundColor: '#f4f4f4f4',
-                            color: '#030303',
-                            fontFamily: 'Roboto-Light',
-                            borderRadius: 24,
-                            fontSize: 16,
-                            lineHeight: 45,
-                        }}>Wired or wifi network</Text>
+                        <Text style={styles.wiredOrWifiNetworkText}>Wired or wifi network</Text>
                     </TouchableWithoutFeedback>
-
                     <TouchableWithoutFeedback onPress={() => {
-                        navigation.navigate("SearchPrinter", { title: "Bluetooth", description: "To connect to the Bluetooth printer, press the Bluetooth button on the printer for about 10 seconds, then press the \"Start Searching\" button in the app.",img : Bluetooth })
+                        navigation.navigate("SearchPrinter", { title: "Bluetooth", description: "To connect to the Bluetooth printer, press the Bluetooth button on the printer for about 10 seconds, then press the \"Start Searching\" button in the app.", img: Bluetooth })
                         setToggleModal(false)
                     }} style={{
                         justifyContent: 'center',
                         alignItems: 'center',
                     }}>
-                        <Text style={{
-                            paddingHorizontal: '3%',
-                            backgroundColor: '#f4f4f4f4',
-                            color: '#030303',
-                            fontFamily: 'Roboto-Light',
-                            borderRadius: 24,
-                            fontSize: 16,
-                            lineHeight: 45,
-                            marginLeft: '1%',
-                        }}>Bluetooth</Text>
+                        <Text style={styles.bluetoothText}>Bluetooth</Text>
                     </TouchableWithoutFeedback>
                 </View>
             </View>
@@ -91,4 +73,23 @@ const styles = StyleSheet.create({
         fontFamily: 'Montserrat-Light',
         color: '#030303',
     },
+    wiredOrWifiNetworkText: {
+        paddingHorizontal: '3%',
+        backgroundColor: '#f4f4f4f4',
+        color: '#030303',
+        fontFamily: 'Roboto-Light',
+        borderRadius: 24,
+        fontSize: 16,
+        lineHeight: 45,
+    },
+    bluetoothText: {
+        paddingHorizontal: '3%',
+        backgroundColor: '#f4f4f4f4',
+        color: '#030303',
+        fontFamily: 'Roboto-Light',
+        borderRadius: 24,
+        fontSize: 16,
+        lineHeight: 45,
+        marginLeft: '1%',
+    }
 })

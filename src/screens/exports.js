@@ -17,5 +17,9 @@ export { default as ProductModal } from './Home/Settings/Availability/Category/P
 export { default as PrintingSetting } from './Home/Settings/PrintingSettings/PrintingSetting'
 export { default as PrintingSettingsModal } from './Home/Settings/PrintingSettings/PrintingSettingsModal/PrintingSeetingsModal'
 export { default as SearchPrinter } from './Home/Settings/PrintingSettings/SearchPrinter/PrinterSearch'
-export { default as CheckBoxModal } from './Home/Settings/PrintingSettings/SearchPrinter/CheckBoxModal/CheckBoxModal'
+export { default as LanModal } from './Home/Settings/PrintingSettings/SearchPrinter/LanModal/LanModal'
+export { default as DetailedPrinterSelected } from './Home/Settings/PrintingSettings/DetailedPrinterSelected/DetailedPrinterSelected'
+export { default as PrintModal } from './Home/Orders/OrderDetailed/PrintModal/PrintModal'
+
+export { default as BluetoothModal } from './Home/Settings/PrintingSettings/SearchPrinter/BluetoothModal/BluetoothModal'
 

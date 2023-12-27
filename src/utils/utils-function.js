@@ -108,7 +108,7 @@ export function reformulateItems(items) {
 // `
 // }
 
-export default function escPosConvert(order, currency, image) {
+export function receipt(order, currency, store) {
   let escPosCommands = '';
 
   order.items.forEach((item) => {
@@ -126,6 +126,90 @@ export default function escPosConvert(order, currency, image) {
       escPosCommands += '[L]\n';
     });
   });
+// ORDER N°045</font>
+  return "[L]<u><font size='tall'>ORDER ID : " + order._id.substring(order._id.length - 4) + "</font></u>[R]for <b>" + order.type + "</b>\n" +
+    '[L]\n' +
+    '[L]Order at : ' + order.createdAt.date + " " + order.createdAt.time + "\n" +
+    '[L]Prepared for : ' + order.preparedAt.date + " " + order.preparedAt.time + "\n" +
+    '[L]\n' +
+    '[L]\n' +
+    "[C]<b><font size='tall'>" + store.name + "</font></b>\n" +
+    '[C]' + store.address + "\n" +
+    '[C]Phone : ' + store.phoneNumber + "\n" +
+    '[C]SIRET : TVX301B\n' +
+    '[L]\n'+
+    '[L]\n'+
+    '[C]================================\n' +
+    '[L]\n' +
+    escPosCommands +
+    '[C]--------------------------------\n' +
+    '[R]TOTAL PRICE :[R]' + order.price_total + ' ' + currency + '\n' +
+    '[R]TAX :[R]4.23e\n' +
+    '[L]\n' +
+    '[C]================================\n' +
+    '[L]\n' +
+    "[L]<font size='tall'>Customer infos :</font>\n" +
+    '[L]Name : ' + order.name + '\n' +
+    '[L]Phone : ' + order.client_phone + '\n' +
+    '[L]Email : ' + order.client_email + '\n' +
+    '[L]DeliveryAddress : ' + order.deliveryAdress + '\n' +
+    '[L]Table : ' + order.table + '\n' +
+    '[L]\n' +
+    '[L]\n' +
+    '[L]\n' +
+    '[L]\n' +
+    '[L]\n'
+}
+export function kitchen(order, currency, store) {
+  let escPosCommands = '';
+
+  order.items.forEach((item) => {
+    escPosCommands +=
+      '[L]<b>' + item.quantity + 'x ' + item.name.charAt(0).toUpperCase() + item.name.slice(1) + '</b>[R]' + item.price + ' ' + currency + '\n';
+    escPosCommands += '[L]\n' // i want to add another line here how ?
+
+    item.optionsGroup.forEach((optionGroup) => {
+      escPosCommands += '[L]  ' + optionGroup.optionGroupeName.charAt(0).toUpperCase() + optionGroup.optionGroupeName.slice(1) + '\n';
+
+      escPosCommands += optionGroup.options.map((option, ind) => {
+        return '[L]  +' + option.name.charAt(0).toUpperCase() + option.name.slice(1) + '[R]' + option.price + ' ' + currency + '\n';
+      }).join('');
+
+      escPosCommands += '[L]\n';
+    });
+  });
+
+  return "[L]<u><font size='tall'>ORDER ID : " + order._id.substring(order._id.length - 4) + "</font></u>[R]for <b>" + order.type + "</b>\n" +
+  '[L]\n' +
+  '[L]Order at : ' + order.createdAt.date + " " + order.createdAt.time + "\n" +
+  '[L]Prepared for : ' + order.preparedAt.date + " " + order.preparedAt.time + "\n" +
+  '[L]\n' +
+  '[L]\n'+
+  '[C]================================\n' +
+  '[L]\n' +
+  escPosCommands +
+  '[C]--------------------------------\n' +
+  '[R]TOTAL PRICE :[R]' + order.price_total + ' ' + currency + '\n' +
+  '[R]TAX :[R]4.23e\n' +
+  '[L]\n' +
+  '[C]================================\n' +
+  '[L]\n' +
+  "[L]<font size='tall'>Customer infos :</font>\n" +
+  '[L]Name : ' + order.name + '\n' +
+  '[L]Phone : ' + order.client_phone + '\n' +
+  '[L]Email : ' + order.client_email + '\n' +
+  '[L]DeliveryAddress : ' + order.deliveryAdress + '\n' +
+  '[L]Table : ' + order.table + '\n' +
+  '[L]\n' +
+  '[L]\n' +
+  '[L]\n' +
+  '[L]\n' +
+  '[L]\n'
+}
+
+
+
+/*
 
 
   return '[C]<img>' + image + '</img>\n' +
@@ -154,7 +238,4 @@ export default function escPosConvert(order, currency, image) {
     '[L]\n' +
     '[L]\n'
 
-  // "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
-  // "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>"
-
-}
+*/
