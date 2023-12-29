@@ -22,18 +22,19 @@ export default function PrintingSetting() {
 
     return (
         <View style={styles.container}>
-            <Header />
-            <Text style={[styles.textTitle, { marginBottom: (lankitchen?.length === 0 && lanreceipt?.length === 0) ? 0 : '2%' }]}>Select</Text>
-            <View style={{
-                marginHorizontal: '5%',
-            }}>
-                <ScrollView>
+            <ScrollView>
+
+                <Header />
+                <Text style={[styles.textTitle, { marginBottom: (lankitchen?.length === 0 && lanreceipt?.length === 0) ? 0 : '2%' }]}>Select</Text>
+                <View style={{
+                    marginHorizontal: '5%',
+                }}>
                     {
                         lankitchen.map((item, index) => {
                             return (
                                 <TouchableWithoutFeedback key={item.ip} onPress={() => navigation.navigate("DetailedPrinterSelected", { technology: "lan", from: "Kitchen printer", printer: item })}>
                                     <View style={{
-                                        marginBottom: '2%',
+                                        marginBottom: index !== lankitchen.length - 1 && '2%',
                                     }}>
                                         <Text style={styles.textHostName}>{item.hostname}</Text>
                                         <View style={{
@@ -47,6 +48,9 @@ export default function PrintingSetting() {
                             )
                         })
                     }
+                    <View style={{
+                        marginBottom: lanreceipt.length > 0 && '2%',
+                    }} />
                     {
                         lanreceipt.map((item, index) => {
                             return (
@@ -64,6 +68,9 @@ export default function PrintingSetting() {
                             )
                         })
                     }
+                    <View style={{
+                        marginBottom: bluetoothreceipt.length > 0 && '2%',
+                    }} />
                     {
                         bluetoothreceipt.map((item, index) => {
                             return (
@@ -81,6 +88,9 @@ export default function PrintingSetting() {
                             )
                         })
                     }
+                    <View style={{
+                        marginBottom: bluetoothkitchen.length > 0 && '2%',
+                    }} />
                     {
                         bluetoothkitchen.map((item, index) => {
                             return (
@@ -98,20 +108,19 @@ export default function PrintingSetting() {
                             )
                         })
                     }
+                    <View style={styles.barHorizantale} />
+                    <View style={styles.containerButton}>
+                        <AntDesign name="plus" size={20} color="#030303" />
+                        <TouchableWithoutFeedback onPress={
+                            () => setToggleModal(!toggleModal)
+                        }>
+                            <Text style={styles.textAddPrinter}>Add printer(s)</Text>
+                        </TouchableWithoutFeedback >
+                    </View>
 
-                </ScrollView>
-                <View style={styles.barHorizantale} />
-                <View style={styles.containerButton}>
-                    <AntDesign name="plus" size={20} color="#030303" />
-                    <TouchableWithoutFeedback onPress={
-                        () => setToggleModal(!toggleModal)
-                    }>
-                        <Text style={styles.textAddPrinter}>Add printer(s)</Text>
-                    </TouchableWithoutFeedback >
                 </View>
-
-            </View>
-            {toggleModal && <PrintingSettingsModal modalProps={{ toggleModal, setToggleModal }} />}
+                {toggleModal && <PrintingSettingsModal modalProps={{ toggleModal, setToggleModal }} />}
+            </ScrollView>
         </View>
     )
 }
@@ -131,7 +140,7 @@ const styles = StyleSheet.create({
         color: "#030303",
         fontSize: 18
     },
-    textName : {
+    textName: {
         fontFamily: "Roboto-Light",
         color: "#030303",
         fontSize: 18

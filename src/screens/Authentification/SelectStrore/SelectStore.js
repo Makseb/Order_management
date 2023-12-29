@@ -116,7 +116,8 @@ const styles = StyleSheet.create({
         top: 0,
     },
     button: {
-        marginTop: '10.64%', // 6.64% (is the height of select cauz they are one above one) + (4% height i choosed between the button and the select like the page before)
+        // marginTop: '10.64%', // 6.64% (is the height of select cauz they are one above one) + (4% height i choosed between the button and the select like the page before)
+        marginTop : '20%',
         width: '40%',
         height: 41,
         backgroundColor: '#df8f17',

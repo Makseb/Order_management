@@ -2,11 +2,12 @@ import { useRoute } from "@react-navigation/native";
 import { LanModal, Header, BluetoothModal } from "../../../../exports";
 import { store } from "../../../../../shared";
 import { useSelector } from "react-redux";
-import { setBluetooth, setLan } from "../../../../../shared/slices/Printer/PrinterSlice";
-import { useEffect, useState } from "react";
+import { resetBluetooth, setBluetooth, setLan } from "../../../../../shared/slices/Printer/PrinterSlice";
+import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, Image, NativeModules, StyleSheet, TouchableWithoutFeedback, ScrollView, Platform, PermissionsAndroid, NativeAppEventEmitter } from "react-native";
 import { setRootLoading } from "../../../../../shared/slices/rootSlice";
 import BleManager from 'react-native-ble-manager';
+import { Toast } from 'react-native-toast-message/lib/src/Toast';
 
 
 export default function SearchPrinter() {
@@ -32,8 +33,6 @@ export default function SearchPrinter() {
         value: null
     })
 
-
-
     // get connected bluetooth
     const bluetooth = useSelector((state) => state.printer.bluetooth)
 
@@ -41,17 +40,22 @@ export default function SearchPrinter() {
     if (title === "Bluetooth") {
         useEffect(() => {
             const initialize = async () => {
+                await requestPermissions()
+
                 // Event listener for discovered peripherals
                 NativeAppEventEmitter.addListener('BleManagerDiscoverPeripheral', (data) => {
-                    store.dispatch(setBluetooth({ name: "test1" }));
-                    store.dispatch(setBluetooth({ name: "test2" }));
                     if (data.name !== null) {
                         console.log(data.name);
-                        store.dispatch(setBluetooth({ name: data.name }));
+                        console.log(data.id);
+                        store.dispatch(setBluetooth({ name: data.name, id: data.id }));
                     }
                 });
                 NativeAppEventEmitter.addListener('BleManagerStopScan', () => {
                     store.dispatch(setRootLoading(false))
+                    setShowText({
+                        value: "bluetooth",
+                        state: true
+                    })
                 });
                 BleManager.start({ showAlert: false })
                     .then(() => {
@@ -65,40 +69,41 @@ export default function SearchPrinter() {
     // Function to initiate Bluetooth scan
     const bluetoothScan = async () => {
         store.dispatch(setRootLoading(true))
-        await BleManager.scan([], 10);
+        await BleManager.scan([], 15);
     };
 
 
+    const [permissions, setPermissions] = useState(true)
     const requestPermissions = async () => {
-        const bluetoothScanPermission = await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
-            {
-                title: "Location Permission",
-                message: "Bluetooth Low Energy requires Location",
-                buttonPositive: "OK",
-            }
-        );
-        const bluetoothConnectPermission = await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
-            {
-                title: "Location Permission",
-                message: "Bluetooth Low Energy requires Location",
-                buttonPositive: "OK",
-            }
-        );
-        const fineLocationPermission = await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-            {
-                title: "Location Permission",
-                message: "Bluetooth Low Energy requires Location",
-                buttonPositive: "OK",
-            }
-        );
-        return (
-            bluetoothScanPermission === "granted" &&
-            bluetoothConnectPermission === "granted" &&
-            fineLocationPermission === "granted"
-        );
+        await BleManager.checkState()
+            .then(async (currentState) => {
+                if (currentState === 'on') {
+                } else {
+                    await BleManager.enableBluetooth().then(() => {
+                    }).catch((err) => {
+                        setPermissions(false)
+                    })
+                }
+            })
+
+        if (Platform.OS === 'android' && Platform.Version >= 23) {
+            PermissionsAndroid.check(
+                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+            ).then(result => {
+                console.log(result);
+                if (result) {
+                } else {
+                    PermissionsAndroid.request(
+                        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+                    ).then(result => {
+                        if (result === "denied" || result === "never_ask_again") {
+                            setPermissions(false)
+                        }
+                    });
+                }
+            })
+
+        }
     };
 
 
@@ -175,17 +180,22 @@ export default function SearchPrinter() {
 
             <View style={styles.containerButton}>
                 <TouchableOpacity onPress={async () => {
+                    store.dispatch(setLan({ lan: [] }))
+                    store.dispatch(resetBluetooth({ bluetooth: [] }))
                     if (title === "Bluetooth") {
-                        if (requestPermissions()) {
+                        console.log(permissions);
+                        if (permissions) {
                             bluetoothScan()
-                            setShowText({
-                                value: "bluetooth",
-                                state: true
+                        } else {
+                            Toast.show({
+                                type: 'error',
+                                text1: 'Please accept permission(s).',
                             })
                         }
                     } else {
                         store.dispatch(setRootLoading(true));
                         const scanNetwork = await NativeModules.MyNativeModule.scanNetwork()
+                        console.log(scanNetwork);
                         store.dispatch(setRootLoading(false))
                         store.dispatch(setLan({ lan: scanNetwork }))
                         setShowText({

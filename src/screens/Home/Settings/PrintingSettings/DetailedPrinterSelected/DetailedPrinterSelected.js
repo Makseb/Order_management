@@ -9,6 +9,20 @@ export default function DetailedPrinterSelected() {
     const route = useRoute();
     const { printer, from, technology } = route.params;
     const navigation = useNavigation()
+
+    const disconnectFromPeripheral = id => {
+        BleManager.removeBond(id)
+            .then(() => {
+                peripheral.connected = false;
+            })
+            .catch(() => {
+                Toast.show({
+                    type: 'error',
+                    text1: "Failed to disconnect from printer",
+                })
+            });
+    };
+
     return (
         <View style={styles.container}>
             <Header />
@@ -39,11 +53,11 @@ export default function DetailedPrinterSelected() {
                             store.dispatch(removeLanKitchen(({ ip: printer.ip })))
                         }
                     } else {
-                        console.log("testttttttttttttttttt");
+                        // disconnectFromPeripheral(printer.id)
                         if (from === "Receipt printer") {
-                            store.dispatch(removeBluetoothReceipt({ name: printer.name }))
+                            store.dispatch(removeBluetoothReceipt({ id: printer.id }))
                         } else {
-                            store.dispatch(removeBluetoothKitchen({ name: printer.name }))
+                            store.dispatch(removeBluetoothKitchen({ id: printer.id }))
                         }
                     }
                 }}>

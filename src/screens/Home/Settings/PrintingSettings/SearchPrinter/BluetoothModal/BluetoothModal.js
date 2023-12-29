@@ -7,6 +7,7 @@ import { store } from "../../../../../../shared";
 import { setBluetoothKitchen, removeBluetoothKitchen, setBluetoothReceipt, removeBluetoothReceipt } from "../../../../../../shared/slices/Printer/PrinterSlice";
 // import Toast from "react-native-toast-message";
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
+import BleManager from 'react-native-ble-manager';
 
 export default function BluetoothModal({ modalProps }) {
     const { setToggleModalBluetooth, toggleModalBluetooth } = modalProps
@@ -17,6 +18,19 @@ export default function BluetoothModal({ modalProps }) {
     console.log(bluetoothreceipt);
     console.log("bluetoothkitchen");
     console.log(bluetoothkitchen);
+
+    const connectToPeripheral = id => {
+        BleManager.createBond(id)
+            .then(() => {
+                peripheral.connected = true
+            })
+            .catch(() => {
+                Toast.show({
+                    type: 'error',
+                    text1: "Failed to connect on printer",
+                })
+            });
+    };
 
     return (
         <Modal
@@ -52,11 +66,15 @@ export default function BluetoothModal({ modalProps }) {
                             label="Receipt printer"
                             value="Receipt printer"
                             labelStyle={styles.radioButton}
-                            status={bluetoothreceipt?.find(printer => printer?.name === toggleModalBluetooth.value?.name) ? 'checked' : 'unchecked'}
+                            status={bluetoothreceipt?.find(printer => printer?.id === toggleModalBluetooth.value?.id) ? 'checked' : 'unchecked'}
                             onPress={async () => {
-                                const exist = bluetoothkitchen?.find(printer => printer?.name === toggleModalBluetooth.value?.name)
+                                const exist = bluetoothkitchen?.find(printer => printer?.id === toggleModalBluetooth.value?.id)
                                 if (exist || (bluetoothkitchen.length < 1 && bluetoothreceipt.length < 1)) {
-                                    store.dispatch(removeBluetoothKitchen({ name: toggleModalBluetooth.value.name }))
+                                    // the first connection between two devices
+                                    if (!exist) {
+                                        // connectToPeripheral(toggleModalBluetooth.value.id)
+                                    }
+                                    store.dispatch(removeBluetoothKitchen({ id: toggleModalBluetooth.value.id }))
                                     store.dispatch(setBluetoothReceipt({ bluetoothreceipt: toggleModalBluetooth.value }))
                                 } else {
                                     Toast.show({
@@ -72,11 +90,16 @@ export default function BluetoothModal({ modalProps }) {
                             label="Kitchen printer"
                             labelStyle={styles.radioButton}
                             value="Kitchen printer"
-                            status={bluetoothkitchen?.find(printer => printer?.name === toggleModalBluetooth.value?.name) ? 'checked' : 'unchecked'}
+                            status={bluetoothkitchen?.find(printer => printer?.id === toggleModalBluetooth.value?.id) ? 'checked' : 'unchecked'}
                             onPress={async () => {
-                                const exist = bluetoothreceipt?.find(printer => printer?.name === toggleModalBluetooth.value?.name)
+                                const exist = bluetoothreceipt?.find(printer => printer?.id === toggleModalBluetooth.value?.id)
                                 if (exist || (bluetoothkitchen.length < 1 && bluetoothreceipt.length < 1)) {
-                                    store.dispatch(removeBluetoothReceipt({ name: toggleModalBluetooth.value.name }))
+
+                                    // the first connection between two devices
+                                    if (!exist) {
+                                        // connectToPeripheral(toggleModalBluetooth.value.id)
+                                    }
+                                    store.dispatch(removeBluetoothReceipt({ id: toggleModalBluetooth.value.id }))
                                     store.dispatch(setBluetoothKitchen({ bluetoothkitchen: toggleModalBluetooth.value }))
                                 } else {
                                     Toast.show({

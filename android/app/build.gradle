@@ -104,9 +104,6 @@ android {
 }
 
 dependencies {
-    // config printer
-    // implementation(":react-native-lanscan")
-
     implementation("com.facebook.react:react-android")
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}")

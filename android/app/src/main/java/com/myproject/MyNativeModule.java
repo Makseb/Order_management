@@ -35,6 +35,7 @@ import java.io.InputStreamReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+
 public class MyNativeModule extends ReactContextBaseJavaModule {
   public MyNativeModule(ReactApplicationContext reactContext) {
     super(reactContext);
@@ -122,4 +123,7 @@ public class MyNativeModule extends ReactContextBaseJavaModule {
             promise.reject("SCAN_ERROR", "Error scanning network");
         }
     }).start();
-}}
+
+    }
+}
+
