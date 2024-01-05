@@ -6,7 +6,8 @@ export const AuthentificationInitialState = {
     isLoggedIn: false,
     userId: undefined,
     token: undefined,
-    storeSelected: undefined
+    storeSelected: undefined,
+    notificationId: undefined
 };
 
 export const authentificationSlice = createSlice({
@@ -38,8 +39,11 @@ export const authentificationSlice = createSlice({
                 state.storeSelected = undefined
 
         },
+        setNotificationId: (state, action) => {
+            state.notificationId = action.payload.notificationId
+        }
 
     },
 });
 
-export const { setLoggedInUser, setToken, disconnect, setStoreSelected } = authentificationSlice.actions;
+export const { setLoggedInUser, setToken, disconnect, setStoreSelected, setNotificationId } = authentificationSlice.actions;

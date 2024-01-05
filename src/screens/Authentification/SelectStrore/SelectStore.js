@@ -6,7 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 
 import { getStoresNameAndIdByUserId } from '../../../shared/slices/Auth/AuthService';
 import { store } from '../../../shared';
-import { setStoreSelected } from '../../../shared/slices/Auth/AuthSlice';
+import { setNotificationId, setStoreSelected } from '../../../shared/slices/Auth/AuthSlice';
 
 import { Logo } from '../../../assets/images/exports';
 
@@ -73,6 +73,7 @@ export default function SelectStore() {
                             if (selectedStore) {
                                 for (let i = 0; i < stores.length; i++) {
                                     if (stores[i]._id == selectedStore) {
+                                        store.dispatch(setNotificationId({ notificationId: new Date().toString() }))
                                         store.dispatch(setStoreSelected(stores[i]))
                                         navigation.navigate('Home')
                                     }
@@ -117,7 +118,7 @@ const styles = StyleSheet.create({
     },
     button: {
         // marginTop: '10.64%', // 6.64% (is the height of select cauz they are one above one) + (4% height i choosed between the button and the select like the page before)
-        marginTop : '20%',
+        marginTop: '20%',
         width: '40%',
         height: 41,
         backgroundColor: '#df8f17',

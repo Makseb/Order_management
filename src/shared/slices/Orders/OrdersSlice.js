@@ -4,7 +4,7 @@ import { reformulateItems } from '../../../utils/utils-function';
 export const OrdersState = {
     all: [],
     inprogress: [],
-    ready: []
+    ready: [],
 };
 
 export const ordersSlice = createSlice({
@@ -47,7 +47,6 @@ export const ordersSlice = createSlice({
         updateState: (state, action) => {
             switch (action.payload.stage) {
                 case "all": {
-                    let data = state.all
                     let newData = {
                         status: action.payload.action,
                         updatedAt: {
@@ -59,14 +58,18 @@ export const ordersSlice = createSlice({
                         date: format(new Date(action.payload.preparedAt), 'yyyy-MM-dd'),
                         time: format(new Date(action.payload.preparedAt), 'HH:mm')
                     }
-                    data[action.payload.index] = {
-                        ...data[action.payload.index],
+
+                    let order = state.all.find(order => order._id === action.payload.id)
+                    order = {
+                        ...order,
                         ...newData
                     }
+                    let data = state.all
+                    const index = state.all.findIndex(order => order._id === action.payload.id);
+                    data[index] = order
                     state.all = data
                 }
                 case "inprogress": {
-                    let data = state.inprogress
                     let newData = {
                         status: action.payload.action,
                         updatedAt: {
@@ -74,16 +77,20 @@ export const ordersSlice = createSlice({
                             time: format(new Date(action.payload.updatedAt), 'HH:mm')
                         },
                     }
-                    data[action.payload.index] = {
-                        ...data[action.payload.index],
+                    let order = state.inprogress.find(order => order._id === action.payload.id)
+                    order = {
+                        ...order,
                         ...newData
                     }
+                    let data = state.inprogress
+                    const index = state.inprogress.findIndex(order => order._id === action.payload.id);
+                    data[index] = order
                     state.inprogress = data
                 }
             }
         },
         deleteOrderFromInProgressStage: (state, action) => {
-            state.inprogress = state.inprogress.filter((item, index) => index !== action.payload.index)
+            state.inprogress = state.inprogress.filter((item) => item._id !== action.payload.id)
         }
         // decrementCounter: (state, action) => {
 
@@ -108,5 +115,5 @@ export const ordersSlice = createSlice({
 
 
 
-export const { setOrders, updateState, deleteOrderFromInProgressStage } = ordersSlice.actions;
+export const { setOrders, updateState, deleteOrderFromInProgressStage, resetIncrement, setIncrement } = ordersSlice.actions;
 // decrementCounter

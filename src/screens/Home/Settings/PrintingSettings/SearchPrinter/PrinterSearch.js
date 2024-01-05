@@ -129,7 +129,7 @@ export default function SearchPrinter() {
                 {
                     lan.map((item, index) => {
                         return (
-                            <TouchableWithoutFeedback key={item.ip} onPress={() => setToggleModal({
+                            <TouchableWithoutFeedback key={index} onPress={() => setToggleModal({
                                 state: true,
                                 value: item
                             })}>
@@ -152,7 +152,7 @@ export default function SearchPrinter() {
                     {
                         bluetooth.map((item, index) => {
                             return (
-                                <TouchableWithoutFeedback key={item.name} onPress={() => {
+                                <TouchableWithoutFeedback key={index} onPress={() => {
                                     setToggleModalBluetooth({
                                         state: true,
                                         value: item
@@ -204,6 +204,7 @@ export default function SearchPrinter() {
                         })
                     }
                 }
+                
                 } style={styles.button}>
                     <Text style={styles.textButton}>Scan</Text>
                 </TouchableOpacity>

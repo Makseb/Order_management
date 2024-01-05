@@ -6,6 +6,7 @@ import { kitchen, receipt } from "../../../../../utils/utils-function";
 import { useSelector } from "react-redux";
 import { Checkbox } from "react-native-paper";
 import { useState } from "react";
+import { Toast } from 'react-native-toast-message/lib/src/Toast';
 
 export default function PrintModal({ modalProps }) {
     const { toggleModal, setToggleModal, order } = modalProps
@@ -31,8 +32,12 @@ export default function PrintModal({ modalProps }) {
             isVisible={toggleModal}
             onBackdropPress={() => setToggleModal(false)}
             style={{ justifyContent: 'flex-end', margin: 0 }}>
+
+
+
             <View
                 style={styles.container}>
+                
                 <TouchableWithoutFeedback onPress={() => setToggleModal(!toggleModal)}>
                     <AntDesign
                         style={styles.iconClock}
@@ -60,38 +65,46 @@ export default function PrintModal({ modalProps }) {
                 </View>
                 <View style={styles.printContainer}>
                     <TouchableOpacity style={styles.printButton} onPress={async () => {
-                        setToggleModal(false)
-                        try {
-                            if (checkedKitchen) {
-                                for (let i = 0; i < lankitchen.length; i++) {
-                                    await ThermalPrinterModule.printTcp({
-                                        ip: lankitchen[i].ip,
-                                        port: 9100,
-                                        payload: kitchen(order, currency, store),
-                                        timeout: 30000, // in milliseconds 
-                                    });
+                        if (checkedKitchen || checkedReceipt) {
+                            setToggleModal(false)
+                            try {
+                                if (checkedKitchen) {
+                                    for (let i = 0; i < lankitchen.length; i++) {
+                                        await ThermalPrinterModule.printTcp({
+                                            ip: lankitchen[i].ip,
+                                            port: 9100,
+                                            payload: kitchen(order, currency, store),
+                                            timeout: 30000, // in milliseconds 
+                                        });
+                                    }
                                 }
-                            }
-                            if (checkedReceipt) {
-                                for (let i = 0; i < lanreceipt.length; i++) {
-                                    await ThermalPrinterModule.printTcp({
-                                        ip: lanreceipt[i].ip,
-                                        port: 9100,
-                                        payload: receipt(order, currency, store),
-                                        timeout: 30000, // in milliseconds 
-                                    });
+                                if (checkedReceipt) {
+                                    for (let i = 0; i < lanreceipt.length; i++) {
+                                        await ThermalPrinterModule.printTcp({
+                                            ip: lanreceipt[i].ip,
+                                            port: 9100,
+                                            payload: receipt(order, currency, store),
+                                            timeout: 30000, // in milliseconds 
+                                        });
+                                    }
                                 }
-                            }
 
-                        } catch (err) {
-                            //error handling
-                            console.log(err.message);
+                            } catch (err) {
+                                //error handling
+                                console.log(err.message);
+                            }
+                        } else {
+                            Toast.show({
+                                type: 'error',
+                                text1: "Please select at least one.",
+                            });
                         }
                     }}>
                         <Text style={styles.textPrintButton}>Print</Text>
                     </TouchableOpacity>
                 </View>
             </View>
+            <Toast />
         </Modal >
     )
 

@@ -21,15 +21,15 @@ export default function InProgress() {
             // console.log(storeSelected);
             await getAcceptedOrdersByStroreId(storeSelected).then(res => {
                 store.dispatch(setOrders({ orders: res.orders, currency: currency, stage: "inprogress" }))
-
+                
             }).catch(err => {
             })
         }
         fetchAcceptedOrdersByStroreId()
     }, [])
 
-    const showButtonViewAndReject = (index) => {
-        navigation.navigate('OrderDetailed', { index, stage: "inprogress" })
+    const showButtonViewAndReject = (id) => {
+        navigation.navigate('OrderDetailed', { id, stage: "inprogress" })
     }
     // navigate between screens
     const navigation = useNavigation()
@@ -42,7 +42,7 @@ export default function InProgress() {
             {
                 orders.map((order, index) => {
                     return (<View key={order._id}>
-                        <TouchableWithoutFeedback onPress={() => showButtonViewAndReject(index)} >
+                        <TouchableWithoutFeedback onPress={() => showButtonViewAndReject(order._id)} >
                             <View style={{ marginHorizontal: '5%' }}>
                                 {/* mapping orders */}
                                 <Order order={order} />

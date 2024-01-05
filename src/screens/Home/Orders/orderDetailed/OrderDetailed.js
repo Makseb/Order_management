@@ -1,24 +1,37 @@
 import { BackHandler, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 import { store } from "../../../../shared";
 import { deleteOrderFromInProgressStage, updateState } from "../../../../shared/slices/Orders/OrdersSlice";
-import { Header } from "../../../exports"
 import { updateOrderStatus } from "../../../../shared/slices/Orders/OrdersService";
-import { AcceptModal } from "../../../../screens/exports";
+import { AcceptModal, RejectOrdersDetailedModal, Header } from "../../../../screens/exports";
 import { ListSection } from "../../../../Components/exports";
 
 export default function OrderDetailed({ route }) {
-    const { index, stage } = route.params
+
+    const [rejectModal, setRejectModal] = useState({
+        state: false,
+        data: {
+            id: undefined,
+            stage: undefined,
+            action: undefined
+        }
+    })
+
+    // get notification id from redux
+    const notificationId = useSelector((state) => state.authentification.notificationId)
+
+    let { id, stage } = route.params
 
     // get the order according to stage :"all" or "inprogress"
     const order =
         stage === "all"
-            ? useSelector((state) => state.orders.all[index])
+            ? useSelector((state) => state.orders.all.find(order => order._id === id))
             : stage === "inprogress"
-                ? useSelector((state) => state.orders.inprogress[index])
-                : useSelector((state) => state.orders.ready[index]);
+                ? useSelector((state) => state.orders.inprogress.find(order => order._id === id))
+                : useSelector((state) => state.orders.ready.find(order => order._id === id));
+
 
     // open the detail of each title example (client details, fulfillment)
     const [expandeds, setExpandeds] = useState(null);
@@ -31,6 +44,7 @@ export default function OrderDetailed({ route }) {
         newData[index] = !newData[index];
         setExpandeds(newData);
     }
+
     useEffect(() => {
         const initData = () => {
             let data = [];
@@ -52,7 +66,7 @@ export default function OrderDetailed({ route }) {
         const handleBackPress = () => {
             // delete the order if status ready and stage inprogress
             if (order.status === "ready" && stage === "inprogress") {
-                store.dispatch(deleteOrderFromInProgressStage({ index }));
+                store.dispatch(deleteOrderFromInProgressStage({ id }))
             }
             return false;
         }
@@ -83,7 +97,8 @@ export default function OrderDetailed({ route }) {
                             backgroundColor: (order.status === "accepted" || order.status === "ready") ? "#5cd964" : (order.status === "rejected") ? "#ff3b30" : (order.status === "missed") ? "#ff3b30" : "#fc0"
                         }]}>
                             <Text style={styles.textStatus}>
-                                {order.status.charAt(0).toUpperCase() + order.status.slice(1)}</Text>
+                                {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                            </Text>
                         </View>
                     </View>
 
@@ -101,14 +116,14 @@ export default function OrderDetailed({ route }) {
                             </TouchableOpacity>
 
                             <TouchableOpacity onPress={() => {
-                                // update status in backend to rejected
-                                const updateOrderStatusToRejected = async () => {
-                                    await updateOrderStatus({ status: "rejected", _id: order._id }).then(res => {
-                                        store.dispatch(updateState({ index, action: "rejected", stage: stage, updatedAt: res.order.updatedAt }))
-                                    }).catch(err => {
-                                    })
-                                }
-                                updateOrderStatusToRejected()
+                                setRejectModal({
+                                    state: true,
+                                    data: {
+                                        stage: "all",
+                                        action: "rejected",
+                                        id: order._id,
+                                    }
+                                })
                             }}
                                 style={styles.rejectButton}>
                                 <Text style={styles.textRejectButton}>Reject</Text>
@@ -123,8 +138,8 @@ export default function OrderDetailed({ route }) {
                             <TouchableOpacity style={styles.readyButton} onPress={() => {
                                 // update status in backend to ready
                                 const updateOrderStatusToReady = async () => {
-                                    await updateOrderStatus({ status: "ready", _id: order._id }).then(res => {
-                                        store.dispatch(updateState({ index, action: "ready", stage: stage, updatedAt: res.order.updatedAt }))
+                                    await updateOrderStatus({ status: "ready", _id: order._id }, notificationId).then(res => {
+                                        store.dispatch(updateState({ id, action: "ready", stage: stage, updatedAt: res.order.updatedAt }))
                                     }).catch(err => {
                                         // Handle error
                                     })
@@ -142,12 +157,15 @@ export default function OrderDetailed({ route }) {
                                 toggleModal,
                                 setToggleModal,
                                 stage,
-                                index,
+                                id,
                                 orderId: order._id,
-                                preparedAt: order.preparedAt
+                                preparedAt: order.preparedAt,
                             }}
                         />
                     )}
+                    {/* show modal if rejectModal true */}
+                    {rejectModal.state && <RejectOrdersDetailedModal modalProps={{ rejectModal, setRejectModal }} />}
+
                 </View>
 
             </ScrollView>

@@ -28,8 +28,8 @@ export default function Ready() {
         fetchReadyOrdersByStroreId()
     }, [])
 
-    const showButtonViewAndReject = (index) => {
-        navigation.navigate('OrderDetailed', { index, stage: "ready" })
+    const showButtonViewAndReject = (id) => {
+        navigation.navigate('OrderDetailed', { id, stage: "ready" })
     }
     const navigation = useNavigation()
     return (
@@ -37,7 +37,7 @@ export default function Ready() {
             {
                 orders.map((order, index) => {
                     return (<View key={order._id}>
-                        <TouchableWithoutFeedback onPress={() => showButtonViewAndReject(index)} >
+                        <TouchableWithoutFeedback onPress={() => showButtonViewAndReject(order._id)} >
                             <View style={{ marginHorizontal: '5%' }}>
                                 {/* mapping orders */}
                                 <Order order={order} />

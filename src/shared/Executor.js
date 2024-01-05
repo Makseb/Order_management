@@ -17,7 +17,7 @@ export function Executor(config) {
             }
         })
             .then((res) => {
-                console.log(res.data);
+                // console.log(res.data);
                 const successStatus = res?.status === 200
 
                 successStatus && config.successFun && config.successFun(res?.data)

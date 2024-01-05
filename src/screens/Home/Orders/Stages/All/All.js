@@ -2,11 +2,13 @@ import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TouchableWithoutF
 import React, { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 
-import { setOrders, updateState } from "../../../../../shared/slices/Orders/OrdersSlice";
+import { setOrders } from "../../../../../shared/slices/Orders/OrdersSlice";
 import { useSelector } from "react-redux";
 import { Order } from "../../../../../Components/exports";
-import { getAllOrdersByStroreId, updateOrderStatus } from "../../../../../shared/slices/Orders/OrdersService";
+import { getAllOrdersByStroreId } from "../../../../../shared/slices/Orders/OrdersService";
 import { store } from "../../../../../shared";
+
+import { RejectModal } from "./../../../../exports";
 
 export default function All() {
 
@@ -16,11 +18,10 @@ export default function All() {
     // get currency
     const currency = useSelector((state) => state.authentification.storeSelected.currency)
 
-    // get the orders from redux
-    const orders = useSelector((state) => state.orders.all)
-
     // navigate between screens
     const navigation = useNavigation()
+
+
 
     useEffect(() => {
         // this function will get the all orders that was related to the store choosen from login step
@@ -34,10 +35,12 @@ export default function All() {
         fetchAllOrdersByStroreId()
     }, [])
 
+    // get the orders from redux
+    const orders = useSelector((state) => state.orders.all)
 
     // this function is used to show or not show buttons view and reject
     const [showButtons, setShowButtons] = useState([])
-    const showButtonViewAndReject = (id, action, index) => {
+    const showButtonViewAndReject = (id, action) => {
         if (action === "pending") {
             setShowButtons((prevShowButtons) => {
                 if (!prevShowButtons.includes(id)) {
@@ -47,28 +50,36 @@ export default function All() {
                 }
             })
         } else {
-            navigation.navigate('OrderDetailed', { index, stage: "all" })
+            navigation.navigate('OrderDetailed', { id, stage: "all" })
         }
     }
 
 
     // change state of order by rejecting or view to the order detailed
-    const changeState = (action, index, event, updatedAt) => {
+    const changeState = (action, id, event, updatedAt) => {
         event.stopPropagation()
         if (action === "view") {
-            navigation.navigate('OrderDetailed', { index, stage: "all" })
-        } else {
-            console.log(updatedAt);
-            store.dispatch(updateState({ index, action, stage: "all", updatedAt }))
+            navigation.navigate('OrderDetailed', { id, stage: "all" })
         }
     }
 
+    const [toggleModal, setToggleModal] = useState({
+        state: false,
+        data: {
+            id: undefined,
+            stage: undefined,
+            action: undefined
+        }
+    })
+
     return (
         <ScrollView>
+            {toggleModal.state && <RejectModal modalProps={{ toggleModal, setToggleModal }} />}
+
             {
                 orders.map((order, index) => {
                     return (<View key={order._id}>
-                        <TouchableWithoutFeedback onPress={() => showButtonViewAndReject(order._id, order.status, index)} >
+                        <TouchableWithoutFeedback onPress={() => showButtonViewAndReject(order._id, order.status)} >
                             <View style={{ marginHorizontal: '5%' }}>
                                 {/* mapping orders */}
                                 <Order order={order} />
@@ -79,23 +90,19 @@ export default function All() {
                                             alignSelf: 'center',
                                             flexDirection: 'row',
                                         }}>
-                                            <TouchableOpacity onPress={(event) => { changeState("view", index, event) }} style={styles.viewButton}>
+                                            <TouchableOpacity onPress={(event) => { changeState("view", order._id, event) }} style={styles.viewButton}>
                                                 <Text style={styles.textViewButton}>View</Text>
                                             </TouchableOpacity>
 
-                                            <TouchableOpacity onPress={(event) => {
-                                                // update status in backend to rejected
-                                                const updateOrderStatusToRejected = async () => {
-                                                    await updateOrderStatus({ status: "rejected", _id: order._id }).then(res => {
-                                                        changeState("rejected", index, event, res.order.updatedAt)
-                                                    }).catch(err => {
-                                                        console.log(order._id);
-                                                        console.log(err);
-                                                    })
-                                                }
-                                                // this cauz theris two func
-                                                event.persist();
-                                                updateOrderStatusToRejected()
+                                            <TouchableOpacity onPress={() => {
+                                                setToggleModal({
+                                                    state: true,
+                                                    data: {
+                                                        stage: "all",
+                                                        action: "rejected",
+                                                        id: order._id,
+                                                    }
+                                                })
                                             }} style={styles.rejectButton}>
                                                 <Text style={styles.textRejectButton}>Reject</Text>
                                             </TouchableOpacity>

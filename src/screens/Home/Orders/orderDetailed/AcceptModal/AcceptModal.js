@@ -5,11 +5,16 @@ import { useState } from "react";
 import { updateState } from "../../../../../shared/slices/Orders/OrdersSlice";
 import { updateOrderStatus } from "../../../../../shared/slices/Orders/OrdersService";
 import { store } from "../../../../../shared";
+import { useSelector } from "react-redux";
+import { Toast } from 'react-native-toast-message/lib/src/Toast';
 
 export default function AcceptModal({ modalProps }) {
-    const { toggleModal, setToggleModal, stage, index, orderId, preparedAt } = modalProps;
+    const { toggleModal, setToggleModal, stage, id, orderId, preparedAt } = modalProps;
 
-    const [minutes, setMinutes] = useState();
+    // get notification id from redux
+    const notificationId = useSelector((state) => state.authentification.notificationId)
+
+    const [minutes, setMinutes] = useState(null);
     const handleMinutesChange = (input) => {
         const numericInput = input.replace(/[^0-9]/g, '');
         const limitedInput = numericInput.slice(0, 2);
@@ -49,25 +54,32 @@ export default function AcceptModal({ modalProps }) {
                 }
                 <View style={styles.acceptContainer}>
                     <TouchableOpacity style={styles.acceptButton} onPress={() => {
-                        // update status in backend to accepted
-                        const updateOrderStatusToAccepted = async () => {
-                            !preparedAt ? (await updateOrderStatus({ status: "accepted", _id: orderId, preparationTime: minutes }).then(res => {
-                                store.dispatch(updateState({ index, action: "accepted", stage: stage, updatedAt: res.order.updatedAt, preparedAt: res.order.preparedAt }))
-                            }).catch(err => { })
-                            ) : (
-                                await updateOrderStatus({ status: "accepted", _id: orderId }).then(res => {
-                                    store.dispatch(updateState({ index, action: "accepted", stage: stage, updatedAt: res.order.updatedAt }))
+                        if (minutes === null || minutes === "") {
+                            Toast.show({
+                                type: 'error',
+                                text1: "Please select time.",
+                            });
+                        } else {
+                            // update status in backend to accepted
+                            const updateOrderStatusToAccepted = async () => {
+                                !preparedAt ? (await updateOrderStatus({ status: "accepted", _id: orderId, preparationTime: minutes }, notificationId).then(res => {
+                                    store.dispatch(updateState({ id, action: "accepted", stage: stage, updatedAt: res.order.updatedAt, preparedAt: res.order.preparedAt }))
                                 }).catch(err => { })
-                            )
+                                ) : (
+                                    await updateOrderStatus({ status: "accepted", _id: orderId }).then(res => {
+                                        store.dispatch(updateState({ id, action: "accepted", stage: stage, updatedAt: res.order.updatedAt }, notificationId))
+                                    }).catch(err => { })
+                                )
+                            }
+                            updateOrderStatusToAccepted()
+                            setToggleModal(false)
                         }
-                        updateOrderStatusToAccepted()
-                        setToggleModal(false)
                     }}>
                         <Text style={styles.textAcceptButton}>Accept</Text>
                     </TouchableOpacity>
                 </View>
-
             </View>
+            <Toast />
         </Modal >
     )
 

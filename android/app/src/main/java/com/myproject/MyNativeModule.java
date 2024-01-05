@@ -85,10 +85,12 @@ public class MyNativeModule extends ReactContextBaseJavaModule {
                                     if (online) {
                                         if(isPortOpen(ipToTest,9100)){
                                             WritableMap addressMap = Arguments.createMap();
-                                            String hostname = InetAddress.getByName(ipToTest).getHostName();
+                                            String hostname = InetAddress.getByName(ipToTest).getCanonicalHostName();
                                             if(hostname.equals(ipToTest)){
                                                 k[0]++;
                                                 addressMap.putString("hostname","Printer " + String.valueOf(k[0]));
+                                            }else{
+                                                addressMap.putString("hostname",hostname);
                                             }
                                             addressMap.putString("ip", ipToTest);
                                             resultArray.pushMap(addressMap);

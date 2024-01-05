@@ -20,6 +20,9 @@ export { default as SearchPrinter } from './Home/Settings/PrintingSettings/Searc
 export { default as LanModal } from './Home/Settings/PrintingSettings/SearchPrinter/LanModal/LanModal'
 export { default as DetailedPrinterSelected } from './Home/Settings/PrintingSettings/DetailedPrinterSelected/DetailedPrinterSelected'
 export { default as PrintModal } from './Home/Orders/OrderDetailed/PrintModal/PrintModal'
-
 export { default as BluetoothModal } from './Home/Settings/PrintingSettings/SearchPrinter/BluetoothModal/BluetoothModal'
+export { default as RejectModal } from './Home/Orders/Stages/All/RejectModal/RejectModal'
+
+export { default as RejectOrdersDetailedModal } from './Home/Orders/OrderDetailed/RejectModal/RejectModal'
+
 

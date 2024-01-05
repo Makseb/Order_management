@@ -1,10 +1,11 @@
 import { BaseUrl } from "../..";
 import { Executor } from "../../Executor";
 
+
 export const getAllOrdersByStroreId = (storeSelected) => {
     return Executor({
         method: 'get',
-        url: BaseUrl + '/owner/order/allorders/' + storeSelected,
+        url: BaseUrl + '/manager/order/allorders/' + storeSelected,
         isSilent: false,
         successFun: () => {
         },
@@ -16,7 +17,7 @@ export const getAllOrdersByStroreId = (storeSelected) => {
 export const getAcceptedOrdersByStroreId = (storeSelected) => {
     return Executor({
         method: 'get',
-        url: BaseUrl + '/owner/order/acceptedorders/' + storeSelected,
+        url: BaseUrl + '/manager/order/acceptedorders/' + storeSelected,
         isSilent: false,
         successFun: () => {
         },
@@ -28,7 +29,7 @@ export const getAcceptedOrdersByStroreId = (storeSelected) => {
 export const getReadyOrdersByStroreId = (storeSelected) => {
     return Executor({
         method: 'get',
-        url: BaseUrl + '/owner/order/readydorders/' + storeSelected,
+        url: BaseUrl + '/manager/order/readydorders/' + storeSelected,
         isSilent: false,
         successFun: () => {
         },
@@ -37,11 +38,11 @@ export const getReadyOrdersByStroreId = (storeSelected) => {
     });
 };
 
-export const updateOrderStatus = (data) => {
+export const updateOrderStatus = (data,notificationId) => {
     return Executor({
         method: 'put',
         data,
-        url: BaseUrl + '/owner/order/updatestatus',
+        url: BaseUrl + '/sse/order/updatestatus/' + notificationId,
         isSilent: false,
         successFun: () => {
         },
