@@ -17,7 +17,7 @@ export default function CategoryModal({ modalProps }) {
     const category = useSelector((state) => state.availability.categories)[categorySelected.indexCategory]
 
     // get store selected
-    const storeSelected = useSelector((state) => state.authentification.storeSelected._id)
+    const storeSelected = useSelector((state) => state.authentification.storeSelected.store._id)
 
     // const [checkMode, setCheckMode] = useState()
     const [checked, setChecked] = useState(null)

@@ -38,55 +38,55 @@ export const ordersSlice = createSlice({
                 delete data[i].client_first_name
                 delete data[i].client_last_name
             }
-            switch (action.payload.stage) {
-                case "all": state.all = data
-                case "inprogress": state.inprogress = data
-                case "ready": state.ready = data
+            if (action.payload.stage === "all") {
+                state.all = data
+            } else if (action.payload.stage === "inprogress") {
+                state.inprogress = data
+            } else {
+                state.ready = data
             }
         },
         updateState: (state, action) => {
-            switch (action.payload.stage) {
-                case "all": {
-                    let newData = {
-                        status: action.payload.action,
-                        updatedAt: {
-                            date: format(new Date(action.payload.updatedAt), 'yyyy-MM-dd'),
-                            time: format(new Date(action.payload.updatedAt), 'HH:mm')
-                        },
-                    }
-                    if (action.payload.preparedAt) newData.preparedAt = {
-                        date: format(new Date(action.payload.preparedAt), 'yyyy-MM-dd'),
-                        time: format(new Date(action.payload.preparedAt), 'HH:mm')
-                    }
+            if (action.payload.stage === "all") {
+                let newData = {
+                    status: action.payload.action,
+                    updatedAt: {
+                        date: format(new Date(action.payload.updatedAt), 'yyyy-MM-dd'),
+                        time: format(new Date(action.payload.updatedAt), 'HH:mm')
+                    },
+                }
+                if (action.payload.preparedAt) newData.preparedAt = {
+                    date: format(new Date(action.payload.preparedAt), 'yyyy-MM-dd'),
+                    time: format(new Date(action.payload.preparedAt), 'HH:mm')
+                }
 
-                    let order = state.all.find(order => order._id === action.payload.id)
-                    order = {
-                        ...order,
-                        ...newData
-                    }
-                    let data = state.all
-                    const index = state.all.findIndex(order => order._id === action.payload.id);
-                    data[index] = order
-                    state.all = data
+                let order = state.all.find(order => order._id === action.payload.id)
+                order = {
+                    ...order,
+                    ...newData
                 }
-                case "inprogress": {
-                    let newData = {
-                        status: action.payload.action,
-                        updatedAt: {
-                            date: format(new Date(action.payload.updatedAt), 'yyyy-MM-dd'),
-                            time: format(new Date(action.payload.updatedAt), 'HH:mm')
-                        },
-                    }
-                    let order = state.inprogress.find(order => order._id === action.payload.id)
-                    order = {
-                        ...order,
-                        ...newData
-                    }
-                    let data = state.inprogress
-                    const index = state.inprogress.findIndex(order => order._id === action.payload.id);
-                    data[index] = order
-                    state.inprogress = data
+                let data = state.all
+                const index = state.all.findIndex(order => order._id === action.payload.id);
+                data[index] = order
+                state.all = data
+            } else if (action.payload.stage === "inprogress") {
+                let newData = {
+                    status: action.payload.action,
+                    updatedAt: {
+                        date: format(new Date(action.payload.updatedAt), 'yyyy-MM-dd'),
+                        time: format(new Date(action.payload.updatedAt), 'HH:mm')
+                    },
                 }
+                let order = state.inprogress.find(order => order._id === action.payload.id)
+                order = {
+                    ...order,
+                    ...newData
+                }
+                let data = state.inprogress
+                const index = state.inprogress.findIndex(order => order._id === action.payload.id);
+                data[index] = order
+                state.inprogress = data
+
             }
         },
         deleteOrderFromInProgressStage: (state, action) => {

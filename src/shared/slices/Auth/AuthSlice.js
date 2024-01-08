@@ -29,15 +29,19 @@ export const authentificationSlice = createSlice({
             state.token = action.payload.token;
         },
         setStoreSelected: (state, action) => {
-            state.storeSelected = action.payload
+            state.storeSelected = {
+                store: action.payload.store,
+                currency: action.payload.currency
+            }
+            console.log(state.storeSelected);
         },
         disconnect: (state) => {
-            state.loggedInUser = undefined,
-                state.isLoggedIn = false,
-                state.userId = undefined,
-                state.token = undefined,
-                state.storeSelected = undefined
-
+            state.loggedInUser = undefined
+            state.isLoggedIn = false
+            state.userId = undefined
+            state.token = undefined
+            state.storeSelected = undefined
+            state.notificationId = undefined
         },
         setNotificationId: (state, action) => {
             state.notificationId = action.payload.notificationId

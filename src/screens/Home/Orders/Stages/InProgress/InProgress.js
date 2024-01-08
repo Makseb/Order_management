@@ -10,7 +10,7 @@ import { getAcceptedOrdersByStroreId } from "../../../../../shared/slices/Orders
 
 export default function InProgress() {
     // get store selected
-    const storeSelected = useSelector((state) => state.authentification.storeSelected._id)
+    const storeSelected = useSelector((state) => state.authentification.storeSelected.store._id)
 
     // get currency
     const currency = useSelector((state) => state.authentification.storeSelected.currency)

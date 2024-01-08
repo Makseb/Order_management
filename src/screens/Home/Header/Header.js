@@ -10,12 +10,13 @@ import { store } from '../../../shared';
 import Toast from 'react-native-toast-message';
 
 export default function Header() {
-    const storeSelected = useSelector((state) => state.authentification.storeSelected)
+    const storeSelected = useSelector((state) => state.authentification.storeSelected.store)
+    const currency = useSelector((state) => state.authentification.storeSelected.currency)
 
     const toggleSwitch = () => {
         const updateStoreStatus = async () => {
             await changeStoreStatus({ _id: storeSelected._id, active: !storeSelected.active }).then(res => {
-                store.dispatch(setStoreSelected(res.store));
+                store.dispatch(setStoreSelected({ store: res.store, currency: currency }));
             }).catch(err => {
             })
         }

@@ -16,12 +16,13 @@ export default function SelectStore() {
 
     const [stores, setStores] = useState(null)
 
+
     const navigation = useNavigation()
 
     useEffect(() => {
         const fetchStoresByUserId = async () => {
             await getStoresNameAndIdByUserId(userId).then(res => {
-                setStores(res.stores)
+                setStores(res)
             }).catch(err => {
             })
         }
@@ -61,7 +62,7 @@ export default function SelectStore() {
                             color: '#202020'
                         }}
                         setSelected={(val) => setSelectedStore(val)}
-                        data={stores.map(item => ({ key: item._id, value: item.name }))}
+                        data={stores.stores.map(item => ({ key: item._id, value: item.name }))}
                         save="key"
                     />
                 </View>
@@ -70,11 +71,13 @@ export default function SelectStore() {
                     style={styles.button}
                     onPress={
                         () => {
+                            console.log(selectedStore);
                             if (selectedStore) {
-                                for (let i = 0; i < stores.length; i++) {
-                                    if (stores[i]._id == selectedStore) {
+                                for (let i = 0; i < stores.stores.length; i++) {
+                                    if (stores.stores[i]._id === selectedStore) {
+                                        console.log("hhh");
                                         store.dispatch(setNotificationId({ notificationId: new Date().toString() }))
-                                        store.dispatch(setStoreSelected(stores[i]))
+                                        store.dispatch(setStoreSelected({ store: stores.stores[i], currency : stores.currencies[i].currency }))
                                         navigation.navigate('Home')
                                     }
                                 }
@@ -117,8 +120,8 @@ const styles = StyleSheet.create({
         top: 0,
     },
     button: {
-        // marginTop: '10.64%', // 6.64% (is the height of select cauz they are one above one) + (4% height i choosed between the button and the select like the page before)
-        marginTop: '20%',
+        marginTop: '10.64%', // 6.64% (is the height of select cauz they are one above one) + (4% height i choosed between the button and the select like the page before)
+        // marginTop: '20%',
         width: '40%',
         height: 41,
         backgroundColor: '#df8f17',

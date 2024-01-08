@@ -12,7 +12,7 @@ import { useNavigation } from "@react-navigation/native";
 
 export default function Category() {
     // get store selected
-    const storeSelected = useSelector((state) => state.authentification.storeSelected._id)
+    const storeSelected = useSelector((state) => state.authentification.storeSelected.store._id)
 
     // get all categories
     const categories = useSelector((state) => state.availability.categories)

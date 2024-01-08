@@ -7,8 +7,6 @@ import { useNavigation } from '@react-navigation/native';
 
 import { store } from "../../../shared";
 import { disconnect } from "../../../shared/slices/Auth/AuthSlice";
-import { useSelector } from "react-redux";
-
 
 
 export default function Settings() {
@@ -45,6 +43,7 @@ export default function Settings() {
 
             <TouchableWithoutFeedback onPress={() => {
                 navigation.navigate("Login")
+                // store.dispatch(disconnect())
             }}>
                 <View style={[styles.containerIconAndText, { marginBottom: 0 }]}>
                     <Icon name="log-out" size={24} color={'#333'} />

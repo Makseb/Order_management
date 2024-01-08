@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TouchableWithoutFeedback } from "react-native";
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TouchableWithoutFeedback, FlatList, ActivityIndicator } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 
@@ -13,7 +13,7 @@ import { RejectModal } from "./../../../../exports";
 export default function All() {
 
     // get store selected
-    const storeSelected = useSelector((state) => state.authentification.storeSelected._id)
+    const storeSelected = useSelector((state) => state.authentification.storeSelected.store._id)
 
     // get currency
     const currency = useSelector((state) => state.authentification.storeSelected.currency)
@@ -22,18 +22,25 @@ export default function All() {
     const navigation = useNavigation()
 
 
+    const [loading, setLoading] = useState(false)
+
+    const [page, setPage] = useState(1);
+
+
 
     useEffect(() => {
         // this function will get the all orders that was related to the store choosen from login step
         const fetchAllOrdersByStroreId = async () => {
             // console.log(storeSelected);
-            await getAllOrdersByStroreId(storeSelected).then(res => {
+            await getAllOrdersByStroreId(storeSelected, page).then(res => {
                 store.dispatch(setOrders({ orders: res.orders, currency: currency, stage: "all" }))
+
+                // setLoading(false);
             }).catch(err => {
             })
         }
         fetchAllOrdersByStroreId()
-    }, [])
+    }, [page])
 
     // get the orders from redux
     const orders = useSelector((state) => state.orders.all)
@@ -72,52 +79,72 @@ export default function All() {
         }
     })
 
-    return (
-        <ScrollView>
-            {toggleModal.state && <RejectModal modalProps={{ toggleModal, setToggleModal }} />}
+    const loadMoreItem = () => {
+        setPage((prevPage) => prevPage + 1)
+    };
 
-            {
-                orders.map((order, index) => {
-                    return (<View key={order._id}>
-                        <TouchableWithoutFeedback onPress={() => showButtonViewAndReject(order._id, order.status)} >
-                            <View style={{ marginHorizontal: '5%' }}>
-                                {/* mapping orders */}
-                                <Order order={order} />
-                                {/* showing button view and reject if status pending */}
-                                {
-                                    showButtons.includes(order._id) && order.status === "pending" && (
-                                        <View style={{
-                                            alignSelf: 'center',
-                                            flexDirection: 'row',
-                                        }}>
-                                            <TouchableOpacity onPress={(event) => { changeState("view", order._id, event) }} style={styles.viewButton}>
-                                                <Text style={styles.textViewButton}>View</Text>
-                                            </TouchableOpacity>
+    const renderLoader = () => {
+        return (
+            loading ?
+                <View style={styles.loaderStyle}>
+                    <ActivityIndicator size="large" color="#aaa" />
+                </View> : null
+        );
+    };
 
-                                            <TouchableOpacity onPress={() => {
-                                                setToggleModal({
-                                                    state: true,
-                                                    data: {
-                                                        stage: "all",
-                                                        action: "rejected",
-                                                        id: order._id,
-                                                    }
-                                                })
-                                            }} style={styles.rejectButton}>
-                                                <Text style={styles.textRejectButton}>Reject</Text>
-                                            </TouchableOpacity>
-                                        </View>
-                                    )
-                                }
+    const renderItem = ({ item: order }) => {
+        return <View key={order._id}>
+            <TouchableWithoutFeedback onPress={() => showButtonViewAndReject(order._id, order.status)} >
+                <View style={{ marginHorizontal: '5%' }}>
+
+                    {/* mapping orders */}
+                    <Order order={order} />
+                    {/* showing button view and reject if status pending */}
+                    {
+                        showButtons.includes(order._id) && order.status === "pending" && (
+                            <View style={{
+                                alignSelf: 'center',
+                                flexDirection: 'row',
+                            }}>
+                                <TouchableOpacity onPress={(event) => { changeState("view", order._id, event) }} style={styles.viewButton}>
+                                    <Text style={styles.textViewButton}>View</Text>
+                                </TouchableOpacity>
+
+                                <TouchableOpacity onPress={() => {
+                                    setToggleModal({
+                                        state: true,
+                                        data: {
+                                            stage: "all",
+                                            action: "rejected",
+                                            id: order._id,
+                                        }
+                                    })
+                                }} style={styles.rejectButton}>
+                                    <Text style={styles.textRejectButton}>Reject</Text>
+                                </TouchableOpacity>
                             </View>
-                        </TouchableWithoutFeedback>
-                        {/* bar that separate orders */}
-                        < View style={styles.barSeparateOrder} />
-                    </View>
-                    )
-                })
-            }
-        </ScrollView >
+                        )
+                    }
+                </View>
+            </TouchableWithoutFeedback>
+            {/* bar that separate orders */}
+            < View style={styles.barSeparateOrder} />
+        </View>
+    }
+
+    return (
+        <>
+            {toggleModal.state && <RejectModal modalProps={{ toggleModal, setToggleModal }} />}
+            <FlatList
+                data={orders}
+                renderItem={renderItem}
+                keyExtractor={item => item._id}
+                onEndReached={loadMoreItem}
+                onEndReachedThreshold={0}
+                ListFooterComponent={renderLoader}
+
+            />
+        </>
     )
 }
 
@@ -155,5 +182,10 @@ const styles = StyleSheet.create({
         borderBottomColor: '#f0f0f0',
         borderBottomWidth: 3,
         marginHorizontal: '5%',
-    }
+    },
+    loaderStyle: {
+        marginVertical: 16,
+        alignItems: "center",
+        zIndex : 9999
+    },
 })

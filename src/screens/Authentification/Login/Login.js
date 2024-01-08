@@ -5,6 +5,7 @@ import Toast from 'react-native-toast-message/';
 
 import { login } from '../../../shared/slices/Auth/AuthService';
 import { Logo } from '../../../assets/images/exports';
+import { useSelector } from 'react-redux';
 
 export default function Login() {
 
@@ -12,9 +13,12 @@ export default function Login() {
     const [password, setPassword] = useState('')
     const navigation = useNavigation()
 
+    const auth = useSelector((state) => state.authentification)
+    console.log("auth");
+    console.log(auth);
+    console.log("auth");
+
     const submit = async () => {
-        console.log(email);
-        console.log(password);
         if (email && password) {
             await login({ email, password }).then(res => {
                 res.user.stores > 1 ? navigation.navigate('SelectStore') : navigation.navigate('SelectStore')

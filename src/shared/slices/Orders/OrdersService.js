@@ -2,11 +2,11 @@ import { BaseUrl } from "../..";
 import { Executor } from "../../Executor";
 
 
-export const getAllOrdersByStroreId = (storeSelected) => {
+export const getAllOrdersByStroreId = (storeSelected, page) => {
     return Executor({
         method: 'get',
-        url: BaseUrl + '/manager/order/allorders/' + storeSelected,
-        isSilent: false,
+        url: BaseUrl + '/manager/order/allorders/' + storeSelected + "/" + page,
+        isSilent: true,
         successFun: () => {
         },
         withErrorToast: false,
@@ -38,7 +38,7 @@ export const getReadyOrdersByStroreId = (storeSelected) => {
     });
 };
 
-export const updateOrderStatus = (data,notificationId) => {
+export const updateOrderStatus = (data, notificationId) => {
     return Executor({
         method: 'put',
         data,

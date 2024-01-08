@@ -14,13 +14,11 @@ export default function PrintModal({ modalProps }) {
     const lankitchen = useSelector((state) => state.printer.lankitchen)
     const lanreceipt = useSelector((state) => state.printer.lanreceipt)
 
-    // const logoStore = useSelector((state) => state.authentification.storeSelected.logo)
-
     // get currency
     const currency = useSelector((state) => state.authentification.storeSelected.currency)
 
     // get store
-    const store = useSelector((state) => state.authentification.storeSelected)
+    const store = useSelector((state) => state.authentification.storeSelected.store._id)
 
     console.log(store);
 
@@ -37,7 +35,7 @@ export default function PrintModal({ modalProps }) {
 
             <View
                 style={styles.container}>
-                
+
                 <TouchableWithoutFeedback onPress={() => setToggleModal(!toggleModal)}>
                     <AntDesign
                         style={styles.iconClock}

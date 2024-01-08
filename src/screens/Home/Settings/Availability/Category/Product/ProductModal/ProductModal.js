@@ -17,7 +17,7 @@ export default function ProductModal({ modalProps }) {
     const product = useSelector((state) => state.availability.products)[productSelected.indexProduct]
 
     // get store selected
-    const storeSelected = useSelector((state) => state.authentification.storeSelected._id)
+    const storeSelected = useSelector((state) => state.authentification.storeSelected.store._id)
 
     // const [checkMode, setCheckMode] = useState()
     const [checked, setChecked] = useState(null)

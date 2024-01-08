@@ -9,7 +9,7 @@ import { Header, ProductModal } from "../../../../../exports";
 
 export default function Product({ route }) {
     // get store selected
-    const storeSelected = useSelector((state) => state.authentification.storeSelected._id)
+    const storeSelected = useSelector((state) => state.authentification.storeSelected.store._id)
 
     // get the category id to fetch the products
     const { categoryId } = route.params;

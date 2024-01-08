@@ -54,7 +54,7 @@ export default function AcceptModal({ modalProps }) {
                 }
                 <View style={styles.acceptContainer}>
                     <TouchableOpacity style={styles.acceptButton} onPress={() => {
-                        if (minutes === null || minutes === "") {
+                        if ((minutes === null || minutes === "") && !preparedAt) {
                             Toast.show({
                                 type: 'error',
                                 text1: "Please select time.",
