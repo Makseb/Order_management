@@ -18,7 +18,8 @@ export default function PrintModal({ modalProps }) {
     const currency = useSelector((state) => state.authentification.storeSelected.currency)
 
     // get store
-    const store = useSelector((state) => state.authentification.storeSelected.store._id)
+
+    const store = useSelector((state) => state.authentification.storeSelected.store)
 
     console.log(store);
 

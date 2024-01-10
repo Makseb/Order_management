@@ -2,11 +2,11 @@ import { BaseUrl } from "../..";
 import { Executor } from "../../Executor";
 
 
-export const getAllOrdersByStroreId = (storeSelected, page) => {
+export const getAllOrdersByStroreId = (storeSelected, page, isSilent) => {
     return Executor({
         method: 'get',
         url: BaseUrl + '/manager/order/allorders/' + storeSelected + "/" + page,
-        isSilent: true,
+        isSilent: isSilent,
         successFun: () => {
         },
         withErrorToast: false,
@@ -14,11 +14,11 @@ export const getAllOrdersByStroreId = (storeSelected, page) => {
     });
 };
 
-export const getAcceptedOrdersByStroreId = (storeSelected) => {
+export const getAcceptedOrdersByStroreId = (storeSelected, page, isSilent) => {
     return Executor({
         method: 'get',
-        url: BaseUrl + '/manager/order/acceptedorders/' + storeSelected,
-        isSilent: false,
+        url: BaseUrl + '/manager/order/acceptedorders/' + storeSelected + "/" + page,
+        isSilent: isSilent,
         successFun: () => {
         },
         withErrorToast: false,
@@ -26,11 +26,11 @@ export const getAcceptedOrdersByStroreId = (storeSelected) => {
     });
 };
 
-export const getReadyOrdersByStroreId = (storeSelected) => {
+export const getReadyOrdersByStroreId = (storeSelected, page, isSilent) => {
     return Executor({
         method: 'get',
-        url: BaseUrl + '/manager/order/readydorders/' + storeSelected,
-        isSilent: false,
+        url: BaseUrl + '/manager/order/readydorders/' + storeSelected + "/" + page,
+        isSilent: isSilent,
         successFun: () => {
         },
         withErrorToast: false,

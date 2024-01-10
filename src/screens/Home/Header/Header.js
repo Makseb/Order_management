@@ -11,6 +11,7 @@ import Toast from 'react-native-toast-message';
 
 export default function Header() {
     const storeSelected = useSelector((state) => state.authentification.storeSelected.store)
+    // console.log(storeSelected);
     const currency = useSelector((state) => state.authentification.storeSelected.currency)
 
     const toggleSwitch = () => {

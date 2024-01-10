@@ -10,7 +10,8 @@ import { store } from "../../../../../shared";
 
 import { RejectModal } from "./../../../../exports";
 
-export default function All() {
+export default function All(props) {
+    let { allProps, setAllProps } = props.props
 
     // get store selected
     const storeSelected = useSelector((state) => state.authentification.storeSelected.store._id)
@@ -21,26 +22,46 @@ export default function All() {
     // navigate between screens
     const navigation = useNavigation()
 
-
-    const [loading, setLoading] = useState(false)
-
-    const [page, setPage] = useState(1);
-
-
+    // loader in bottom
+    const [isLoading, setIsLoading] = useState(false)
 
     useEffect(() => {
+        console.log(allProps.fromNotification);
         // this function will get the all orders that was related to the store choosen from login step
         const fetchAllOrdersByStroreId = async () => {
-            // console.log(storeSelected);
-            await getAllOrdersByStroreId(storeSelected, page).then(res => {
-                store.dispatch(setOrders({ orders: res.orders, currency: currency, stage: "all" }))
-
-                // setLoading(false);
-            }).catch(err => {
-            })
+            if (allProps.page > 1) {
+                setIsLoading(true)
+                await getAllOrdersByStroreId(storeSelected, allProps.page, true).then(res => {
+                    store.dispatch(setOrders({ orders: res.orders, currency: currency, stage: "all" }))
+                    setAllProps({
+                        ...allProps,
+                        isLastPage: res.isLastPage,
+                        pageAfterLoading: allProps.pageAfterLoading + 1
+                    })
+                    setIsLoading(false)
+                }).catch(err => {
+                })
+            } else {
+                if (allProps.fromNotification===true) {
+                    setAllProps({
+                        ...allProps,
+                        fromNotification: false
+                    })
+                } else {
+                    console.log("aaaaaaaaaaaaaaaaaaaooooooooooooooooooooo");
+                    await getAllOrdersByStroreId(storeSelected, allProps.page, false).then(res => {
+                        store.dispatch(setOrders({ orders: res.orders, currency: currency, stage: "all" }))
+                        setAllProps({
+                            ...allProps,
+                            isLastPage: res.isLastPage,
+                        })
+                    }).catch(err => {
+                    })
+                }
+            }
         }
         fetchAllOrdersByStroreId()
-    }, [page])
+    }, [allProps.page])
 
     // get the orders from redux
     const orders = useSelector((state) => state.orders.all)
@@ -63,7 +84,7 @@ export default function All() {
 
 
     // change state of order by rejecting or view to the order detailed
-    const changeState = (action, id, event, updatedAt) => {
+    const changeState = (action, id, event) => {
         event.stopPropagation()
         if (action === "view") {
             navigation.navigate('OrderDetailed', { id, stage: "all" })
@@ -80,15 +101,20 @@ export default function All() {
     })
 
     const loadMoreItem = () => {
-        setPage((prevPage) => prevPage + 1)
+        if (!allProps.isLastPage && allProps.page === allProps.pageAfterLoading) {
+            setAllProps({
+                ...allProps,
+                page: allProps.page + 1
+            })
+        }
     };
 
     const renderLoader = () => {
         return (
-            loading ?
-                <View style={styles.loaderStyle}>
-                    <ActivityIndicator size="large" color="#aaa" />
-                </View> : null
+            isLoading &&
+            <View style={styles.loaderStyle}>
+                <ActivityIndicator size="large" color="#7f7f7f" />
+            </View>
         );
     };
 
@@ -142,7 +168,7 @@ export default function All() {
                 onEndReached={loadMoreItem}
                 onEndReachedThreshold={0}
                 ListFooterComponent={renderLoader}
-
+                style={{ marginBottom: '11.5%' }}
             />
         </>
     )
@@ -184,8 +210,8 @@ const styles = StyleSheet.create({
         marginHorizontal: '5%',
     },
     loaderStyle: {
-        marginVertical: 16,
-        alignItems: "center",
-        zIndex : 9999
+        marginVertical: 5,
+        flexDirection: 'row',
+        justifyContent: 'center'
     },
 })

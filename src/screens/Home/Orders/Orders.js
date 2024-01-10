@@ -38,6 +38,15 @@ export default function Orders() {
     // i use this when there is call for example the sound of notification will be in background
     Sound.setCategory('Playback', true);
 
+
+    const [allProps, setAllProps] = useState({
+        page: 1,
+        isLastPage: true,
+        pageAfterLoading: 1,
+        fromNotification: false
+    })
+
+
     // get notifications in any stages
     useEffect(() => {
 
@@ -47,8 +56,15 @@ export default function Orders() {
             if (!data.data.toLowerCase().includes("welcome")) {
                 if (switchButton === "all") {
                     const fetchAllOrdersByStroreId = async () => {
-                        await getAllOrdersByStroreId(storeSelected).then(res => {
+                        await getAllOrdersByStroreId(storeSelected, 1, false).then(res => {
                             store.dispatch(setOrders({ orders: res.orders, currency: currency, stage: "all" }))
+                            setAllProps({
+                                page: 1,
+                                isLastPage: res.isLastPage,
+                                pageAfterLoading: 1,
+                                fromNotification: true
+                            })
+
                             if (data.data.includes("{")) {
                                 Toast.show({
                                     type: 'success',
@@ -82,8 +98,9 @@ export default function Orders() {
                     fetchAllOrdersByStroreId()
                 } else if (switchButton === "inprogress") {
                     const fetchAcceptedOrdersByStroreId = async () => {
-                        await getAcceptedOrdersByStroreId(storeSelected).then(res => {
+                        await getAcceptedOrdersByStroreId(storeSelected, 1, false).then(res => {
                             store.dispatch(setOrders({ orders: res.orders, currency: currency, stage: "inprogress" }))
+
                             if (data.data.includes("{")) {
                                 Toast.show({
                                     type: 'success',
@@ -116,8 +133,9 @@ export default function Orders() {
                     fetchAcceptedOrdersByStroreId()
                 } else {
                     const fetchReadyOrdersByStroreId = async () => {
-                        await getReadyOrdersByStroreId(storeSelected).then(res => {
+                        await getReadyOrdersByStroreId(storeSelected, 1, false).then(res => {
                             store.dispatch(setOrders({ orders: res.orders, currency: currency, stage: "ready" }))
+
                             if (data.data.includes("{")) {
                                 Toast.show({
                                     type: 'success',
@@ -222,7 +240,7 @@ export default function Orders() {
                 </View>
                 {/* second part */}
                 {
-                    switchButton === "all" ? <All /> :
+                    switchButton === "all" ? <All props={{ allProps, setAllProps }} /> :
                         switchButton === "inprogress" ? <InProgress /> :
                             <Ready />
                 }

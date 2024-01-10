@@ -12,7 +12,6 @@ export default function Home() {
             <View style={{ zIndex: 9999 }}>
                 <Toast />
             </View>
-
             <Footer />
         </View>
     );
