@@ -38,154 +38,139 @@ export default function Orders() {
     // i use this when there is call for example the sound of notification will be in background
     Sound.setCategory('Playback', true);
 
-
-    const [allProps, setAllProps] = useState({
-        page: 1,
-        isLastPage: true,
-        pageAfterLoading: 1,
-        fromNotification: false
-    })
-
-
     // get notifications in any stages
-    useEffect(() => {
+    // useEffect(() => {
 
-        const eventSource = new EventSource(BaseUrl + "/sse/sse/" + storeSelected + "/" + notificationId);
+    //     const eventSource = new EventSource(BaseUrl + "/sse/sse/" + storeSelected + "/" + notificationId);
 
-        const handleEventMessage = (data) => {
-            if (!data.data.toLowerCase().includes("welcome")) {
-                if (switchButton === "all") {
-                    const fetchAllOrdersByStroreId = async () => {
-                        await getAllOrdersByStroreId(storeSelected, 1, false).then(res => {
-                            store.dispatch(setOrders({ orders: res.orders, currency: currency, stage: "all" }))
-                            setAllProps({
-                                page: 1,
-                                isLastPage: res.isLastPage,
-                                pageAfterLoading: 1,
-                                fromNotification: true
-                            })
+    //     const handleEventMessage = (data) => {
+    //         if (!data.data.toLowerCase().includes("welcome")) {
+    //             if (switchButton === "all") {
+    //                 const fetchAllOrdersByStroreId = async () => {
+    //                     await getAllOrdersByStroreId(storeSelected, 1, false).then(res => {
+    //                         store.dispatch(setOrders({ orders: res.orders, currency: currency, stage: "all" }))
 
-                            if (data.data.includes("{")) {
-                                Toast.show({
-                                    type: 'success',
-                                    text1: "Order has been changed from another interface.",
-                                });
-                            } else if (data.data.includes("Your order is missed")) {
-                                Toast.show({
-                                    type: 'error',
-                                    text1: "The order is missed.",
-                                });
-                            } else {
-                                Toast.show({
-                                    type: 'success',
-                                    text1: "Order received. 3 minutes and it will be missed.",
-                                });
-                            }
-                            var whoosh = new Sound('sound.mp3', Sound.MAIN_BUNDLE, (error) => {
-                                if (error) {
-                                    return;
-                                }
-                                whoosh.play((success) => {
-                                    if (success) {
-                                    } else {
-                                    }
-                                });
-                            });
+    //                         if (data.data.includes("{")) {
+    //                             Toast.show({
+    //                                 type: 'success',
+    //                                 text1: "Order has been changed from another interface.",
+    //                             });
+    //                         } else if (data.data.includes("Your order is missed")) {
+    //                             Toast.show({
+    //                                 type: 'error',
+    //                                 text1: "The order is missed.",
+    //                             });
+    //                         } else {
+    //                             Toast.show({
+    //                                 type: 'success',
+    //                                 text1: "Order received. 3 minutes and it will be missed.",
+    //                             });
+    //                         }
+    //                         var whoosh = new Sound('sound.mp3', Sound.MAIN_BUNDLE, (error) => {
+    //                             if (error) {
+    //                                 return;
+    //                             }
+    //                             whoosh.play((success) => {
+    //                                 if (success) {
+    //                                 } else {
+    //                                 }
+    //                             });
+    //                         });
 
-                        }).catch(err => {
-                        })
-                    }
-                    fetchAllOrdersByStroreId()
-                } else if (switchButton === "inprogress") {
-                    const fetchAcceptedOrdersByStroreId = async () => {
-                        await getAcceptedOrdersByStroreId(storeSelected, 1, false).then(res => {
-                            store.dispatch(setOrders({ orders: res.orders, currency: currency, stage: "inprogress" }))
+    //                     }).catch(err => {
+    //                     })
+    //                 }
+    //                 fetchAllOrdersByStroreId()
+    //             } else if (switchButton === "inprogress") {
+    //                 const fetchAcceptedOrdersByStroreId = async () => {
+    //                     await getAcceptedOrdersByStroreId(storeSelected, 1, false).then(res => {
+    //                         store.dispatch(setOrders({ orders: res.orders, currency: currency, stage: "inprogress" }))
 
-                            if (data.data.includes("{")) {
-                                Toast.show({
-                                    type: 'success',
-                                    text1: "Order has been changed from another interface.",
-                                });
-                            } else if (data.data.includes("Your order is missed")) {
-                                Toast.show({
-                                    type: 'error',
-                                    text1: "The order is missed.",
-                                });
-                            } else {
-                                Toast.show({
-                                    type: 'success',
-                                    text1: "Order received. 3 minutes and it will be missed.",
-                                });
-                            }
-                            var whoosh = new Sound('sound.mp3', Sound.MAIN_BUNDLE, (error) => {
-                                if (error) {
-                                    return;
-                                }
-                                whoosh.play((success) => {
-                                    if (success) {
-                                    } else {
-                                    }
-                                });
-                            });
-                        }).catch(err => {
-                        })
-                    }
-                    fetchAcceptedOrdersByStroreId()
-                } else {
-                    const fetchReadyOrdersByStroreId = async () => {
-                        await getReadyOrdersByStroreId(storeSelected, 1, false).then(res => {
-                            store.dispatch(setOrders({ orders: res.orders, currency: currency, stage: "ready" }))
+    //                         if (data.data.includes("{")) {
+    //                             Toast.show({
+    //                                 type: 'success',
+    //                                 text1: "Order has been changed from another interface.",
+    //                             });
+    //                         } else if (data.data.includes("Your order is missed")) {
+    //                             Toast.show({
+    //                                 type: 'error',
+    //                                 text1: "The order is missed.",
+    //                             });
+    //                         } else {
+    //                             Toast.show({
+    //                                 type: 'success',
+    //                                 text1: "Order received. 3 minutes and it will be missed.",
+    //                             });
+    //                         }
+    //                         var whoosh = new Sound('sound.mp3', Sound.MAIN_BUNDLE, (error) => {
+    //                             if (error) {
+    //                                 return;
+    //                             }
+    //                             whoosh.play((success) => {
+    //                                 if (success) {
+    //                                 } else {
+    //                                 }
+    //                             });
+    //                         });
+    //                     }).catch(err => {
+    //                     })
+    //                 }
+    //                 fetchAcceptedOrdersByStroreId()
+    //             } else {
+    //                 const fetchReadyOrdersByStroreId = async () => {
+    //                     await getReadyOrdersByStroreId(storeSelected, 1, false).then(res => {
+    //                         store.dispatch(setOrders({ orders: res.orders, currency: currency, stage: "ready" }))
 
-                            if (data.data.includes("{")) {
-                                Toast.show({
-                                    type: 'success',
-                                    text1: "Order has been changed from another interface.",
-                                });
-                            } else if (data.data.includes("Your order is missed")) {
-                                Toast.show({
-                                    type: 'error',
-                                    text1: "The order is missed.",
-                                });
-                            } else {
-                                Toast.show({
-                                    type: 'success',
-                                    text1: "Order received. 3 minutes and it will be missed.",
-                                });
-                            }
-                            var whoosh = new Sound('sound.mp3', Sound.MAIN_BUNDLE, (error) => {
-                                if (error) {
-                                    return;
-                                }
-                                whoosh.play((success) => {
-                                    if (success) {
-                                    } else {
-                                    }
-                                });
-                            });
+    //                         if (data.data.includes("{")) {
+    //                             Toast.show({
+    //                                 type: 'success',
+    //                                 text1: "Order has been changed from another interface.",
+    //                             });
+    //                         } else if (data.data.includes("Your order is missed")) {
+    //                             Toast.show({
+    //                                 type: 'error',
+    //                                 text1: "The order is missed.",
+    //                             });
+    //                         } else {
+    //                             Toast.show({
+    //                                 type: 'success',
+    //                                 text1: "Order received. 3 minutes and it will be missed.",
+    //                             });
+    //                         }
+    //                         var whoosh = new Sound('sound.mp3', Sound.MAIN_BUNDLE, (error) => {
+    //                             if (error) {
+    //                                 return;
+    //                             }
+    //                             whoosh.play((success) => {
+    //                                 if (success) {
+    //                                 } else {
+    //                                 }
+    //                             });
+    //                         });
 
-                        }).catch(err => {
-                        })
-                    }
-                    fetchReadyOrdersByStroreId()
-                }
-            }
-        }
+    //                     }).catch(err => {
+    //                     })
+    //                 }
+    //                 fetchReadyOrdersByStroreId()
+    //             }
+    //         }
+    //     }
 
-        // Grab all events with the type of 'message'
-        eventSource.addEventListener('message', (data) => {
-            handleEventMessage(data)
-        });
+    //     // Grab all events with the type of 'message'
+    //     eventSource.addEventListener('message', (data) => {
+    //         handleEventMessage(data)
+    //     });
 
-        return () => {
-            // Log that the component is unmounting
-            console.log('Restaurant App is unmounting...');
-            // Remove the event listener and close the connection
-            console.log('Removing event listener and closing EventSource connection...');
-            eventSource.removeEventListener('message', handleEventMessage);
-            eventSource.close();
-        };
+    //     return () => {
+    //         // Log that the component is unmounting
+    //         console.log('Restaurant App is unmounting...');
+    //         // Remove the event listener and close the connection
+    //         console.log('Removing event listener and closing EventSource connection...');
+    //         eventSource.removeEventListener('message', handleEventMessage);
+    //         eventSource.close();
+    //     };
 
-    }, [switchButton]);
+    // }, [switchButton]);
 
 
     return (
@@ -238,13 +223,15 @@ export default function Orders() {
                         </View>
                     </TouchableWithoutFeedback>
                 </View>
+                {/* <Toast /> */}
+
                 {/* second part */}
                 {
-                    switchButton === "all" ? <All props={{ allProps, setAllProps }} /> :
+                    switchButton === "all" ? <All /> :
                         switchButton === "inprogress" ? <InProgress /> :
                             <Ready />
                 }
-
+                
             </View >
         </View>
     );

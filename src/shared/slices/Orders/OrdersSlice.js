@@ -115,5 +115,5 @@ export const ordersSlice = createSlice({
 
 
 
-export const { setOrders, updateState, deleteOrderFromInProgressStage, resetIncrement, setIncrement } = ordersSlice.actions;
+export const { setOrders, updateState, deleteOrderFromInProgressStage, resetIncrement, setIncrement, resetIsNotification } = ordersSlice.actions;
 // decrementCounter

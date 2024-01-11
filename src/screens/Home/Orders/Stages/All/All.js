@@ -1,17 +1,19 @@
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TouchableWithoutFeedback, FlatList, ActivityIndicator } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 
 import { setOrders } from "../../../../../shared/slices/Orders/OrdersSlice";
 import { useSelector } from "react-redux";
 import { Order } from "../../../../../Components/exports";
 import { getAllOrdersByStroreId } from "../../../../../shared/slices/Orders/OrdersService";
-import { store } from "../../../../../shared";
+import { BaseUrl, store } from "../../../../../shared";
 
 import { RejectModal } from "./../../../../exports";
+import EventSource from "react-native-sse";
 
-export default function All(props) {
-    let { allProps, setAllProps } = props.props
+import { Toast } from 'react-native-toast-message/lib/src/Toast';
+
+export default function All() {
 
     // get store selected
     const storeSelected = useSelector((state) => state.authentification.storeSelected.store._id)
@@ -19,49 +21,124 @@ export default function All(props) {
     // get currency
     const currency = useSelector((state) => state.authentification.storeSelected.currency)
 
+    // get notification id
+    const notificationId = useSelector((state) => state.authentification.notificationId)
+
     // navigate between screens
     const navigation = useNavigation()
 
     // loader in bottom
     const [isLoading, setIsLoading] = useState(false)
 
+    // increment page when there are more pages
+    const [page, setPage] = useState(1)
+
+    // get boolean from api and set it to this hook
+    const [isLastPage, setIsLastPage] = useState(true)
+
+    // i use this to get page by page after loading
+    const [pageAfterLoading, setPageAfterLoading] = useState(1)
+
+    const [isNotification, setIsNotification] = useState(false)
+
+    const flatListRef = useRef(null);
+
     useEffect(() => {
-        console.log(allProps.fromNotification);
+
+        const eventSource = new EventSource(BaseUrl + "/sse/sse/" + storeSelected + "/" + notificationId);
+
+        const handleEventMessage = (data) => {
+            if (!data.data.toLowerCase().includes("welcome")) {
+                const fetchAllOrdersByStroreId = async () => {
+
+                    flatListRef.current.scrollToOffset({ offset: 0 })
+
+                    requestAnimationFrame(async () => {
+
+                        await getAllOrdersByStroreId(storeSelected, 1, false).then(res => {
+                            store.dispatch(setOrders({ orders: res.orders, currency: currency, stage: "all" }))
+                            setIsNotification(true)
+                            setPageAfterLoading(1)
+                            setIsLastPage(res.isLastPage)
+                            setPage(1)
+                            if (data.data.includes("{")) {
+                                Toast.show({
+                                    type: 'success',
+                                    text1: "Order has been changed from another interface.",
+                                });
+                            } else if (data.data.includes("Your order is missed")) {
+                                Toast.show({
+                                    type: 'error',
+                                    text1: "The order is missed.",
+                                });
+                            } else {
+                                Toast.show({
+                                    type: 'success',
+                                    text1: "Order received. 3 minutes and it will be missed.",
+                                });
+                            }
+                            var whoosh = new Sound('ring.mp3', Sound.MAIN_BUNDLE, (error) => {
+                                if (error) {
+                                    return;
+                                }
+                                whoosh.play((success) => {
+                                    if (success) {
+                                    } else {
+                                    }
+                                });
+                            });
+                        }).catch(err => {
+                            console.log(err);
+                        })
+                    });
+                }
+                fetchAllOrdersByStroreId()
+            }
+        }
+
+        // Grab all events with the type of 'message'
+        eventSource.addEventListener('message', (data) => {
+            handleEventMessage(data)
+        });
+
+        return () => {
+            // Log that the component is unmounting
+            console.log('Restaurant App is unmounting...');
+            // Remove the event listener and close the connection
+            console.log('Removing event listener and closing EventSource connection...');
+            eventSource.removeEventListener('message', handleEventMessage);
+            eventSource.close();
+        };
+
+    }, []);
+
+
+    useEffect(() => {
         // this function will get the all orders that was related to the store choosen from login step
         const fetchAllOrdersByStroreId = async () => {
-            if (allProps.page > 1) {
+            if (page > 1) {
                 setIsLoading(true)
-                await getAllOrdersByStroreId(storeSelected, allProps.page, true).then(res => {
+                await getAllOrdersByStroreId(storeSelected, page, true).then(res => {
                     store.dispatch(setOrders({ orders: res.orders, currency: currency, stage: "all" }))
-                    setAllProps({
-                        ...allProps,
-                        isLastPage: res.isLastPage,
-                        pageAfterLoading: allProps.pageAfterLoading + 1
-                    })
+                    setIsLastPage(res.isLastPage)
+                    setPageAfterLoading((prevPage) => prevPage + 1)
                     setIsLoading(false)
                 }).catch(err => {
                 })
             } else {
-                if (allProps.fromNotification===true) {
-                    setAllProps({
-                        ...allProps,
-                        fromNotification: false
-                    })
+                if (isNotification) {
+                    setIsNotification(false)
                 } else {
-                    console.log("aaaaaaaaaaaaaaaaaaaooooooooooooooooooooo");
-                    await getAllOrdersByStroreId(storeSelected, allProps.page, false).then(res => {
+                    await getAllOrdersByStroreId(storeSelected, page, false).then(res => {
                         store.dispatch(setOrders({ orders: res.orders, currency: currency, stage: "all" }))
-                        setAllProps({
-                            ...allProps,
-                            isLastPage: res.isLastPage,
-                        })
+                        setIsLastPage(res.isLastPage)
                     }).catch(err => {
                     })
                 }
             }
         }
         fetchAllOrdersByStroreId()
-    }, [allProps.page])
+    }, [page])
 
     // get the orders from redux
     const orders = useSelector((state) => state.orders.all)
@@ -101,11 +178,11 @@ export default function All(props) {
     })
 
     const loadMoreItem = () => {
-        if (!allProps.isLastPage && allProps.page === allProps.pageAfterLoading) {
-            setAllProps({
-                ...allProps,
-                page: allProps.page + 1
-            })
+        console.log("wsel");
+        if (!isLastPage && page === pageAfterLoading) {
+            console.log("page :", page);
+            console.log("afterloading :", pageAfterLoading)
+            setPage((prevPage) => prevPage + 1)
         }
     };
 
@@ -162,14 +239,17 @@ export default function All(props) {
         <>
             {toggleModal.state && <RejectModal modalProps={{ toggleModal, setToggleModal }} />}
             <FlatList
+                ref={flatListRef}
+                initialScrollIndex={0}
                 data={orders}
                 renderItem={renderItem}
-                keyExtractor={item => item._id}
+                keyExtractor={(item, index) => index.toString()}
                 onEndReached={loadMoreItem}
                 onEndReachedThreshold={0}
                 ListFooterComponent={renderLoader}
                 style={{ marginBottom: '11.5%' }}
             />
+            <Toast />
         </>
     )
 }
