@@ -158,7 +158,6 @@ export default function All() {
     const [showButtons, setShowButtons] = useState([])
     const showButtonViewAndReject = (id, action) => {
         if (action === "pending") {
-            console.log(action)
             setShowButtons((prevShowButtons) => {
                 if (!prevShowButtons.includes(id)) {
                     return [...prevShowButtons, id];
@@ -170,8 +169,6 @@ export default function All() {
             navigation.navigate('OrderDetailed', { id, stage: "all" })
         }
     }
-
-    console.log(showButtons);
 
     // change state of order by rejecting or view to the order detailed
     const changeState = (action, id, event) => {
@@ -191,7 +188,6 @@ export default function All() {
     })
 
     const loadMoreItem = () => {
-        // console.log("wsel");
         if (!state.isLastPage && state.isLoading === false) {
             console.log("page :", state.page);
             console.log("---------------------------");
@@ -212,32 +208,6 @@ export default function All() {
         );
     };
 
-    const test = (order) => {
-        console.log("tesssssssssssst");
-        return showButtons.includes(order._id) && order.status === "pending" && (
-            <View style={{
-                alignSelf: 'center',
-                flexDirection: 'row',
-            }}>
-                <TouchableOpacity onPress={(event) => { changeState("view", order._id, event) }} style={styles.viewButton}>
-                    <Text style={styles.textViewButton}>View</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => {
-                    setToggleModal({
-                        state: true,
-                        data: {
-                            stage: "all",
-                            action: "rejected",
-                            id: order._id,
-                        }
-                    })
-                }} style={styles.rejectButton}>
-                    <Text style={styles.textRejectButton}>Reject</Text>
-                </TouchableOpacity>
-            </View>
-        )
-    }
-
     const renderItem = ({ item: order }) => (
         <View key={order._id}>
             <TouchableWithoutFeedback onPress={() => showButtonViewAndReject(order._id, order.status)}>
@@ -245,7 +215,7 @@ export default function All() {
                     {/* mapping orders */}
                     <Order order={order} />
                     {/* showing button view and reject if status pending */}
-                    {/* {showButtons.includes(order._id) && order.status === "pending" && (
+                    {showButtons.includes(order._id) && order.status === "pending" && (
                         <View style={{
                             alignSelf: 'center',
                             flexDirection: 'row',
@@ -266,10 +236,9 @@ export default function All() {
                                 <Text style={styles.textRejectButton}>Reject</Text>
                             </TouchableOpacity>
                         </View>
-                    )} */}
-                    {test(order)}
+                    )}
                 </View>
-            </TouchableWithoutFeedback>
+            </TouchableWithoutFeedback >
 
             {/* bar that separates orders */}
             <View style={styles.barSeparateOrder} />
@@ -280,19 +249,19 @@ export default function All() {
         <>
             <View style={{ flexGrow: 1, flexDirection: "row", minHeight: 2 }}>
                 <FlashList
-                    estimatedItemSize={400}
+                    estimatedItemSize={100}
                     ref={flatListRef}
                     initialScrollIndex={0}
                     data={orders}
                     renderItem={renderItem}
-                    keyExtractor={(item, index) => index.toString()}
+                    keyExtractor={(item) => item._id}
                     onEndReached={loadMoreItem}
                     onEndReachedThreshold={0}
                     ListFooterComponent={renderLoader}
                     contentContainerStyle={{ paddingBottom: 200 }}
+                    extraData={showButtons}
                 />
             </View>
-
 
             <Toast />
             {toggleModal.state && <RejectModal modalProps={{ toggleModal, setToggleModal }} />}
