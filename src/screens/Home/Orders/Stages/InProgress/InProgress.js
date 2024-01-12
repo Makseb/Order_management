@@ -20,21 +20,20 @@ export default function InProgress() {
     // get currency
     const currency = useSelector((state) => state.authentification.storeSelected.currency)
 
-    // increment page when there are more pages
-    const [page, setPage] = useState(1)
+    const flatListRef = useRef(null)
 
-    // get boolean from api and set it to this hook
-    const [isLastPage, setIsLastPage] = useState(true)
+    const [state, setState] = useState({
+        page: 1,
+        isLastPage: true,
+        isLoading: false,
+        isNotification: false
+    })
 
-    // loader in bottom
-    const [isLoading, setIsLoading] = useState(false)
+    // navigate between screens
+    const navigation = useNavigation()
 
-    // i use this to get page by page after loading
-    const [pageAfterLoading, setPageAfterLoading] = useState(1)
-
-    const [isNotification, setIsNotification] = useState(false)
-
-    const flatListRef = useRef(null);
+    // get the all orders in progress
+    const orders = useSelector((state) => state.orders.inprogress)
 
     useEffect(() => {
 
@@ -47,13 +46,14 @@ export default function InProgress() {
                     flatListRef.current.scrollToOffset({ offset: 0 })
 
                     requestAnimationFrame(async () => {
-
                         await getAcceptedOrdersByStroreId(storeSelected, 1, false).then(res => {
-                            store.dispatch(setOrders({ orders: res.orders, currency: currency, stage: "inprogress" }))
-                            setIsNotification(true)
-                            setPageAfterLoading(1)
-                            setIsLastPage(res.isLastPage)
-                            setPage(1)
+                            store.dispatch(setOrders({ orders: res.orders, currency: currency, stage: "inprogress", firstUpdate: true }))
+                            setState(prevState => ({
+                                ...prevState,
+                                page: 1,
+                                isLastPage: res.isLastPage,
+                                isNotification: true,
+                            }))
                             if (data.data.includes("{")) {
                                 Toast.show({
                                     type: 'success',
@@ -113,48 +113,57 @@ export default function InProgress() {
         // this function will get accepted orders that was related to the store choosen from login step
         const fetchAcceptedOrdersByStroreId = async () => {
             // console.log(storeSelected);
-            if (page > 1) {
-                setIsLoading(true)
-                await getAcceptedOrdersByStroreId(storeSelected, page, true).then(res => {
+            if (state.page > 1) {
+                setState(prevState => ({
+                    ...prevState,
+                    isLoading: true,
+                }))
+                await getAcceptedOrdersByStroreId(storeSelected, state.page, true).then(res => {
                     store.dispatch(setOrders({ orders: res.orders, currency: currency, stage: "inprogress" }))
-                    setIsLastPage(res.isLastPage)
-                    setIsLoading(false)
-                    setPageAfterLoading((prevPage) => prevPage + 1)
+                    setState(prevState => ({
+                        ...prevState,
+                        isLastPage: res.isLastPage,
+                        isLoading: false,
+                    }))
                 }).catch(err => {
                 })
             } else {
-                if (isNotification) {
-                    setIsNotification(false)
+                if (state.isNotification === true) {
+                    setState(prevState => ({
+                        ...prevState,
+                        isNotification: false
+                    }))
                 } else {
-                    await getAcceptedOrdersByStroreId(storeSelected, page, false).then(res => {
-                        store.dispatch(setOrders({ orders: res.orders, currency: currency, stage: "inprogress" }))
-                        setIsLastPage(res.isLastPage)
+                    await getAcceptedOrdersByStroreId(storeSelected, state.page, false).then(res => {
+                        store.dispatch(setOrders({ orders: res.orders, currency: currency, stage: "inprogress", firstUpdate: true }))
+                        setState(prevState => ({
+                            ...prevState,
+                            isLastPage: res.isLastPage
+                        }))
                     }).catch(err => {
                     })
                 }
             }
         }
         fetchAcceptedOrdersByStroreId()
-    }, [page])
+    }, [state.page])
 
     const showButtonViewAndReject = (id) => {
         navigation.navigate('OrderDetailed', { id, stage: "inprogress" })
     }
-    // navigate between screens
-    const navigation = useNavigation()
-
-    // get the all orders in progress
-    const orders = useSelector((state) => state.orders.inprogress)
 
     const loadMoreItem = () => {
-        if (!isLastPage && page === pageAfterLoading) {
-            setPage((prevPage) => prevPage + 1)
+        if (!state.isLastPage && !state.isLoading) {
+            setState(prevState => ({
+                ...prevState,
+                page: prevState.page + 1
+            }))
         }
     };
 
     const renderLoader = () => {
         return (
-            isLoading &&
+            state.isLoading &&
             <View style={styles.loaderStyle}>
                 <ActivityIndicator size="large" color="#7f7f7f" />
             </View>
@@ -179,14 +188,16 @@ export default function InProgress() {
     return (
         <>
             <FlatList
+                removeClippedSubviews={true}
+                ref={flatListRef}
+                initialScrollIndex={0}
                 data={orders}
                 renderItem={renderItem}
-                keyExtractor={item => item._id}
+                keyExtractor={(item, index) => index.toString()}
                 onEndReached={loadMoreItem}
                 onEndReachedThreshold={0}
                 ListFooterComponent={renderLoader}
                 style={{ marginBottom: '11.5%' }}
-                ref={flatListRef}
             />
             <Toast />
         </>

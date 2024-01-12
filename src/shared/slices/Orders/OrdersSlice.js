@@ -39,11 +39,28 @@ export const ordersSlice = createSlice({
                 delete data[i].client_last_name
             }
             if (action.payload.stage === "all") {
-                state.all = data
+                if (action.payload.firstUpdate === true) {
+                    console.log("eyy!!");
+                    state.all = data
+                } else {
+                    state.all.push(...data);
+                }
+
             } else if (action.payload.stage === "inprogress") {
-                state.inprogress = data
+                if (action.payload.firstUpdate === true) {
+                    state.inprogress = data
+                } else {
+                    state.inprogress.push(...data);
+                }
+
+                // state.inprogress = data
             } else {
-                state.ready = data
+                if (action.payload.firstUpdate === true) {
+                    state.ready = data
+                } else {
+                    state.ready.push(...data);
+                }
+                // state.ready = data
             }
         },
         updateState: (state, action) => {

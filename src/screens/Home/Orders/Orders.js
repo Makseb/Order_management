@@ -12,7 +12,6 @@ import { getAcceptedOrdersByStroreId, getAllOrdersByStroreId, getReadyOrdersBySt
 import { BaseUrl, store } from "../../../shared";
 import { useSelector } from "react-redux";
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
-import Sound from 'react-native-sound';
 
 
 export default function Orders() {
@@ -34,9 +33,6 @@ export default function Orders() {
 
     // get notification id
     const notificationId = useSelector((state) => state.authentification.notificationId)
-
-    // i use this when there is call for example the sound of notification will be in background
-    Sound.setCategory('Playback', true);
 
     // get notifications in any stages
     // useEffect(() => {

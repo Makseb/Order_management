@@ -8,7 +8,7 @@ import { ordersSlice } from "./slices/Orders/OrdersSlice";
 import { availabilitySlice } from "./slices/Availability/AvailabilitySlice";
 import { PrinterSlice } from "./slices/Printer/PrinterSlice";
 
-export const BaseUrl = 'http://192.168.1.43:8000';
+export const BaseUrl = 'http://192.168.1.51:8000';
 // https://api.eatorder.fr
 
 const persistConfig = {

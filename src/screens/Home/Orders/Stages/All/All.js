@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TouchableWithoutFeedback, FlatList, ActivityIndicator } from "react-native";
-import React, { useEffect, useRef, useState } from "react";
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TouchableWithoutFeedback, FlatList, ActivityIndicator, Dimensions } from "react-native";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 
 import { setOrders } from "../../../../../shared/slices/Orders/OrdersSlice";
@@ -12,6 +12,8 @@ import { RejectModal } from "./../../../../exports";
 import EventSource from "react-native-sse";
 
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
+import Sound from 'react-native-sound';
+import { FlashList } from "@shopify/flash-list";
 
 export default function All() {
 
@@ -27,21 +29,17 @@ export default function All() {
     // navigate between screens
     const navigation = useNavigation()
 
-    // loader in bottom
-    const [isLoading, setIsLoading] = useState(false)
-
-    // increment page when there are more pages
-    const [page, setPage] = useState(1)
-
-    // get boolean from api and set it to this hook
-    const [isLastPage, setIsLastPage] = useState(true)
-
-    // i use this to get page by page after loading
-    const [pageAfterLoading, setPageAfterLoading] = useState(1)
-
-    const [isNotification, setIsNotification] = useState(false)
+    const [state, setState] = useState({
+        page: 1,
+        isLoading: false,
+        isLastPage: true,
+        isNotification: false
+    })
 
     const flatListRef = useRef(null);
+
+    // get the orders from redux
+    const orders = useSelector((state) => state.orders.all)
 
     useEffect(() => {
 
@@ -56,11 +54,14 @@ export default function All() {
                     requestAnimationFrame(async () => {
 
                         await getAllOrdersByStroreId(storeSelected, 1, false).then(res => {
-                            store.dispatch(setOrders({ orders: res.orders, currency: currency, stage: "all" }))
-                            setIsNotification(true)
-                            setPageAfterLoading(1)
-                            setIsLastPage(res.isLastPage)
-                            setPage(1)
+                            store.dispatch(setOrders({ orders: res.orders, currency: currency, stage: "all", firstUpdate: true }))
+                            setState(prevState => ({
+                                ...prevState,
+                                page: 1,
+                                isLastPage: res.isLastPage,
+                                isNotification: true
+                            }))
+
                             if (data.data.includes("{")) {
                                 Toast.show({
                                     type: 'success',
@@ -116,37 +117,48 @@ export default function All() {
     useEffect(() => {
         // this function will get the all orders that was related to the store choosen from login step
         const fetchAllOrdersByStroreId = async () => {
-            if (page > 1) {
-                setIsLoading(true)
-                await getAllOrdersByStroreId(storeSelected, page, true).then(res => {
+            if (state.page > 1) {
+                setState(prevState => ({
+                    ...prevState,
+                    isLoading: true,
+                }))
+
+                await getAllOrdersByStroreId(storeSelected, state.page, true).then(res => {
                     store.dispatch(setOrders({ orders: res.orders, currency: currency, stage: "all" }))
-                    setIsLastPage(res.isLastPage)
-                    setPageAfterLoading((prevPage) => prevPage + 1)
-                    setIsLoading(false)
+                    setState(prevState => ({
+                        ...prevState,
+                        isLoading: false,
+                        isLastPage: res.isLastPage,
+                    }))
                 }).catch(err => {
                 })
             } else {
-                if (isNotification) {
-                    setIsNotification(false)
+                if (state.isNotification) {
+                    setState(prevState => ({
+                        ...prevState,
+                        isNotification: false
+                    }))
                 } else {
-                    await getAllOrdersByStroreId(storeSelected, page, false).then(res => {
-                        store.dispatch(setOrders({ orders: res.orders, currency: currency, stage: "all" }))
-                        setIsLastPage(res.isLastPage)
+                    await getAllOrdersByStroreId(storeSelected, state.page, false).then(res => {
+                        store.dispatch(setOrders({ orders: res.orders, currency: currency, stage: "all", firstUpdate: true }))
+                        setState(prevState => ({
+                            ...prevState,
+                            isLastPage: res.isLastPage
+                        }))
                     }).catch(err => {
                     })
                 }
             }
         }
         fetchAllOrdersByStroreId()
-    }, [page])
+    }, [state.page])
 
-    // get the orders from redux
-    const orders = useSelector((state) => state.orders.all)
 
     // this function is used to show or not show buttons view and reject
     const [showButtons, setShowButtons] = useState([])
     const showButtonViewAndReject = (id, action) => {
         if (action === "pending") {
+            console.log(action)
             setShowButtons((prevShowButtons) => {
                 if (!prevShowButtons.includes(id)) {
                     return [...prevShowButtons, id];
@@ -159,6 +171,7 @@ export default function All() {
         }
     }
 
+    console.log(showButtons);
 
     // change state of order by rejecting or view to the order detailed
     const changeState = (action, id, event) => {
@@ -178,80 +191,115 @@ export default function All() {
     })
 
     const loadMoreItem = () => {
-        console.log("wsel");
-        if (!isLastPage && page === pageAfterLoading) {
-            console.log("page :", page);
-            console.log("afterloading :", pageAfterLoading)
-            setPage((prevPage) => prevPage + 1)
+        // console.log("wsel");
+        if (!state.isLastPage && state.isLoading === false) {
+            console.log("page :", state.page);
+            console.log("---------------------------");
+            setState(prevState => ({
+                ...prevState,
+                page: prevState.page + 1
+            }))
+
         }
     };
 
     const renderLoader = () => {
         return (
-            isLoading &&
-            <View style={styles.loaderStyle}>
-                <ActivityIndicator size="large" color="#7f7f7f" />
-            </View>
+            state.isLoading ?
+                <View style={styles.loaderStyle}>
+                    <ActivityIndicator size="large" color="#7f7f7f" />
+                </View> : null
         );
     };
 
-    const renderItem = ({ item: order }) => {
-        return <View key={order._id}>
-            <TouchableWithoutFeedback onPress={() => showButtonViewAndReject(order._id, order.status)} >
-                <View style={{ marginHorizontal: '5%' }}>
+    const test = (order) => {
+        console.log("tesssssssssssst");
+        return showButtons.includes(order._id) && order.status === "pending" && (
+            <View style={{
+                alignSelf: 'center',
+                flexDirection: 'row',
+            }}>
+                <TouchableOpacity onPress={(event) => { changeState("view", order._id, event) }} style={styles.viewButton}>
+                    <Text style={styles.textViewButton}>View</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => {
+                    setToggleModal({
+                        state: true,
+                        data: {
+                            stage: "all",
+                            action: "rejected",
+                            id: order._id,
+                        }
+                    })
+                }} style={styles.rejectButton}>
+                    <Text style={styles.textRejectButton}>Reject</Text>
+                </TouchableOpacity>
+            </View>
+        )
+    }
 
+    const renderItem = ({ item: order }) => (
+        <View key={order._id}>
+            <TouchableWithoutFeedback onPress={() => showButtonViewAndReject(order._id, order.status)}>
+                <View style={{ marginHorizontal: '5%' }}>
                     {/* mapping orders */}
                     <Order order={order} />
                     {/* showing button view and reject if status pending */}
-                    {
-                        showButtons.includes(order._id) && order.status === "pending" && (
-                            <View style={{
-                                alignSelf: 'center',
-                                flexDirection: 'row',
-                            }}>
-                                <TouchableOpacity onPress={(event) => { changeState("view", order._id, event) }} style={styles.viewButton}>
-                                    <Text style={styles.textViewButton}>View</Text>
-                                </TouchableOpacity>
-
-                                <TouchableOpacity onPress={() => {
-                                    setToggleModal({
-                                        state: true,
-                                        data: {
-                                            stage: "all",
-                                            action: "rejected",
-                                            id: order._id,
-                                        }
-                                    })
-                                }} style={styles.rejectButton}>
-                                    <Text style={styles.textRejectButton}>Reject</Text>
-                                </TouchableOpacity>
-                            </View>
-                        )
-                    }
+                    {/* {showButtons.includes(order._id) && order.status === "pending" && (
+                        <View style={{
+                            alignSelf: 'center',
+                            flexDirection: 'row',
+                        }}>
+                            <TouchableOpacity onPress={(event) => { changeState("view", order._id, event) }} style={styles.viewButton}>
+                                <Text style={styles.textViewButton}>View</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => {
+                                setToggleModal({
+                                    state: true,
+                                    data: {
+                                        stage: "all",
+                                        action: "rejected",
+                                        id: order._id,
+                                    }
+                                })
+                            }} style={styles.rejectButton}>
+                                <Text style={styles.textRejectButton}>Reject</Text>
+                            </TouchableOpacity>
+                        </View>
+                    )} */}
+                    {test(order)}
                 </View>
             </TouchableWithoutFeedback>
-            {/* bar that separate orders */}
-            < View style={styles.barSeparateOrder} />
+
+            {/* bar that separates orders */}
+            <View style={styles.barSeparateOrder} />
         </View>
-    }
+    )
 
     return (
         <>
-            {toggleModal.state && <RejectModal modalProps={{ toggleModal, setToggleModal }} />}
-            <FlatList
-                ref={flatListRef}
-                initialScrollIndex={0}
-                data={orders}
-                renderItem={renderItem}
-                keyExtractor={(item, index) => index.toString()}
-                onEndReached={loadMoreItem}
-                onEndReachedThreshold={0}
-                ListFooterComponent={renderLoader}
-                style={{ marginBottom: '11.5%' }}
-            />
+            <View style={{ flexGrow: 1, flexDirection: "row", minHeight: 2 }}>
+                <FlashList
+                    estimatedItemSize={400}
+                    ref={flatListRef}
+                    initialScrollIndex={0}
+                    data={orders}
+                    renderItem={renderItem}
+                    keyExtractor={(item, index) => index.toString()}
+                    onEndReached={loadMoreItem}
+                    onEndReachedThreshold={0}
+                    ListFooterComponent={renderLoader}
+                    contentContainerStyle={{ paddingBottom: 200 }}
+                />
+            </View>
+
+
             <Toast />
+            {toggleModal.state && <RejectModal modalProps={{ toggleModal, setToggleModal }} />}
+
+
         </>
-    )
+    );
 }
 
 const styles = StyleSheet.create({
