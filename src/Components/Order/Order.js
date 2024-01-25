@@ -1,8 +1,11 @@
 import { StyleSheet, Text, View } from "react-native";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { useTranslation } from "react-i18next";
 
 export default function Order({ order }) {
+    const { t: translation } = useTranslation();
+
     return (<View style={styles.containerOrder} >
         <View style={styles.containerOrderLeft}>
             <Icon name="bag-handle" size={40} color={'#333'} style={{ paddingRight: '1%' }} />
@@ -25,8 +28,8 @@ export default function Order({ order }) {
                         (order.status === "accepted" || order.status === "ready") ? [styles.status, { color: '#5cd964' }] :
                             (order.status === "rejected") ? [styles.status, { color: '#ff3b30' }] :
                                 (order.status === "missed") ? [styles.status, { color: '#ff3b30' }] :
-                                styles.status
-                    }>{order.status.charAt(0).toUpperCase() + order.status.slice(1)}</Text>
+                                    styles.status
+                    }>{translation(order.status.charAt(0).toUpperCase() + order.status.slice(1))}</Text>
                     {/* order.status.charAt(0).toUpperCase() + order.status.slice(1) */}
                 </View>
             </View>

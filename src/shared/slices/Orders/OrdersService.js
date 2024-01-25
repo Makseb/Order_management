@@ -2,10 +2,10 @@ import { BaseUrl } from "../..";
 import { Executor } from "../../Executor";
 
 
-export const getAllOrdersByStroreId = (storeSelected, page, isSilent) => {
+export const getAllOrdersByStroreId = (storeSelected, page, isSilent, frombegining) => {
     return Executor({
         method: 'get',
-        url: BaseUrl + '/manager/order/allorders/' + storeSelected + "/" + page,
+        url: BaseUrl + '/manager/order/allorders/' + storeSelected + "/" + page + "/" + frombegining,
         isSilent: isSilent,
         successFun: () => {
         },
@@ -14,10 +14,10 @@ export const getAllOrdersByStroreId = (storeSelected, page, isSilent) => {
     });
 };
 
-export const getAcceptedOrdersByStroreId = (storeSelected, page, isSilent) => {
+export const getAcceptedOrdersByStroreId = (storeSelected, page, isSilent, frombegining) => {
     return Executor({
         method: 'get',
-        url: BaseUrl + '/manager/order/acceptedorders/' + storeSelected + "/" + page,
+        url: BaseUrl + '/manager/order/acceptedorders/' + storeSelected + "/" + page + "/" + frombegining,
         isSilent: isSilent,
         successFun: () => {
         },
@@ -26,10 +26,10 @@ export const getAcceptedOrdersByStroreId = (storeSelected, page, isSilent) => {
     });
 };
 
-export const getReadyOrdersByStroreId = (storeSelected, page, isSilent) => {
+export const getReadyOrdersByStroreId = (storeSelected, page, isSilent, frombegining) => {
     return Executor({
         method: 'get',
-        url: BaseUrl + '/manager/order/readydorders/' + storeSelected + "/" + page,
+        url: BaseUrl + '/manager/order/readydorders/' + storeSelected + "/" + page + "/" + frombegining,
         isSilent: isSilent,
         successFun: () => {
         },

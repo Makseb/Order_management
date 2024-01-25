@@ -7,8 +7,10 @@ import { deleteOrderFromInProgressStage, updateState } from "../../../../shared/
 import { updateOrderStatus } from "../../../../shared/slices/Orders/OrdersService";
 import { AcceptModal, RejectOrdersDetailedModal, Header } from "../../../../screens/exports";
 import { ListSection } from "../../../../Components/exports";
+import { useTranslation } from "react-i18next";
 
 export default function OrderDetailed({ route }) {
+    const { t: translation } = useTranslation();
 
     const [rejectModal, setRejectModal] = useState({
         state: false,
@@ -81,96 +83,100 @@ export default function OrderDetailed({ route }) {
 
 
     return (
-        (order && expandeds != null) && <View style={styles.container}>
-            <Header />
-            <ScrollView>
-                <View style={{
-                    marginHorizontal: '5%',
-                    flexDirection: 'column',
-                }}>
+        <>
+            {(order && expandeds != null) && <View style={styles.container}>
+                <Header />
+                <ScrollView>
                     <View style={{
-                        flexDirection: 'row',
-                        // justifyContent: 'space-between'
+                        marginHorizontal: '5%',
+                        flexDirection: 'column',
                     }}>
-                        <Text style={[styles.orderIdText, { marginRight: '1%' }]}>Order ID : {order._id.substring(order._id.length - 4)}</Text>
-                        <View style={[styles.tag, {
-                            backgroundColor: (order.status === "accepted" || order.status === "ready") ? "#5cd964" : (order.status === "rejected") ? "#ff3b30" : (order.status === "missed") ? "#ff3b30" : "#fc0"
-                        }]}>
-                            <Text style={styles.textStatus}>
-                                {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
-                            </Text>
+                        <View style={{
+                            flexDirection: 'row',
+                            // justifyContent: 'space-between'
+                        }}>
+                            <Text style={[styles.orderIdText, { marginRight: '1%' }]}>{translation("Order ID")} : {order._id.substring(order._id.length - 4)}</Text>
+                            <View style={[styles.tag, {
+                                backgroundColor: (order.status === "accepted" || order.status === "ready") ? "#5cd964" : (order.status === "rejected") ? "#ff3b30" : (order.status === "missed") ? "#ff3b30" : "#fc0"
+                            }]}>
+                                <Text style={styles.textStatus}>
+                                    {translation(order.status.charAt(0).toUpperCase() + order.status.slice(1))}
+                                </Text>
+                            </View>
                         </View>
+
+                        {/* mapping products and show otther information of the order... */}
+                        <ListSection listProps={{ order, expandeds, handlePress }} />
+
+                        <View style={{ marginBottom: (order.status === "rejected" || order.status === "ready") && "3%" }} />
+
+                        {/* Button reject and accept exist when order is pending */}
+                        {
+                            order.status === "pending" &&
+                            <View style={styles.acceptRejectContainer}>
+                                <TouchableOpacity style={styles.acceptButton} onPress={() => { setToggleModal(true) }}>
+                                    <Text style={styles.textAcceptButton}>{translation("Accept")}</Text>
+                                </TouchableOpacity>
+
+                                <TouchableOpacity onPress={() => {
+                                    setRejectModal({
+                                        state: true,
+                                        data: {
+                                            stage: "all",
+                                            action: "rejected",
+                                            id: order._id,
+                                        }
+                                    })
+                                }}
+                                    style={styles.rejectButton}>
+                                    <Text style={styles.textRejectButton}>{translation("Reject")}</Text>
+                                </TouchableOpacity>
+                            </View>
+                        }
+
+                        {order.status === "accepted" && (
+                            <View style={{
+                                flexDirection: 'column', alignItems: 'center', marginVertical: '3%'
+                            }}>
+                                <TouchableOpacity style={styles.readyButton} onPress={() => {
+                                    // update status in backend to ready
+                                    const updateOrderStatusToReady = async () => {
+                                        await updateOrderStatus({ status: "ready", _id: order._id }, notificationId).then(res => {
+                                            store.dispatch(updateState({ id, action: "ready", stage: stage, updatedAt: res.order.updatedAt }))
+                                        }).catch(err => {
+                                            // Handle error
+                                        })
+                                    }
+                                    updateOrderStatusToReady();
+                                }}>
+                                    <Text style={styles.textReadyButton}>Ready</Text>
+                                </TouchableOpacity>
+                            </View>
+                        )}
+                        {/* show modal if toggleModal true */}
+                        {toggleModal && (
+                            <AcceptModal
+                                modalProps={{
+                                    toggleModal,
+                                    setToggleModal,
+                                    stage,
+                                    id,
+                                    orderId: order._id,
+                                    preparedAt: order.preparedAt,
+                                }}
+                            />
+                        )}
+                        {/* show modal if rejectModal true */}
+                        {rejectModal.state && <RejectOrdersDetailedModal modalProps={{ rejectModal, setRejectModal }} />}
+
                     </View>
 
-                    {/* mapping products and show otther information of the order... */}
-                    <ListSection listProps={{ order, expandeds, handlePress }} />
+                </ScrollView>
 
-                    <View style={{ marginBottom: (order.status === "rejected" || order.status === "ready") && "3%" }} />
+            </View>}
 
-                    {/* Button reject and accept exist when order is pending */}
-                    {
-                        order.status === "pending" &&
-                        <View style={styles.acceptRejectContainer}>
-                            <TouchableOpacity style={styles.acceptButton} onPress={() => { setToggleModal(true) }}>
-                                <Text style={styles.textAcceptButton}>Accept</Text>
-                            </TouchableOpacity>
 
-                            <TouchableOpacity onPress={() => {
-                                setRejectModal({
-                                    state: true,
-                                    data: {
-                                        stage: "all",
-                                        action: "rejected",
-                                        id: order._id,
-                                    }
-                                })
-                            }}
-                                style={styles.rejectButton}>
-                                <Text style={styles.textRejectButton}>Reject</Text>
-                            </TouchableOpacity>
-                        </View>
-                    }
-
-                    {order.status === "accepted" && (
-                        <View style={{
-                            flexDirection: 'column', alignItems: 'center', marginVertical: '3%'
-                        }}>
-                            <TouchableOpacity style={styles.readyButton} onPress={() => {
-                                // update status in backend to ready
-                                const updateOrderStatusToReady = async () => {
-                                    await updateOrderStatus({ status: "ready", _id: order._id }, notificationId).then(res => {
-                                        store.dispatch(updateState({ id, action: "ready", stage: stage, updatedAt: res.order.updatedAt }))
-                                    }).catch(err => {
-                                        // Handle error
-                                    })
-                                }
-                                updateOrderStatusToReady();
-                            }}>
-                                <Text style={styles.textReadyButton}>Ready</Text>
-                            </TouchableOpacity>
-                        </View>
-                    )}
-                    {/* show modal if toggleModal true */}
-                    {toggleModal && (
-                        <AcceptModal
-                            modalProps={{
-                                toggleModal,
-                                setToggleModal,
-                                stage,
-                                id,
-                                orderId: order._id,
-                                preparedAt: order.preparedAt,
-                            }}
-                        />
-                    )}
-                    {/* show modal if rejectModal true */}
-                    {rejectModal.state && <RejectOrdersDetailedModal modalProps={{ rejectModal, setRejectModal }} />}
-
-                </View>
-
-            </ScrollView>
-
-        </View>
+        </>
     );
 };
 const styles = StyleSheet.create({

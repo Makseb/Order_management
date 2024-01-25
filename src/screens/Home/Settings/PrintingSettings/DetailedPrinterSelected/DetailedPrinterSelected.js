@@ -5,10 +5,12 @@ import Feather from "react-native-vector-icons/Feather";
 import { Header } from "../../../../exports"
 import { store } from "../../../../../shared";
 import { removeBluetoothKitchen, removeBluetoothReceipt, removeLanKitchen, removeLanReceipt } from "../../../../../shared/slices/Printer/PrinterSlice";
+import { useTranslation } from "react-i18next";
 export default function DetailedPrinterSelected() {
     const route = useRoute();
     const { printer, from, technology } = route.params;
     const navigation = useNavigation()
+    const { t: translation } = useTranslation();
 
     const disconnectFromPeripheral = id => {
         BleManager.removeBond(id)
@@ -18,7 +20,7 @@ export default function DetailedPrinterSelected() {
             .catch(() => {
                 Toast.show({
                     type: 'error',
-                    text1: "Failed to disconnect from printer",
+                    text1: translation("Failed to disconnect from printer"),
                 })
             });
     };
@@ -35,11 +37,11 @@ export default function DetailedPrinterSelected() {
                 </Text> : <Text style={styles.textName}>{printer.name}</Text>}
 
                 <View >
-                    <Text style={styles.textType}>Type</Text>
-                    <Text style={styles.textFrom}>{from}</Text>
+                    <Text style={styles.textType}>{translation("Type")}</Text>
+                    <Text style={styles.textFrom}>{translation(from)}</Text>
                 </View>
 
-                {technology === "lan" && <View><Text style={styles.textIpAddress}>Ip address</Text>
+                {technology === "lan" && <View><Text style={styles.textIpAddress}>{translation("Ip address")}</Text>
                     <Text style={styles.textPrinterIp}>{printer.ip}</Text></View>}
 
                 <View style={styles.barVerticale} />
@@ -68,7 +70,7 @@ export default function DetailedPrinterSelected() {
                         <Feather name="trash-2" size={16} color={'#ff3b30'} style={{
                             marginRight: '2%'
                         }} />
-                        <Text style={styles.textRemovePrinter}>Remove printer</Text>
+                        <Text style={styles.textRemovePrinter}>{translation("Remove printer")}</Text>
                     </View>
 
                 </TouchableWithoutFeedback>

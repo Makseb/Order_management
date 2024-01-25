@@ -5,8 +5,7 @@ import { setRootLoading } from './slices/rootSlice';
 
 import Intersptor from "./Intersptor"
 
-export function Executor(config) {
-
+export function Executor(config,translation) {
     return new Promise((resolve, reject) => {
 
         !config.isSilent && store.dispatch(setRootLoading(true));
@@ -27,7 +26,7 @@ export function Executor(config) {
                 successStatus && config.withSuccessToast &&
                     Toast.show({
                         type: 'success',
-                        text1: res?.data?.message,
+                        text1: translation(res?.data?.message),
                     });
 
                 resolve(res?.data);
@@ -51,7 +50,7 @@ export function Executor(config) {
                 failedStatus && config.withErrorToast &&
                     Toast.show({
                         type: 'error',
-                        text1: err?.response?.data?.message,
+                        text1: translation(err?.response?.data?.message),
                     });
 
 

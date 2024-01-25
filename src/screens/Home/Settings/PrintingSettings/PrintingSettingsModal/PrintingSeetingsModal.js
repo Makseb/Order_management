@@ -5,9 +5,11 @@ import AntDesign from "react-native-vector-icons/AntDesign"
 import { Text } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { Bluetooth, Lanwifi } from "../../../../../assets/images/exports";
+import { useTranslation } from "react-i18next";
 
 export default function PrintingSeetingsModal({ modalProps }) {
     const { toggleModal, setToggleModal } = modalProps
+    const { t: translation } = useTranslation();
 
     const navigation = useNavigation()
     return (
@@ -33,17 +35,17 @@ export default function PrintingSeetingsModal({ modalProps }) {
                     marginBottom: '3%'
                 }}>
                     <TouchableWithoutFeedback onPress={() => {
-                        navigation.navigate("SearchPrinter", { title: "Wired or wifi network", description: "Make sure the printer and this device are connected to the same network.", img: Lanwifi })
+                        navigation.navigate("SearchPrinter", { title: translation("Wired or wifi network"), description: translation("Make sure the printer and this device are connected to the same network."), img: Lanwifi })
                         setToggleModal(false)
 
                     }} style={{
                         justifyContent: 'center',
                         alignItems: 'center',
                     }}>
-                        <Text style={styles.wiredOrWifiNetworkText}>Wired or wifi network</Text>
+                        <Text style={styles.wiredOrWifiNetworkText}>{translation("Wired or wifi network")}</Text>
                     </TouchableWithoutFeedback>
                     <TouchableWithoutFeedback onPress={() => {
-                        navigation.navigate("SearchPrinter", { title: "Bluetooth", description: "To connect to the Bluetooth printer, press the Bluetooth button on the printer for about 10 seconds, then press the \"Start Searching\" button in the app.", img: Bluetooth })
+                        navigation.navigate("SearchPrinter", { title: "Bluetooth", description: translation("To connect to the Bluetooth printer, press the Bluetooth button on the printer for about 10 seconds, then press the \"Start Searching\" button in the app."), img: Bluetooth })
                         setToggleModal(false)
                     }} style={{
                         justifyContent: 'center',

@@ -11,7 +11,7 @@ export const PrinterInitialState = {
     bluetoothkitchen: []
 };
 
-export const PrinterSlice = createSlice({
+export const printerSlice = createSlice({
     name: 'printer',
     initialState: PrinterInitialState,
     reducers: {
@@ -82,4 +82,4 @@ export const PrinterSlice = createSlice({
     },
 });
 
-export const { setLan, setLanKitchen, setLanReceipt, removeLanKitchen, removeLanReceipt, setBluetooth, setBluetoothKitchen, removeBluetoothKitchen, setBluetoothReceipt, removeBluetoothReceipt,resetBluetooth } = PrinterSlice.actions;
+export const { setLan, setLanKitchen, setLanReceipt, removeLanKitchen, removeLanReceipt, setBluetooth, setBluetoothKitchen, removeBluetoothKitchen, setBluetoothReceipt, removeBluetoothReceipt,resetBluetooth } = printerSlice.actions;

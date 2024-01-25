@@ -7,8 +7,11 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 const Tab = createBottomTabNavigator();
 
 import { Orders, Settings } from '../../exports';
+import { useTranslation } from 'react-i18next';
 
 export default function Footer() {
+    const { t: translation } = useTranslation();
+
     return (
         <Tab.Navigator
             screenOptions={{
@@ -33,7 +36,7 @@ export default function Footer() {
 
                 },
             }}>
-            <Tab.Screen name="Orders" component={Orders} options={{
+            <Tab.Screen name={translation("Orders")} component={Orders} options={{
                 tabBarLabelPosition: 'below-icon',
                 tabBarLabelStyle: {
                     fontFamily: 'Montserrat-Light',
@@ -44,7 +47,7 @@ export default function Footer() {
                 ),
             }}
             />
-            <Tab.Screen name="Settings" component={Settings} options={{
+            <Tab.Screen name={translation("Settings")} component={Settings} options={{
                 tabBarLabelPosition: 'below-icon',
                 tabBarLabelStyle: {
                     fontFamily: 'Montserrat-Light',

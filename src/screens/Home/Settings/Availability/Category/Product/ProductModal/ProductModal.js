@@ -4,13 +4,15 @@ import { useSelector } from "react-redux"
 import AntDesign from "react-native-vector-icons/AntDesign"
 import { SelectList } from "react-native-dropdown-select-list"
 import { useState } from "react"
-import Toast from "react-native-toast-message"
 import Modal from "react-native-modal";
 import { updateProductAvailabiltyByMode } from "../../../../../../../shared/slices/Availability/AvailabilityService"
 import { setProducts } from "../../../../../../../shared/slices/Availability/AvailabilitySlice"
 import { store } from "../../../../../../../shared"
+import { useTranslation } from "react-i18next"
 
 export default function ProductModal({ modalProps }) {
+    const { t: translation } = useTranslation();
+
     const { productSelected, setProductSelected } = modalProps
 
     // get modal of product selected 
@@ -22,130 +24,132 @@ export default function ProductModal({ modalProps }) {
     // const [checkMode, setCheckMode] = useState()
     const [checked, setChecked] = useState(null)
     return (
-        <Modal
-            isVisible={productSelected.state}
-            onBackdropPress={() => {
-                setProductSelected({
-                    ...productSelected,
-                    state: false,
-                })
-            }}
-            style={{ justifyContent: 'flex-end', margin: 0 }}>
-            <View style={styles.container}>
-                <TouchableWithoutFeedback onPress={() => {
+        <>
+            <Modal
+                isVisible={productSelected.state}
+                onBackdropPress={() => {
                     setProductSelected({
                         ...productSelected,
                         state: false,
                     })
-                }}>
-                    <AntDesign
-                        style={styles.iconClock}
-                        name="arrowleft"
-                        size={20}
-                    />
-                </TouchableWithoutFeedback>
-                <View style={styles.containerSelectList}>
-                    <SelectList
-                        defaultOption={{ key: product.availabilitys[0].mode._id, value: product.availabilitys[0].mode.name }}
-                        boxStyles={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            height: 51,
-                            borderRadius: 24,
-                            backgroundColor: 'white',
-                            borderColor: '#ddd',
-                        }}
-                        dropdownStyles={{
-                            borderRadius: 24,
-                            backgroundColor: 'white',
-                            borderColor: '#ddd',
-                        }}
-                        dropdownTextStyles={{
-                            color: '#202020',
-                            fontFamily: 'Montserrat-Light',
-                            fontSize: 16
-                        }}
-                        inputStyles={{
-                            fontFamily: 'Montserrat-Light',
-                            fontSize: 16,
-                            color: '#202020'
-                        }}
-                        setSelected={(val) => {
-                            const availability = product.availabilitys.filter(availability => availability.mode._id === val);
-                            availability[0].availability ? setChecked({
-                                value: "available",
-                                idMode: val
-                            }) : setChecked({
-                                value: "notavailable",
-                                idMode: val
-                            })
-                        }}
-                        data={product.availabilitys.map(item => ({ key: item.mode._id, value: item.mode.name }))}
-                        save="key"
-                    />
-                </View>
-                <Text style={styles.textOutOfStock}>Out of stock</Text>
-                <View style={styles.containerRadioButton}>
-                    <RadioButton.Item
-                        color="#df8f17"
-                        label="Available"
-                        value="available"
-                        labelStyle={styles.radioButton}
-                        status={checked?.value === 'available' ? 'checked' : 'unchecked'}
-                        onPress={async () => {
-                            const data = {
-                                idCategory: product.category,
-                                idMode: checked.idMode,
-                                idProduct: product._id,
-                                storeId: storeSelected,
-                                value: true
-                            }
-                            const modifyProductAvailabiltyByMode = async (data) => {
-                                await updateProductAvailabiltyByMode(data).then(res => {
-                                    store.dispatch(setProducts({ products: res.products }))
-                                }).catch(err => {
+                }}
+                style={{ justifyContent: 'flex-end', margin: 0 }}>
+                <View style={styles.container}>
+                    <TouchableWithoutFeedback onPress={() => {
+                        setProductSelected({
+                            ...productSelected,
+                            state: false,
+                        })
+                    }}>
+                        <AntDesign
+                            style={styles.iconClock}
+                            name="arrowleft"
+                            size={20}
+                        />
+                    </TouchableWithoutFeedback>
+                    <View style={styles.containerSelectList}>
+                        <SelectList
+                            defaultOption={{ key: product.availabilitys[0].mode._id, value: product.availabilitys[0].mode.name }}
+                            boxStyles={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                height: 51,
+                                borderRadius: 24,
+                                backgroundColor: 'white',
+                                borderColor: '#ddd',
+                            }}
+                            dropdownStyles={{
+                                borderRadius: 24,
+                                backgroundColor: 'white',
+                                borderColor: '#ddd',
+                            }}
+                            dropdownTextStyles={{
+                                color: '#202020',
+                                fontFamily: 'Montserrat-Light',
+                                fontSize: 16
+                            }}
+                            inputStyles={{
+                                fontFamily: 'Montserrat-Light',
+                                fontSize: 16,
+                                color: '#202020'
+                            }}
+                            setSelected={(val) => {
+                                const availability = product.availabilitys.filter(availability => availability.mode._id === val);
+                                availability[0].availability ? setChecked({
+                                    value: "available",
+                                    idMode: val
+                                }) : setChecked({
+                                    value: "notavailable",
+                                    idMode: val
+                                })
+                            }}
+                            data={product.availabilitys.map(item => ({ key: item.mode._id, value: item.mode.name }))}
+                            save="key"
+                        />
+                    </View>
+                    <Text style={styles.textOutOfStock}>{translation("Out of stock")}</Text>
+                    <View style={styles.containerRadioButton}>
+                        <RadioButton.Item
+                            color="#df8f17"
+                            label={translation("Available")}
+                            value="available"
+                            labelStyle={styles.radioButton}
+                            status={checked?.value === 'available' ? 'checked' : 'unchecked'}
+                            onPress={async () => {
+                                const data = {
+                                    idCategory: product.category,
+                                    idMode: checked.idMode,
+                                    idProduct: product._id,
+                                    storeId: storeSelected,
+                                    value: true
+                                }
+                                const modifyProductAvailabiltyByMode = async (data) => {
+                                    await updateProductAvailabiltyByMode(data).then(res => {
+                                        store.dispatch(setProducts({ products: res.products }))
+                                    }).catch(err => {
+                                    })
+                                }
+                                await modifyProductAvailabiltyByMode(data)
+                                setChecked({
+                                    ...checked,
+                                    value: 'available'
                                 })
                             }
-                            await modifyProductAvailabiltyByMode(data)
-                            setChecked({
-                                ...checked,
-                                value: 'available'
-                            })
-                        }
-                        }
-                    />
-                    <RadioButton.Item
-                        color="#df8f17"
-                        label="Not available"
-                        labelStyle={styles.radioButton}
-                        value="notavailable"
-                        status={checked?.value === 'notavailable' ? 'checked' : 'unchecked'}
-                        onPress={async () => {
-                            const data = {
-                                idMode: checked.idMode,
-                                idProduct: product._id,
-                                storeId: storeSelected,
-                                value: false,
-                                idCategory: product.category,
                             }
-                            const modifyProductAvailabiltyByMode = async (data) => {
-                                await updateProductAvailabiltyByMode(data).then(res => {
-                                    store.dispatch(setProducts({ products: res.products }))
-                                }).catch(err => {
+                        />
+                        <RadioButton.Item
+                            color="#df8f17"
+                            label={translation("Not available")}
+                            labelStyle={styles.radioButton}
+                            value="notavailable"
+                            status={checked?.value === 'notavailable' ? 'checked' : 'unchecked'}
+                            onPress={async () => {
+                                const data = {
+                                    idMode: checked.idMode,
+                                    idProduct: product._id,
+                                    storeId: storeSelected,
+                                    value: false,
+                                    idCategory: product.category,
+                                }
+                                const modifyProductAvailabiltyByMode = async (data) => {
+                                    await updateProductAvailabiltyByMode(data).then(res => {
+                                        store.dispatch(setProducts({ products: res.products }))
+                                    }).catch(err => {
+                                    })
+                                }
+                                await modifyProductAvailabiltyByMode(data)
+                                setChecked({
+                                    ...checked,
+                                    value: 'notavailable'
                                 })
                             }
-                            await modifyProductAvailabiltyByMode(data)
-                            setChecked({
-                                ...checked,
-                                value: 'notavailable'
-                            })
-                        }
-                        }
-                    />
+                            }
+                        />
+                    </View>
                 </View>
-            </View>
-            <Toast />
-        </Modal >
+            </Modal >
+
+        </>
     )
 }
 const styles = StyleSheet.create({
@@ -179,7 +183,7 @@ const styles = StyleSheet.create({
         lineHeight: 45,
     },
     containerRadioButton: {
-        marginBottom: '10%',
+        marginBottom: '20%',
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center'

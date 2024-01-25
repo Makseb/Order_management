@@ -6,8 +6,11 @@ import { useSelector } from "react-redux";
 import { store } from "../../../../../../shared";
 import { Switch } from "react-native-switch";
 import { Header, ProductModal } from "../../../../../exports";
+import { useTranslation } from "react-i18next";
 
 export default function Product({ route }) {
+    const { t: translation } = useTranslation();
+
     // get store selected
     const storeSelected = useSelector((state) => state.authentification.storeSelected.store._id)
 
@@ -45,7 +48,7 @@ export default function Product({ route }) {
             <View style={{
                 marginHorizontal: '5%'
             }}>
-                <Text style={styles.textTitle}>Products</Text>
+                <Text style={styles.textTitle}>{translation('Products')}</Text>
                 {productSelected.state && <ProductModal modalProps={{ productSelected, setProductSelected }} />}
                 <ScrollView>
                     {
@@ -107,7 +110,8 @@ export default function Product({ route }) {
                                                     fontFamily: "Roboto-Light",
                                                     color: "#7f7f7f",
                                                     fontSize: 14
-                                                }}>{product.description}</Text>
+                                                }}>{product.description.length > 25 ? product.description.substring(0, 25) + "..." : product.description}</Text>
+                                                {/* if string>25 get only 25 characters */}
                                             </View>
                                         </View>
                                     </View>

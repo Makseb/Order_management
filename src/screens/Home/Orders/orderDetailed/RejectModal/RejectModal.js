@@ -6,9 +6,11 @@ import { updateOrderStatus } from "../../../../../shared/slices/Orders/OrdersSer
 import { useSelector } from "react-redux";
 import { updateState } from "../../../../../shared/slices/Orders/OrdersSlice";
 import { store } from "../../../../../shared";
+import { useTranslation } from "react-i18next";
 
 
 export default function RejectOrdersDetailedModal({ modalProps }) {
+    const { t: translation } = useTranslation();
 
     const { rejectModal, setRejectModal } = modalProps
 
@@ -53,7 +55,7 @@ export default function RejectOrdersDetailedModal({ modalProps }) {
                         }
                         updateOrderStatusToRejected()
                     }}>
-                        <Text style={styles.textRejectButton}>Reject</Text>
+                        <Text style={styles.textRejectButton}>{translation("Reject")}</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -84,7 +86,7 @@ const styles = StyleSheet.create({
     },
     rejectButton: {
         height: 45,
-        width: '30%',
+        width: '40%',
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#ff3b30',

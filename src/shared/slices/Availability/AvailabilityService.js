@@ -18,7 +18,7 @@ export const updateCategoryAvailabiltyByMode = (data) => {
         url: BaseUrl + '/manager/category/updateavailabiltybymode',
         isSilent: false,
         withErrorToast: false,
-        withSuccessToast: true,
+        withSuccessToast: false,
     });
 };
 
@@ -29,7 +29,7 @@ export const updateCategoryAvailabilty = (data) => {
         url: BaseUrl + '/manager/category/updateavailabilty',
         isSilent: false,
         withErrorToast: false,
-        withSuccessToast: true,
+        withSuccessToast: false,
     });
 };
 
@@ -50,7 +50,7 @@ export const updateProductAvailabilty = (data) => {
         url: BaseUrl + '/manager/product/updateavailabilty',
         isSilent: false,
         withErrorToast: false,
-        withSuccessToast: true,
+        withSuccessToast: false,
     });
 };
 
@@ -61,7 +61,7 @@ export const updateProductAvailabiltyByMode = (data) => {
         url: BaseUrl + '/manager/product/updateavailabiltybymode',
         isSilent: false,
         withErrorToast: false,
-        withSuccessToast: true,
+        withSuccessToast: false,
     });
 };
 

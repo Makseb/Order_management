@@ -6,11 +6,14 @@ import { RadioButton } from "react-native-paper"
 import { useSelector } from "react-redux";
 import { store } from "../../../../../../shared";
 import { removeLanKitchen, removeLanReceipt, setLanKitchen, setLanReceipt } from "../../../../../../shared/slices/Printer/PrinterSlice";
+import { useTranslation } from "react-i18next";
+import Toast from "react-native-toast-message";
 
 export default function LanModal({ modalProps }) {
     const { setToggleModal, toggleModal } = modalProps
     const lankitchen = useSelector((state) => state.printer.lankitchen)
     const lanreceipt = useSelector((state) => state.printer.lanreceipt)
+    const { t: translation } = useTranslation();
 
     return (
         <Modal
@@ -22,6 +25,8 @@ export default function LanModal({ modalProps }) {
                 })
             }}
             style={{ justifyContent: 'flex-end', margin: 0 }}>
+            <Toast />
+
             <View style={styles.container}>
                 <TouchableWithoutFeedback onPress={() => {
                     setToggleModal({
@@ -43,7 +48,7 @@ export default function LanModal({ modalProps }) {
                     <View style={styles.containerRadioButton}>
                         <RadioButton.Item
                             color="#df8f17"
-                            label="Receipt printer"
+                            label={translation("Receipt printer")}
                             value="Receipt printer"
                             labelStyle={styles.radioButton}
 
@@ -56,7 +61,7 @@ export default function LanModal({ modalProps }) {
                         />
                         <RadioButton.Item
                             color="#df8f17"
-                            label="Kitchen printer"
+                            label={translation("Kitchen printer")}
                             labelStyle={styles.radioButton}
                             value="Kitchen printer"
                             status={lankitchen?.find(printer => printer?.ip === toggleModal.value?.ip) ? 'checked' : 'unchecked'}
@@ -98,7 +103,7 @@ const styles = StyleSheet.create({
         color: '#030303',
         fontFamily: 'Montserrat-Light',
         borderRadius: 24,
-        fontSize: 16,
+        fontSize: 12,
         lineHeight: 45,
     }
 })

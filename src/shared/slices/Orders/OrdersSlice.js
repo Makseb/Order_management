@@ -40,7 +40,6 @@ export const ordersSlice = createSlice({
             }
             if (action.payload.stage === "all") {
                 if (action.payload.firstUpdate === true) {
-                    console.log("eyy!!");
                     state.all = data
                 } else {
                     state.all.push(...data);

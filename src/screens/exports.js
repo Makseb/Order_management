@@ -24,5 +24,9 @@ export { default as BluetoothModal } from './Home/Settings/PrintingSettings/Sear
 export { default as RejectModal } from './Home/Orders/Stages/All/RejectModal/RejectModal'
 
 export { default as RejectOrdersDetailedModal } from './Home/Orders/OrderDetailed/RejectModal/RejectModal'
+export { default as ForgotPassword } from './Authentification/ForgotPassword/ForgotPassword'
+export { default as ResetPassword } from './Authentification/ResetPassword/ResetPassword'
 
+
+export { default as Languages } from './Home/Settings/Languages/Languages'
 

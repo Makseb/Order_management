@@ -6,6 +6,7 @@ import { updateOrderStatus } from "../../../../../../shared/slices/Orders/Orders
 import { useSelector } from "react-redux";
 import { updateState } from "../../../../../../shared/slices/Orders/OrdersSlice";
 import { store } from "../../../../../../shared";
+import { useTranslation } from "react-i18next";
 
 
 export default function RejectModal({ modalProps }) {
@@ -24,6 +25,8 @@ export default function RejectModal({ modalProps }) {
 
     // get notification id from redux
     const notificationId = useSelector((state) => state.authentification.notificationId)
+
+    const { t: translation } = useTranslation();
 
     return (
         <Modal
@@ -51,7 +54,7 @@ export default function RejectModal({ modalProps }) {
                         }
                         updateOrderStatusToRejected()
                     }}>
-                        <Text style={styles.textRejectButton}>Reject</Text>
+                        <Text style={styles.textRejectButton}>{translation("Reject")}</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -82,7 +85,7 @@ const styles = StyleSheet.create({
     },
     rejectButton: {
         height: 45,
-        width: '30%',
+        width: '40%',
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#ff3b30',

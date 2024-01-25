@@ -8,6 +8,9 @@ import { Order } from "../../../../../Components/exports";
 import { useNavigation } from "@react-navigation/native";
 import EventSource from "react-native-sse";
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
+import { FlashList } from "@shopify/flash-list";
+import Sound from "react-native-sound";
+import { useTranslation } from "react-i18next";
 
 export default function Ready() {
     // get notification id
@@ -34,61 +37,71 @@ export default function Ready() {
 
     const navigation = useNavigation()
 
+    const { t: translation } = useTranslation();
 
     useEffect(() => {
-
         const eventSource = new EventSource(BaseUrl + "/sse/sse/" + storeSelected + "/" + notificationId);
 
         const handleEventMessage = (data) => {
             if (!data.data.toLowerCase().includes("welcome")) {
-                const fetchAllOrdersByStroreId = async () => {
-
-                    flatListRef.current.scrollToOffset({ offset: 0 })
-
-                    requestAnimationFrame(async () => {
-                        await getReadyOrdersByStroreId(storeSelected, 1, false).then(res => {
-                            store.dispatch(setOrders({ orders: res.orders, currency: currency, stage: "ready", firstUpdate: true }))
-                            setState(prevState => ({
-                                ...prevState,
-                                page: 1,
-                                isLastPage: res.isLastPage,
-                                isNotification: true
-                            }))
-
-                            if (data.data.includes("{")) {
+                const fetchReadyOrdersByStroreId = async () => {
+                    if (data.data.includes("{")) {
+                        flatListRef.current.scrollToOffset({ offset: 0 })
+                        requestAnimationFrame(async () => {
+                            await getReadyOrdersByStroreId(storeSelected, state.page + 1, false, true).then(res => {
+                                store.dispatch(setOrders({ orders: res.orders, currency: currency, stage: "ready", firstUpdate: true }))
                                 Toast.show({
                                     type: 'success',
-                                    text1: "Order has been changed from another interface.",
+                                    text1: translation("Order has been changed from another interface."),
                                 });
-                            } else if (data.data.includes("Your order is missed")) {
-                                Toast.show({
-                                    type: 'error',
-                                    text1: "The order is missed.",
-                                });
-                            } else {
-                                Toast.show({
-                                    type: 'success',
-                                    text1: "Order received. 3 minutes and it will be missed.",
-                                });
-                            }
-                            var whoosh = new Sound('ring.mp3', Sound.MAIN_BUNDLE, (error) => {
-                                if (error) {
-                                    return;
-                                }
-                                whoosh.play((success) => {
-                                    if (success) {
-                                    } else {
+                                var whoosh = new Sound('ring.mp3', Sound.MAIN_BUNDLE, (error) => {
+                                    if (error) {
+                                        return;
                                     }
+                                    whoosh.play((success) => {
+                                        if (success) {
+                                        } else {
+                                        }
+                                    });
                                 });
-                            });
-
-
-                        }).catch(err => {
-                            console.log(err);
+                            }).catch(err => {
+                                console.log(err);
+                            })
                         })
-                    });
+
+                    } else if (data.data.includes("Your order is missed")) {
+                        Toast.show({
+                            type: 'error',
+                            text1: translation("Order missed."),
+                        });
+                        var whoosh = new Sound('ring.mp3', Sound.MAIN_BUNDLE, (error) => {
+                            if (error) {
+                                return;
+                            }
+                            whoosh.play((success) => {
+                                if (success) {
+                                } else {
+                                }
+                            });
+                        });
+                    } else {
+                        Toast.show({
+                            type: 'success',
+                            text1: translation("Order received. 3 minutes and it will be missed."),
+                        });
+                        var whoosh = new Sound('ring.mp3', Sound.MAIN_BUNDLE, (error) => {
+                            if (error) {
+                                return;
+                            }
+                            whoosh.play((success) => {
+                                if (success) {
+                                } else {
+                                }
+                            });
+                        });
+                    }
                 }
-                fetchAllOrdersByStroreId()
+                fetchReadyOrdersByStroreId()
             }
         }
 
@@ -97,27 +110,18 @@ export default function Ready() {
             handleEventMessage(data)
         });
 
-        return () => {
-            // Log that the component is unmounting
-            console.log('Restaurant App is unmounting...');
-            // Remove the event listener and close the connection
-            console.log('Removing event listener and closing EventSource connection...');
-            eventSource.removeEventListener('message', handleEventMessage);
-            eventSource.close();
-        };
-
-    }, []);
-
-    useEffect(() => {
-
-        // this function will get ready orders that was related to the store choosen from login step
         const fetchReadyOrdersByStroreId = async () => {
-            if (state.page > 1) {
+            if (state.isNotification) {
+                setState(prevState => ({
+                    ...prevState,
+                    isNotification: false
+                }))
+            } else if (state.page > 1) {
                 setState(prevState => ({
                     ...prevState,
                     isLoading: true,
                 }))
-                await getReadyOrdersByStroreId(storeSelected, state.page, true).then(res => {
+                await getReadyOrdersByStroreId(storeSelected, state.page, true, false).then(res => {
                     store.dispatch(setOrders({ orders: res.orders, currency: currency, stage: "ready" }))
                     setState(prevState => ({
                         ...prevState,
@@ -127,25 +131,28 @@ export default function Ready() {
                 }).catch(err => {
                 })
             } else {
-                if (state.isNotification) {
+                await getReadyOrdersByStroreId(storeSelected, state.page, false, true).then(res => {
+                    store.dispatch(setOrders({ orders: res.orders, currency: currency, stage: "ready", firstUpdate: true }))
                     setState(prevState => ({
                         ...prevState,
-                        isNotification: false,
+                        isLastPage: res.isLastPage
                     }))
-                } else {
-                    await getReadyOrdersByStroreId(storeSelected, state.page, false).then(res => {
-                        store.dispatch(setOrders({ orders: res.orders, currency: currency, stage: "ready", firstUpdate: true }))
-                        setState(prevState => ({
-                            ...prevState,
-                            isLastPage: res.isLastPage,
-                        }))
-                    }).catch(err => {
-                    })
-                }
+                }).catch(err => {
+                })
             }
         }
         fetchReadyOrdersByStroreId()
-    }, [state.page])
+
+        return () => {
+            // Log that the component is unmounting
+            // console.log('Restaurant App is unmounting...');
+            // Remove the event listener and close the connection
+            // console.log('Removing event listener and closing EventSource connection...');
+            eventSource.removeEventListener('message', handleEventMessage);
+            eventSource.close();
+        };
+
+    }, [state.page]);
 
     const showButtonViewAndReject = (id) => {
         navigation.navigate('OrderDetailed', { id, stage: "ready" })
@@ -187,23 +194,20 @@ export default function Ready() {
     }
 
     return (
-        <>
-            <FlatList
-                removeClippedSubviews={true}
+        <View style={{ flexGrow: 1, flexDirection: "row", minHeight: 100 }}>
+            <FlashList
+                estimatedItemSize={100}
                 ref={flatListRef}
                 initialScrollIndex={0}
                 data={orders}
                 renderItem={renderItem}
-                keyExtractor={(item, index) => index.toString()}
+                keyExtractor={(item) => item._id.toString()}
                 onEndReached={loadMoreItem}
                 onEndReachedThreshold={0}
                 ListFooterComponent={renderLoader}
-                style={{ marginBottom: '11.5%' }}
+                contentContainerStyle={{ paddingBottom: 200 }}
             />
-            <Toast />
-        </>
-
-
+        </View>
     )
 }
 

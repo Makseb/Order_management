@@ -8,9 +8,12 @@ import { View, Text, TouchableOpacity, Image, NativeModules, StyleSheet, Touchab
 import { setRootLoading } from "../../../../../shared/slices/rootSlice";
 import BleManager from 'react-native-ble-manager';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
+import { useTranslation } from "react-i18next";
 
 
 export default function SearchPrinter() {
+    const { t: translation } = useTranslation();
+
     const route = useRoute();
     const { title, description, img } = route.params;
     const [showText, setShowText] = useState({
@@ -189,24 +192,32 @@ export default function SearchPrinter() {
                         } else {
                             Toast.show({
                                 type: 'error',
-                                text1: 'Please accept permission(s).',
+                                text1: translation('Please accept permission(s).'),
                             })
                         }
                     } else {
                         store.dispatch(setRootLoading(true));
                         const scanNetwork = await NativeModules.MyNativeModule.scanNetwork()
                         console.log(scanNetwork);
+                        let formattedData = []
+                        for (let i = 0; i < scanNetwork.length; i++) {
+                            formattedData[i] = scanNetwork[i]
+                            formattedData[i].hostname = translation(scanNetwork[i].hostname.substring(0, scanNetwork[i].hostname.indexOf(" "))) +
+
+                                scanNetwork[i].hostname.substring(scanNetwork[i].hostname.indexOf(" "), scanNetwork[i].hostname.length)
+                            formattedData[i].ip = scanNetwork[i].ip
+                        }
                         store.dispatch(setRootLoading(false))
-                        store.dispatch(setLan({ lan: scanNetwork }))
+                        store.dispatch(setLan({ lan: formattedData }))
                         setShowText({
                             value: "lan",
                             state: true
                         })
                     }
                 }
-                
+
                 } style={styles.button}>
-                    <Text style={styles.textButton}>Scan</Text>
+                    <Text style={styles.textButton}>{translation("Scan")}</Text>
                 </TouchableOpacity>
             </View>
 

@@ -6,9 +6,12 @@ import { updateState } from "../../../../../shared/slices/Orders/OrdersSlice";
 import { updateOrderStatus } from "../../../../../shared/slices/Orders/OrdersService";
 import { store } from "../../../../../shared";
 import { useSelector } from "react-redux";
-import { Toast } from 'react-native-toast-message/lib/src/Toast';
+import Toast from "react-native-toast-message";
+import { useTranslation } from "react-i18next";
 
 export default function AcceptModal({ modalProps }) {
+    const { t: translation } = useTranslation();
+
     const { toggleModal, setToggleModal, stage, id, orderId, preparedAt } = modalProps;
 
     // get notification id from redux
@@ -21,66 +24,70 @@ export default function AcceptModal({ modalProps }) {
         setMinutes(limitedInput);
     };
     return (
-        <Modal
-            isVisible={toggleModal}
-            onBackdropPress={() => setToggleModal(false)}
-            style={{ justifyContent: 'flex-end', margin: 0 }}>
-            <View
-                style={styles.container}>
-                <TouchableWithoutFeedback onPress={() => setToggleModal(!toggleModal)}>
-                    <AntDesign
-                        style={styles.iconClock}
-                        name="arrowleft"
-                        size={20}
-                    />
-                </TouchableWithoutFeedback>
-                <Text style={styles.text}>{preparedAt ? "Request for preparing at" : "Prepared at"}</Text>
+        <>
+            <Modal
+                isVisible={toggleModal}
+                onBackdropPress={() => setToggleModal(false)}
+                style={{ justifyContent: 'flex-end', margin: 0 }}>
+                <Toast />
+                <View
+                    style={styles.container}>
+                    <TouchableWithoutFeedback onPress={() => setToggleModal(!toggleModal)}>
+                        <AntDesign
+                            style={styles.iconClock}
+                            name="arrowleft"
+                            size={20}
+                        />
+                    </TouchableWithoutFeedback>
+                    <Text style={styles.text}>{preparedAt ? translation("Request for preparing at") : translation("Prepared at")}</Text>
 
 
-                {!preparedAt && <View style={styles.inputContainer}>
-                    <AntDesign name="clockcircleo" size={20} style={{ color: '#716D6D', position: 'absolute', zIndex: 2, left: 10 }} />
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Minutes"
-                        keyboardType="numeric"
-                        placeholderTextColor="#030303"
-                        value={minutes}
-                        onChangeText={handleMinutesChange}
-                    />
-                </View>}
-                {preparedAt && <View style={styles.containerPreparation}>
-                    <Text style={styles.textPreparation}>{preparedAt.date} {preparedAt.time}</Text>
-                </View>
-                }
-                <View style={styles.acceptContainer}>
-                    <TouchableOpacity style={styles.acceptButton} onPress={() => {
-                        if ((minutes === null || minutes === "") && !preparedAt) {
-                            Toast.show({
-                                type: 'error',
-                                text1: "Please select time.",
-                            });
-                        } else {
-                            // update status in backend to accepted
-                            const updateOrderStatusToAccepted = async () => {
-                                !preparedAt ? (await updateOrderStatus({ status: "accepted", _id: orderId, preparationTime: minutes }, notificationId).then(res => {
-                                    store.dispatch(updateState({ id, action: "accepted", stage: stage, updatedAt: res.order.updatedAt, preparedAt: res.order.preparedAt }))
-                                }).catch(err => { })
-                                ) : (
-                                    await updateOrderStatus({ status: "accepted", _id: orderId }).then(res => {
-                                        store.dispatch(updateState({ id, action: "accepted", stage: stage, updatedAt: res.order.updatedAt }, notificationId))
+                    {!preparedAt && <View style={styles.inputContainer}>
+                        <AntDesign name="clockcircleo" size={20} style={{ color: '#716D6D', position: 'absolute', zIndex: 2, left: 10 }} />
+                        <TextInput
+                            style={styles.input}
+                            placeholder={translation("Minutes")}
+                            keyboardType="numeric"
+                            placeholderTextColor="#030303"
+                            value={minutes}
+                            onChangeText={handleMinutesChange}
+                        />
+                    </View>}
+                    {preparedAt && <View style={styles.containerPreparation}>
+                        <Text style={styles.textPreparation}>{preparedAt.date} {preparedAt.time}</Text>
+                    </View>
+                    }
+                    <View style={styles.acceptContainer}>
+                        <TouchableOpacity style={styles.acceptButton} onPress={() => {
+                            if ((minutes === null || minutes === "") && !preparedAt) {
+                                Toast.show({
+                                    type: 'error',
+                                    text1: translation("Please select time."),
+                                });
+                            } else {
+                                // update status in backend to accepted
+                                const updateOrderStatusToAccepted = async () => {
+                                    !preparedAt ? (await updateOrderStatus({ status: "accepted", _id: orderId, preparationTime: minutes }, notificationId).then(res => {
+                                        store.dispatch(updateState({ id, action: "accepted", stage: stage, updatedAt: res.order.updatedAt, preparedAt: res.order.preparedAt }))
                                     }).catch(err => { })
-                                )
+                                    ) : (
+                                        await updateOrderStatus({ status: "accepted", _id: orderId }).then(res => {
+                                            store.dispatch(updateState({ id, action: "accepted", stage: stage, updatedAt: res.order.updatedAt }, notificationId))
+                                        }).catch(err => { })
+                                    )
+                                }
+                                updateOrderStatusToAccepted()
+                                setToggleModal(false)
                             }
-                            updateOrderStatusToAccepted()
-                            setToggleModal(false)
-                        }
-                    }}>
-                        <Text style={styles.textAcceptButton}>Accept</Text>
-                    </TouchableOpacity>
+                        }}>
+                            <Text style={styles.textAcceptButton}>{translation("Accept")}</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
-            </View>
-            <Toast />
-        </Modal >
+            </Modal >
+
+
+        </>
     )
 
 }
@@ -107,7 +114,7 @@ const styles = StyleSheet.create({
         marginBottom: '1%'
     },
     inputContainer: {
-        width: '20%',
+        width: '35%',
         height: 45,
         flexDirection: 'row',
         alignItems: 'center',
@@ -148,7 +155,7 @@ const styles = StyleSheet.create({
     },
     acceptButton: {
         height: 45,
-        width: '30%',
+        width: '40%',
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#5cd964',

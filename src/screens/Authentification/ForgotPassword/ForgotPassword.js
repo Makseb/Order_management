@@ -1,33 +1,35 @@
 import { StyleSheet, TextInput, View, Text, Image, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
 import React, { useState } from 'react';
-import { useNavigation, useRoute } from '@react-navigation/native';
 import Toast from "react-native-toast-message";
 
-import { login } from '../../../shared/slices/Auth/AuthService';
 import { Logo } from '../../../assets/images/exports';
+import { forgotpassword } from '../../../shared/slices/Auth/AuthService';
 import { useTranslation } from 'react-i18next';
 
-export default function Login() {
-
+export default function ForgotPassword() {
     const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const navigation = useNavigation()
     const { t: translation } = useTranslation();
 
     const submit = async () => {
-        if (email && password) {
-            await login({ email, password }, translation).then(res => {
-                navigation.navigate('SelectStore')
-                // res.user.stores > 1 ? navigation.navigate('Home') : navigation.navigate('SelectStore')
+        if (email) {
+            await forgotpassword({ email }, translation).then(res => {
+                setEmail('')
             }).catch(err => {
+                if (err.response.data.message === "Error in sending e-mail." || err.response.data.message === "Email not found.") {
+                    Toast.show({
+                        type: 'error',
+                        text1: translation(err.response.data.message),
+                    })
+                }
             });
         } else {
             Toast.show({
                 type: 'error',
-                text1: translation("Please type your e-mail and password."),
+                text1: translation("Please type your e-mail."),
             });
         }
     }
+
     return (
         <View style={styles.container}>
             <Image source={Logo} style={styles.image} />
@@ -43,37 +45,18 @@ export default function Login() {
                 />
             </View>
 
-            <View style={{
-                width: "70%",
-                marginTop: '2%'
-            }}>
-                <TouchableWithoutFeedback onPress={() => navigation.navigate("ForgotPassword")}>
-                    <Text style={styles.textForgotPassword}>{translation("Forgot password ?")}</Text>
-                </TouchableWithoutFeedback>
-            </View>
-
-            <View style={styles.containerPasswordInput}>
-                <TextInput
-                    style={styles.passwordInput}
-                    value={password}
-                    placeholder={translation("Password")}
-                    onChangeText={e => setPassword(e)}
-                    autoComplete={'password'}
-                    secureTextEntry={true}
-                    placeholderTextColor="#716D6D"
-                />
-            </View>
-
             <View style={styles.containerButton}>
                 <TouchableOpacity
                     style={styles.button}
                     onPress={() => submit()}>
-                    <Text style={styles.textButton}>{translation("Login")}</Text>
+                    <Text style={styles.textButton}>{translation("Forgot password")}</Text>
                 </TouchableOpacity>
             </View>
         </View>
     );
+
 }
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -101,29 +84,6 @@ const styles = StyleSheet.create({
         borderRadius: 24,
         textAlign: 'center',
         fontSize: 14
-    },
-    containerPasswordInput: {
-        width: '70%',
-        marginTop: '1%',
-        height: 55
-    },
-    passwordInput: {
-        backgroundColor: 'white',
-        color: '#7f7f7f',
-        justifyContent: 'center',
-        fontFamily: 'Montserrat-Light',
-        borderColor: '#ddd',
-        borderWidth: 1,
-        borderRadius: 24,
-        textAlign: 'center',
-        fontSize: 14
-    },
-    textForgotPassword: {
-        alignSelf: 'flex-end',
-        color: '#df8f17',
-        fontFamily: 'Montserrat-Light',
-        fontSize: 12
-
     },
     containerButton: {
         width: '70%',

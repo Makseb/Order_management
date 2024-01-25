@@ -3,7 +3,7 @@ import { Executor } from "../../Executor";
 
 import { setLoggedInUser, setToken } from "./AuthSlice";
 
-export const login = (data) => {
+export const login = (data, translation) => {
     return Executor({
         method: 'post',
         url: BaseUrl + '/manager/login-',
@@ -16,7 +16,7 @@ export const login = (data) => {
         },
         withErrorToast: true,
         withSuccessToast: false,
-    });
+    }, translation);
 };
 
 const saveUserData = (data) => {
@@ -51,8 +51,39 @@ export const changeStoreStatus = (data) => {
         successFun: () => {
         },
         withErrorToast: false,
-        withSuccessToast: true,
+        withSuccessToast: false,
     });
 };
 
+
+// change store status
+export const forgotpassword = (data, translation) => {
+    return Executor({
+        method: 'post',
+        data,
+        url: BaseUrl + '/manager/forgotpassword',
+        isSilent: false,
+        successFun: () => {
+        },
+        withErrorToast: false,
+        withSuccessToast: true,
+    }, translation);
+};
+// change store status
+export const resetpassword = (data, token) => {
+    console.log(token);
+    return Executor({
+        method: 'put',
+        head: {
+            Authorization: `Bearer ${token}`
+        },
+        data,
+        url: BaseUrl + '/manager/resetpassword',
+        isSilent: false,
+        successFun: () => {
+        },
+        withErrorToast: false,
+        withSuccessToast: false,
+    });
+};
 

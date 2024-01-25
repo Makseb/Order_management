@@ -5,6 +5,7 @@ import { List, Text } from 'react-native-paper';
 import { useSelector } from "react-redux";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { PrintModal } from "../../screens/exports";
+import { useTranslation } from "react-i18next";
 
 
 export default function ListSection({ listProps }) {
@@ -13,6 +14,7 @@ export default function ListSection({ listProps }) {
     const currency = useSelector((state) => state.authentification.storeSelected.currency)
 
     const [toggleModal, setToggleModal] = useState(false)
+    const { t: translation } = useTranslation();
 
     return (
         <View>
@@ -25,7 +27,7 @@ export default function ListSection({ listProps }) {
                     expanded={expandeds[0]}
                     onPress={() => handlePress(0)}
                     descriptionStyle={{ fontFamily: 'Roboto-Light', fontSize: 12 }}
-                    title="Item details" description="Product, Option group, Option" titleStyle={{ color: expandeds[0] ? "#df8f17" : "#7f7f7f", fontFamily: 'Robot-Regular' }}
+                    title={translation("Item details")} description={translation("Product, Options")} titleStyle={{ color: expandeds[0] ? "#df8f17" : "#7f7f7f", fontFamily: 'Robot-Regular' }}
                     left={props => <List.Icon {...props} icon="food" color={expandeds[0] ? "#df8f17" : "#7f7f7f"} />} rippleColor={"#df8f17"}
                     style={[
                         {
@@ -118,7 +120,7 @@ export default function ListSection({ listProps }) {
                             justifyContent: 'space-between'
                         }}>
                             <Text></Text>
-                            <List.Item title={`Total price : ${order.price_total} ${currency}`} titleStyle={{
+                            <List.Item title={`${translation("Total price")} : ${order.price_total} ${currency}`} titleStyle={{
                                 fontFamily: 'Roboto-Regular',
                                 fontSize: 20,
                                 color: '#424242',
@@ -136,7 +138,7 @@ export default function ListSection({ listProps }) {
                     expanded={expandeds[1]}
                     onPress={() => handlePress(1)}
                     descriptionStyle={{ fontFamily: 'Roboto-Light', fontSize: 12 }}
-                    title="Client details" description="Phone, E-mail" titleStyle={{ color: expandeds[1] ? "#df8f17" : "#7f7f7f", fontFamily: 'Robot-Regular' }}
+                    title={translation("Client details")} description={translation("Phone, E-mail")} titleStyle={{ color: expandeds[1] ? "#df8f17" : "#7f7f7f", fontFamily: 'Robot-Regular' }}
                     left={props => <List.Icon {...props} icon="information" color={expandeds[1] ? "#df8f17" : "#7f7f7f"} />} rippleColor={"#df8f17"}
                     style={[
                         {
@@ -144,8 +146,8 @@ export default function ListSection({ listProps }) {
                             backgroundColor: '#fafafa'
                         },
                     ]}>
-                    <List.Item titleStyle={{ fontFamily: 'Roboto-Regular' }} title={`Phone : ${order.client_phone}`} />
-                    <List.Item titleStyle={{ fontFamily: 'Roboto-Regular' }} title={`Email : ${order.client_email}`} />
+                    <List.Item titleStyle={{ fontFamily: 'Roboto-Regular' }} title={`${translation("Phone")} : ${order.client_phone}`} />
+                    <List.Item titleStyle={{ fontFamily: 'Roboto-Regular' }} title={`${translation("E-mail")} : ${order.client_email}`} />
 
                 </List.Accordion>
 
@@ -154,7 +156,7 @@ export default function ListSection({ listProps }) {
                     expanded={expandeds[2]}
                     onPress={() => handlePress(2)}
                     descriptionStyle={{ fontFamily: 'Roboto-Light', fontSize: 12 }}
-                    title="Fulfillment" description="Mode, Reserved table, Source, Date and time, Address" titleStyle={{ color: expandeds[2] ? "#df8f17" : "#7f7f7f", fontFamily: 'Roboto-Regular' }}
+                    title={translation("Fulfillment")} description={translation("Mode, Reserved table, Source, Date and time, Address")} titleStyle={{ color: expandeds[2] ? "#df8f17" : "#7f7f7f", fontFamily: 'Roboto-Regular' }}
                     left={props => <List.Icon {...props} icon="check-circle" color={expandeds[2] ? "#df8f17" : "#7f7f7f"} />} rippleColor={"#df8f17"}
                     style={[
                         {
@@ -162,13 +164,13 @@ export default function ListSection({ listProps }) {
                             backgroundColor: '#fafafa'
                         },
                     ]}>
-                    <List.Item titleStyle={{ fontFamily: 'Roboto-Regular' }} title={`Created at : ${order.createdAt.date} ${order.createdAt.time}`} />
-                    {order.status !== "pending" && <List.Item titleStyle={{ fontFamily: 'Roboto-Regular' }} title={`Last update : ${order.updatedAt.date} ${order.updatedAt.time}`} />}
-                    {order.status !== "rejected" && <List.Item titleStyle={{ fontFamily: 'Roboto-Regular' }} title={`Prepared at : ${order.preparedAt ? `${order.preparedAt.date} ${order.preparedAt.time}` : "still not chosen by you"}`} />}
-                    <List.Item titleStyle={{ fontFamily: 'Roboto-Regular' }} title={`Mode : ${order.type}`} />
-                    <List.Item titleStyle={{ fontFamily: 'Roboto-Regular' }} title={`Reserved table : ${order.table}`} />
-                    <List.Item titleStyle={{ fontFamily: 'Roboto-Regular' }} title={`Source : ${order.source}`} />
-                    <List.Item titleStyle={{ fontFamily: 'Roboto-Regular' }} title={`Address : ${order.deliveryAdress}`} />
+                    <List.Item titleStyle={{ fontFamily: 'Roboto-Regular' }} title={`${translation("Created at")} : ${order.createdAt.date} ${order.createdAt.time}`} />
+                    {order.status !== "pending" && <List.Item titleStyle={{ fontFamily: 'Roboto-Regular' }} title={`${translation("Last update")} : ${order.updatedAt.date} ${order.updatedAt.time}`} />}
+                    {order.status !== "rejected" && <List.Item titleStyle={{ fontFamily: 'Roboto-Regular' }} title={`${translation("Prepared at")} : ${order.preparedAt ? `${order.preparedAt.date} ${order.preparedAt.time}` : "still not chosen by you"}`} />}
+                    <List.Item titleStyle={{ fontFamily: 'Roboto-Regular' }} title={`${translation("Mode")} : ${order.type}`} />
+                    <List.Item titleStyle={{ fontFamily: 'Roboto-Regular' }} title={`${translation("Reserved table")} : ${order.table}`} />
+                    <List.Item titleStyle={{ fontFamily: 'Roboto-Regular' }} title={`${translation("Source")} : ${order.source}`} />
+                    <List.Item titleStyle={{ fontFamily: 'Roboto-Regular' }} title={`${translation("Address")} : ${order.deliveryAdress}`} />
 
                 </List.Accordion>
                 {/* Payment */}
@@ -177,15 +179,15 @@ export default function ListSection({ listProps }) {
                     expanded={expandeds[3]}
                     onPress={() => handlePress(3)}
                     descriptionStyle={{ fontFamily: 'Roboto-Light', fontSize: 12 }}
-                    title="Payment" description="Status, Method" titleStyle={{ color: expandeds[3] ? "#df8f17" : "#7f7f7f", fontFamily: 'Roboto-Regular' }}
+                    title={translation("Payment")} description={translation("Status, Method")} titleStyle={{ color: expandeds[3] ? "#df8f17" : "#7f7f7f", fontFamily: 'Roboto-Regular' }}
                     left={props => <List.Icon {...props} icon="cash" color={expandeds[3] ? "#df8f17" : "#7f7f7f"} />} rippleColor={"#df8f17"}
                     style={
                         {
                             backgroundColor: '#fafafa'
                         }
                     }>
-                    <List.Item titleStyle={{ fontFamily: 'Roboto-Regular' }} title={`Status : `} />
-                    <List.Item titleStyle={{ fontFamily: 'Roboto-Regular' }} title={`Method : `} />
+                    <List.Item titleStyle={{ fontFamily: 'Roboto-Regular' }} title={`${translation("Status")} : `} />
+                    <List.Item titleStyle={{ fontFamily: 'Roboto-Regular' }} title={`${translation("Method")} : `} />
                 </List.Accordion>
             </List.Section>
         </View>

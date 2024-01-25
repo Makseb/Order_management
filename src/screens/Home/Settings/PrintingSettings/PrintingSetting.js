@@ -5,8 +5,11 @@ import AntDesign from "react-native-vector-icons/AntDesign";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
 
 export default function PrintingSetting() {
+    const { t: translation } = useTranslation();
+
     const lankitchen = useSelector((state) => state.printer.lankitchen)
     const lanreceipt = useSelector((state) => state.printer.lanreceipt)
 
@@ -25,7 +28,7 @@ export default function PrintingSetting() {
             <ScrollView>
 
                 <Header />
-                <Text style={[styles.textTitle, { marginBottom: (lankitchen?.length === 0 && lanreceipt?.length === 0) ? 0 : '2%' }]}>Select</Text>
+                <Text style={[styles.textTitle, { marginBottom: (lankitchen?.length === 0 && lanreceipt?.length === 0) ? 0 : '2%' }]}>{translation("Select")}</Text>
                 <View style={{
                     marginHorizontal: '5%',
                 }}>
@@ -40,7 +43,7 @@ export default function PrintingSetting() {
                                         <View style={{
                                             flexDirection: 'row', alignItems: 'flex-end'
                                         }}>
-                                            <Text style={styles.textKitchenPrinter}>Kitchen printer </Text>
+                                            <Text style={styles.textKitchenPrinter}>{translation("Kitchen printer ")}</Text>
                                             <Text style={styles.textLanWifi}>- LAN/WIFI</Text>
                                         </View>
                                     </View>
@@ -60,7 +63,7 @@ export default function PrintingSetting() {
                                     }}>
                                         <Text style={styles.textHostName}>{item.hostname}</Text>
                                         <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
-                                            <Text style={styles.textReceiptPrinter}>Receipt printer </Text>
+                                            <Text style={styles.textReceiptPrinter}>{translation("Receipt printer ")}</Text>
                                             <Text style={styles.textLanWifi}>- LAN/WIFI</Text>
                                         </View>
                                     </View>
@@ -80,7 +83,7 @@ export default function PrintingSetting() {
                                     }}>
                                         <Text style={styles.textName}>{item.name}</Text>
                                         <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
-                                            <Text style={styles.textReceiptPrinter}>Receipt printer </Text>
+                                            <Text style={styles.textReceiptPrinter}>{translation("Receipt printer ")}</Text>
                                             <Text style={styles.textLanWifi}>- BLUETOOTH</Text>
                                         </View>
                                     </View>
@@ -100,7 +103,7 @@ export default function PrintingSetting() {
                                     }}>
                                         <Text style={styles.textName}>{item.name}</Text>
                                         <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
-                                            <Text style={styles.textReceiptPrinter}>Kitchen printer </Text>
+                                            <Text style={styles.textReceiptPrinter}>{translation("Kitchen printer ")}</Text>
                                             <Text style={styles.textLanWifi}>- BLUETOOTH</Text>
                                         </View>
                                     </View>
@@ -114,7 +117,7 @@ export default function PrintingSetting() {
                         <TouchableWithoutFeedback onPress={
                             () => setToggleModal(!toggleModal)
                         }>
-                            <Text style={styles.textAddPrinter}>Add printer(s)</Text>
+                            <Text style={styles.textAddPrinter}>{translation("Add printer(s)")}</Text>
                         </TouchableWithoutFeedback >
                     </View>
 

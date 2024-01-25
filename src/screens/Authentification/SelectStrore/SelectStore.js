@@ -9,10 +9,13 @@ import { store } from '../../../shared';
 import { setNotificationId, setStoreSelected } from '../../../shared/slices/Auth/AuthSlice';
 
 import { Logo } from '../../../assets/images/exports';
+import { useTranslation } from 'react-i18next';
+import Toast from "react-native-toast-message";
 
 export default function SelectStore() {
     const userId = useSelector((state) => state.authentification.userId)
     const [selectedStore, setSelectedStore] = useState(null)
+    const { t: translation } = useTranslation();
 
     const [stores, setStores] = useState(null)
 
@@ -32,11 +35,12 @@ export default function SelectStore() {
     return (
         stores &&
         (<View style={styles.container}>
+
             <Image source={Logo} style={styles.image} />
             <View style={styles.containerSelectListAndButton}>
                 <View style={styles.containerSelectList}>
                     <SelectList
-                        placeholder='store'
+                        placeholder={translation('Store')}
                         boxStyles={{
                             display: 'flex',
                             alignItems: 'center',
@@ -75,23 +79,23 @@ export default function SelectStore() {
                             if (selectedStore) {
                                 for (let i = 0; i < stores.stores.length; i++) {
                                     if (stores.stores[i]._id === selectedStore) {
-                                        console.log("hhh");
                                         store.dispatch(setNotificationId({ notificationId: new Date().toString() }))
-                                        store.dispatch(setStoreSelected({ store: stores.stores[i], currency : stores.currencies[i].currency }))
+                                        store.dispatch(setStoreSelected({ store: stores.stores[i], currency: stores.currencies[i].currency }))
                                         navigation.navigate('Home')
                                     }
                                 }
-
+                            } else {
+                                Toast.show({
+                                    type: 'error',
+                                    text1: translation("Please select store."),
+                                });
                             }
                         }
                     }>
-                    <Text style={styles.textButton}>Select</Text>
+                    <Text style={styles.textButton}>{translation("Select")}</Text>
                 </TouchableOpacity>
             </View>
         </View>)
-
-
-
 
     )
 };
@@ -120,8 +124,8 @@ const styles = StyleSheet.create({
         top: 0,
     },
     button: {
-        marginTop: '10.64%', // 6.64% (is the height of select cauz they are one above one) + (4% height i choosed between the button and the select like the page before)
-        // marginTop: '20%',
+        // marginTop: '10.64%', // 6.64% (is the height of select cauz they are one above one) + (4% height i choosed between the button and the select like the page before)
+        marginTop: '15%',
         width: '40%',
         height: 41,
         backgroundColor: '#df8f17',

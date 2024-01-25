@@ -5,11 +5,13 @@ import { RadioButton } from "react-native-paper"
 import { useSelector } from "react-redux";
 import { store } from "../../../../../../shared";
 import { setBluetoothKitchen, removeBluetoothKitchen, setBluetoothReceipt, removeBluetoothReceipt } from "../../../../../../shared/slices/Printer/PrinterSlice";
-// import Toast from "react-native-toast-message";
-import { Toast } from 'react-native-toast-message/lib/src/Toast';
+import Toast from "react-native-toast-message";
 import BleManager from 'react-native-ble-manager';
+import { useTranslation } from "react-i18next";
 
 export default function BluetoothModal({ modalProps }) {
+    const { t: translation } = useTranslation();
+
     const { setToggleModalBluetooth, toggleModalBluetooth } = modalProps
 
     const bluetoothreceipt = useSelector((state) => state.printer.bluetoothreceipt)
@@ -27,7 +29,7 @@ export default function BluetoothModal({ modalProps }) {
             .catch(() => {
                 Toast.show({
                     type: 'error',
-                    text1: "Failed to connect on printer",
+                    text1: translation("Failed to connect on printer"),
                 })
             });
     };
@@ -42,6 +44,8 @@ export default function BluetoothModal({ modalProps }) {
                 })
             }}
             style={{ justifyContent: 'flex-end', margin: 0 }}>
+            <Toast />
+
             <View style={styles.container}>
                 <TouchableWithoutFeedback onPress={() => {
                     setToggleModalBluetooth({
@@ -63,7 +67,7 @@ export default function BluetoothModal({ modalProps }) {
                     <View style={styles.containerRadioButton}>
                         <RadioButton.Item
                             color="#df8f17"
-                            label="Receipt printer"
+                            label={translation("Receipt printer")}
                             value="Receipt printer"
                             labelStyle={styles.radioButton}
                             status={bluetoothreceipt?.find(printer => printer?.id === toggleModalBluetooth.value?.id) ? 'checked' : 'unchecked'}
@@ -79,7 +83,7 @@ export default function BluetoothModal({ modalProps }) {
                                 } else {
                                     Toast.show({
                                         type: 'error',
-                                        text1: "You can select only one printer on printer",
+                                        text1: translation("You can select only one printer on printer"),
                                     });
                                 }
                             }
@@ -87,7 +91,7 @@ export default function BluetoothModal({ modalProps }) {
                         />
                         <RadioButton.Item
                             color="#df8f17"
-                            label="Kitchen printer"
+                            label={translation("Kitchen printer")}
                             labelStyle={styles.radioButton}
                             value="Kitchen printer"
                             status={bluetoothkitchen?.find(printer => printer?.id === toggleModalBluetooth.value?.id) ? 'checked' : 'unchecked'}
@@ -104,7 +108,7 @@ export default function BluetoothModal({ modalProps }) {
                                 } else {
                                     Toast.show({
                                         type: 'error',
-                                        text1: "You can select only one printer on printer",
+                                        text1: translation("You can select only one printer on printer"),
                                     });
                                 }
                             }
@@ -113,7 +117,6 @@ export default function BluetoothModal({ modalProps }) {
                     </View>
                 </View>
             </View>
-            <Toast />
         </Modal>
     )
 }
@@ -144,7 +147,7 @@ const styles = StyleSheet.create({
         color: '#030303',
         fontFamily: 'Montserrat-Light',
         borderRadius: 24,
-        fontSize: 16,
+        fontSize: 12,
         lineHeight: 45,
     }
 })

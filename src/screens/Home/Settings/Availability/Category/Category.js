@@ -8,9 +8,12 @@ import Feather from "react-native-vector-icons/Feather";
 import { Switch } from "react-native-switch";
 import { setCategories } from "../../../../../shared/slices/Availability/AvailabilitySlice";
 import { useNavigation } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
 
 
 export default function Category() {
+    const { t: translation } = useTranslation();
+
     // get store selected
     const storeSelected = useSelector((state) => state.authentification.storeSelected.store._id)
 
@@ -43,7 +46,7 @@ export default function Category() {
         <View style={{
             marginHorizontal: '5%'
         }}>
-            <Text style={styles.textTitle}>Categories</Text>
+            <Text style={styles.textTitle}>{translation("Categories")}</Text>
             {categorySelected.state && <CategoryModal modalProps={{ categorySelected, setCategorySelected }} />}
             <ScrollView>
                 {
@@ -84,7 +87,7 @@ export default function Category() {
                                             containerStyle={
                                                 {
                                                     borderWidth: 1,
-                                                    borderColor: category.availability ? '#df8f17' : '#7f7f7f' 
+                                                    borderColor: category.availability ? '#df8f17' : '#7f7f7f'
                                                 }
                                             }
                                             renderActiveText={false}
@@ -104,7 +107,7 @@ export default function Category() {
                                                 fontFamily: "Roboto-Light",
                                                 color: "#7f7f7f",
                                                 fontSize: 14
-                                            }}>{category.description}</Text>
+                                            }}>{category.description.length > 25 ? category.description.substring(0, 25) + "..." : category.description}</Text>
                                         </View>
                                     </View>
                                     <View style={styles.containerArrowRight}>
