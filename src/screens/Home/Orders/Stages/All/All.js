@@ -49,6 +49,7 @@ export default function All() {
         const handleEventMessage = (data) => {
             if (!data.data.toLowerCase().includes("welcome")) {
                 const fetchAllOrdersByStroreId = async () => {
+                    console.log("data :",data.data);
                     if (data.data.includes("{")) {
                         flatListRef.current.scrollToOffset({ offset: 0 })
                         requestAnimationFrame(async () => {
@@ -74,7 +75,7 @@ export default function All() {
                         })
                     } else if (data.data.includes("Your order is missed")) {
 
-                        console.log("missed :", state.page)
+                        // console.log("missed :", state.page)
 
                         flatListRef.current.scrollToOffset({ offset: 0 })
                         requestAnimationFrame(async () => {
@@ -100,7 +101,7 @@ export default function All() {
                         })
 
                     } else {
-                        console.log("new :", state.page)
+                        // console.log("new :", state.page)
 
                         flatListRef.current.scrollToOffset({ offset: 0 })
                         requestAnimationFrame(async () => {
@@ -223,6 +224,7 @@ export default function All() {
     const loadMoreItem = () => {
 
         if (!state.isLastPage && state.isLoading === false) {
+            // console.log("page : ",state.page);
             setState(prevState => ({
                 ...prevState,
                 page: prevState.page + 1

@@ -41,7 +41,7 @@ export default function Languages() {
                                 marginLeft: '8%',
                                 fontFamily: "Roboto-Regular",
                                 color: "#030303",
-                                fontSize: 14
+                                fontSize: 16
                             }}>{language.name}</Text>
                         </View>
 

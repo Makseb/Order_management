@@ -33,7 +33,7 @@ export const authentificationSlice = createSlice({
                 store: action.payload.store,
                 currency: action.payload.currency
             }
-            console.log(state.storeSelected);
+            // console.log(state.storeSelected);
         },
         disconnect: (state) => {
             state.loggedInUser = undefined

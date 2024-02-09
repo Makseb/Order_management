@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { format } from 'date-fns';
-import { reformulateItems } from '../../../utils/utils-function';
+import { reformulateItems,reformulatePromo } from '../../../utils/utils-function';
 export const OrdersState = {
     all: [],
     inprogress: [],
@@ -22,6 +22,8 @@ export const ordersSlice = createSlice({
                     },
                     currency: action.payload.currency,
                     items: reformulateItems(data[i].items),
+                    promo: reformulatePromo(data[i].promo),
+
                 }
                 if (data[i].preparedAt) data[i].preparedAt = {
                     date: format(new Date(data[i].preparedAt), 'yyyy-MM-dd'),

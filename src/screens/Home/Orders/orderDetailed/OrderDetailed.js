@@ -51,11 +51,11 @@ export default function OrderDetailed({ route }) {
         const initData = () => {
             let data = [];
             for (let i = 0; i < 4; i++) {
-                if (i == 0 || i == 1) {
+                // if (i == 0 || i == 1) {
                     data.push(true)
-                } else {
-                    data.push(false)
-                }
+                // } else {
+                    // data.push(false)
+                // }
             }
             setExpandeds(data);
         };
@@ -92,18 +92,29 @@ export default function OrderDetailed({ route }) {
                         flexDirection: 'column',
                     }}>
                         <View style={{
-                            flexDirection: 'row',
-                            // justifyContent: 'space-between'
+                            flexDirection: "row",
+                            justifyContent : "space-between"
                         }}>
-                            <Text style={[styles.orderIdText, { marginRight: '1%' }]}>{translation("Order ID")} : {order._id.substring(order._id.length - 4)}</Text>
+                            <View style={{flexDirection : "row"}}>
+                                <Text style={[styles.orderIdText, { marginRight: '2%' }]}>{translation("Order ID")} : {order._id.substring(order._id.length - 4)}</Text>
+                                <View style={[styles.tag, {
+                                    backgroundColor: (order.status === "accepted" || order.status === "ready") ? "#5cd964" : (order.status === "rejected") ? "#ff3b30" : (order.status === "missed") ? "#ff3b30" : "#fc0"
+                                }]}>
+                                    <Text style={styles.textStatus}>
+                                        {translation(order.status.charAt(0).toUpperCase() + order.status.slice(1))}
+                                    </Text>
+                                </View>
+                            </View>
                             <View style={[styles.tag, {
-                                backgroundColor: (order.status === "accepted" || order.status === "ready") ? "#5cd964" : (order.status === "rejected") ? "#ff3b30" : (order.status === "missed") ? "#ff3b30" : "#fc0"
+                                backgroundColor: (order.paymentStatus === "Paid") ? "#5cd964" : "#ff3b30",
                             }]}>
                                 <Text style={styles.textStatus}>
-                                    {translation(order.status.charAt(0).toUpperCase() + order.status.slice(1))}
+                                    {order.paymentStatus === "Paid" ? translation("Paid") : translation("Unpaid")}
                                 </Text>
                             </View>
                         </View>
+
+
 
                         {/* mapping products and show otther information of the order... */}
                         <ListSection listProps={{ order, expandeds, handlePress }} />
@@ -196,6 +207,7 @@ const styles = StyleSheet.create({
         borderRadius: 24,
     },
     textStatus: {
+        // paddingVertical : "5%",
         color: 'white',
         fontFamily: 'Roboto-Regular',
         fontSize: 12

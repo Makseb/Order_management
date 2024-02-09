@@ -45,8 +45,8 @@ export default function PrintingSeetingsModal({ modalProps }) {
                         <Text style={styles.wiredOrWifiNetworkText}>{translation("Wired or wifi network")}</Text>
                     </TouchableWithoutFeedback>
                     <TouchableWithoutFeedback onPress={() => {
-                        navigation.navigate("SearchPrinter", { title: "Bluetooth", description: translation("To connect to the Bluetooth printer, press the Bluetooth button on the printer for about 10 seconds, then press the \"Start Searching\" button in the app."), img: Bluetooth })
-                        setToggleModal(false)
+                        // navigation.navigate("SearchPrinter", { title: "Bluetooth", description: translation("To connect to the Bluetooth printer, press the Bluetooth button on the printer for about 10 seconds, then press the \"Start Searching\" button in the app."), img: Bluetooth })
+                        // setToggleModal(false)
                     }} style={{
                         justifyContent: 'center',
                         alignItems: 'center',

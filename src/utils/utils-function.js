@@ -46,12 +46,15 @@ export function reformulateItems(items) {
         optionsGroup[idExistsIndex].options.push(option);
       }
     }
+
     data.push({
       id: items[i].id,
       _id: items[i]._id,
       name: items[i].name,
       description: items[i].description,
       price: items[i].price,
+      size : items[i].size,
+      item_price: items[i].item_price,
       quantity: items[i].quantity,
       tax: items[i].tax,
       optionsGroup: optionsGroup
@@ -60,6 +63,55 @@ export function reformulateItems(items) {
   return data
 }
 
+export function reformulatePromo(promo) {
+  let promos = []
+  for (let k = 0; k < promo.length; k++) {
+    let items = promo[k].items
+    // console.log('items', items);
+    let data = []
+    for (let i = 0; i < items.length; i++) {
+      const optionsGroup = []
+      for (let j = 0; j < items[i].options.length; j++) {
+        const option = {
+          _id: items[i].options[j]._id,
+          id: items[i].options[j].id,
+          name: items[i].options[j].name,
+          price: items[i].options[j].price,
+        }
+        const idExistsIndex = optionsGroup.findIndex(item => item.optionGroupeId === items[i].options[j].optionGroupeId);
+        // console.log("items[i].options[j].optionGroupeId", items[i].options[j].optionGroupeId);
+        if (idExistsIndex === -1) {
+          optionsGroup.push({
+            optionGroupeId: items[i].options[j].optionGroupeId,
+            optionGroupeName: items[i].options[j].optionGroupeName,
+            options: [option]
+          });
+        } else {
+          optionsGroup[idExistsIndex].options.push(option);
+        }
+      }
+      // console.log("optionsGroup", optionsGroup);
+      data.push({
+        id: items[i].id,
+        _id: items[i]._id,
+        name: items[i].name,
+        description: items[i].description,
+        price: items[i].price,
+        item_price: items[i].item_price,
+        subtotal: items[i].subtotal,
+        size : items[i].size,
+        item_price_after_discount: items[i].item_price_after_discount,
+        quantity: items[i].quantity,
+        tax: items[i].tax,
+        optionsGroup: optionsGroup
+      })
+    }
+    promos.push({ "items": data, "promo": promo[k].promoId })
+
+  }
+
+  return promos
+}
 // export const PrintScreen = (order, currency) => {
 //   return `<html>
 //   <head>
@@ -126,7 +178,7 @@ export function receipt(order, currency, store) {
       escPosCommands += '[L]\n';
     });
   });
-// ORDER N°045</font>
+  // ORDER N°045</font>
   return "[L]<u><font size='tall'>ORDER ID : " + order._id.substring(order._id.length - 4) + "</font></u>[R]for <b>" + order.type + "</b>\n" +
     '[L]\n' +
     '[L]Order at : ' + order.createdAt.date + " " + order.createdAt.time + "\n" +
@@ -137,8 +189,8 @@ export function receipt(order, currency, store) {
     '[C]' + store.address + "\n" +
     '[C]Phone : ' + store.phoneNumber + "\n" +
     '[C]SIRET : TVX301B\n' +
-    '[L]\n'+
-    '[L]\n'+
+    '[L]\n' +
+    '[L]\n' +
     '[C]================================\n' +
     '[L]\n' +
     escPosCommands +
@@ -180,31 +232,31 @@ export function kitchen(order, currency, store) {
   });
 
   return "[L]<u><font size='tall'>ORDER ID : " + order._id.substring(order._id.length - 4) + "</font></u>[R]for <b>" + order.type + "</b>\n" +
-  '[L]\n' +
-  '[L]Order at : ' + order.createdAt.date + " " + order.createdAt.time + "\n" +
-  '[L]Prepared for : ' + order.preparedAt.date + " " + order.preparedAt.time + "\n" +
-  '[L]\n' +
-  '[L]\n'+
-  '[C]================================\n' +
-  '[L]\n' +
-  escPosCommands +
-  '[C]--------------------------------\n' +
-  '[R]TOTAL PRICE :[R]' + order.price_total + ' ' + currency + '\n' +
-  '[R]TAX :[R]4.23e\n' +
-  '[L]\n' +
-  '[C]================================\n' +
-  '[L]\n' +
-  "[L]<font size='tall'>Customer infos :</font>\n" +
-  '[L]Name : ' + order.name + '\n' +
-  '[L]Phone : ' + order.client_phone + '\n' +
-  '[L]Email : ' + order.client_email + '\n' +
-  '[L]DeliveryAddress : ' + order.deliveryAdress + '\n' +
-  '[L]Table : ' + order.table + '\n' +
-  '[L]\n' +
-  '[L]\n' +
-  '[L]\n' +
-  '[L]\n' +
-  '[L]\n'
+    '[L]\n' +
+    '[L]Order at : ' + order.createdAt.date + " " + order.createdAt.time + "\n" +
+    '[L]Prepared for : ' + order.preparedAt.date + " " + order.preparedAt.time + "\n" +
+    '[L]\n' +
+    '[L]\n' +
+    '[C]================================\n' +
+    '[L]\n' +
+    escPosCommands +
+    '[C]--------------------------------\n' +
+    '[R]TOTAL PRICE :[R]' + order.price_total + ' ' + currency + '\n' +
+    '[R]TAX :[R]4.23e\n' +
+    '[L]\n' +
+    '[C]================================\n' +
+    '[L]\n' +
+    "[L]<font size='tall'>Customer infos :</font>\n" +
+    '[L]Name : ' + order.name + '\n' +
+    '[L]Phone : ' + order.client_phone + '\n' +
+    '[L]Email : ' + order.client_email + '\n' +
+    '[L]DeliveryAddress : ' + order.deliveryAdress + '\n' +
+    '[L]Table : ' + order.table + '\n' +
+    '[L]\n' +
+    '[L]\n' +
+    '[L]\n' +
+    '[L]\n' +
+    '[L]\n'
 }
 
 

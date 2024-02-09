@@ -23,6 +23,7 @@
 		DAE1C06E87F34012A4B7C7CE /* Inconsolata-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AA3A360AEEDD4ED6B5549183 /* Inconsolata-Bold.ttf */; };
 		3103C0F3FFEB4C4B859F61C8 /* Inconsolata-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4FD251B219B74372AEEF48CC /* Inconsolata-SemiBold.ttf */; };
 		2E9D15D6086E4EBB8B04DEA2 /* Montserrat-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D4C900253FAD4AFF9B26F279 /* Montserrat-Bold.ttf */; };
+		0BC1898803734F20AA166590 /* Roboto-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 64AFE1EC62C7407A8197D4AC /* Roboto-BoldItalic.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -62,6 +63,7 @@
 		AA3A360AEEDD4ED6B5549183 /* Inconsolata-Bold.ttf */ = {isa = PBXFileReference; name = "Inconsolata-Bold.ttf"; path = "../src/assets/fonts/Inconsolata-Bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		4FD251B219B74372AEEF48CC /* Inconsolata-SemiBold.ttf */ = {isa = PBXFileReference; name = "Inconsolata-SemiBold.ttf"; path = "../src/assets/fonts/Inconsolata-SemiBold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		D4C900253FAD4AFF9B26F279 /* Montserrat-Bold.ttf */ = {isa = PBXFileReference; name = "Montserrat-Bold.ttf"; path = "../src/assets/fonts/Montserrat-Bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		64AFE1EC62C7407A8197D4AC /* Roboto-BoldItalic.ttf */ = {isa = PBXFileReference; name = "Roboto-BoldItalic.ttf"; path = "../src/assets/fonts/Roboto-BoldItalic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -179,6 +181,7 @@
 				AA3A360AEEDD4ED6B5549183 /* Inconsolata-Bold.ttf */,
 				4FD251B219B74372AEEF48CC /* Inconsolata-SemiBold.ttf */,
 				D4C900253FAD4AFF9B26F279 /* Montserrat-Bold.ttf */,
+				64AFE1EC62C7407A8197D4AC /* Roboto-BoldItalic.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -289,6 +292,7 @@
 				DAE1C06E87F34012A4B7C7CE /* Inconsolata-Bold.ttf in Resources */,
 				3103C0F3FFEB4C4B859F61C8 /* Inconsolata-SemiBold.ttf in Resources */,
 				2E9D15D6086E4EBB8B04DEA2 /* Montserrat-Bold.ttf in Resources */,
+				0BC1898803734F20AA166590 /* Roboto-BoldItalic.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

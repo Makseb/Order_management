@@ -10,7 +10,19 @@ export default function Order({ order }) {
         <View style={styles.containerOrderLeft}>
             <Icon name="bag-handle" size={40} color={'#333'} style={{ paddingRight: '1%' }} />
             <View style={styles.containerTakeNameAndIconWithHerStatus}>
-                <Text style={styles.name}>{order.name}</Text>
+
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <Text style={styles.name}>{order.name}</Text>
+                    <View style={[styles.tag, {
+                        marginLeft: "6%",
+                        backgroundColor: (order.paymentStatus === "Paid") ? "#5cd964" : "#ff3b30"
+                    }]}>
+                        <Text style={styles.textStatus}>
+                            {order.paymentStatus === "Paid" ? translation("Paid") : translation("Unpaid")}
+                        </Text>
+                    </View>
+                </View>
+
                 <View style={styles.containerTakeIconWithHerStatus}>
                     <MaterialIcons name={
                         (order.status === "accepted" || order.status === "ready") ? 'done' :
@@ -44,6 +56,7 @@ export default function Order({ order }) {
     </View>)
 }
 const styles = StyleSheet.create({
+
     containerOrder: {
         // backgroundColor : 'black',
         paddingVertical: '1%',
@@ -62,6 +75,20 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'flex-start',
     },
+    tag: {
+        width: 70,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 24,
+    },
+
+    textStatus: {
+        // paddingVertical : "5%",
+        color: 'white',
+        fontFamily: 'Roboto-Regular',
+        fontSize: 12
+    },
+
     name: {
         fontSize: 16,
         fontFamily: 'Roboto-Regular',

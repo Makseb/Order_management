@@ -48,8 +48,8 @@ export default function SearchPrinter() {
                 // Event listener for discovered peripherals
                 NativeAppEventEmitter.addListener('BleManagerDiscoverPeripheral', (data) => {
                     if (data.name !== null) {
-                        console.log(data.name);
-                        console.log(data.id);
+                        // console.log(data.name);
+                        // console.log(data.id);
                         store.dispatch(setBluetooth({ name: data.name, id: data.id }));
                     }
                 });
@@ -62,7 +62,7 @@ export default function SearchPrinter() {
                 });
                 BleManager.start({ showAlert: false })
                     .then(() => {
-                        console.log('Bluetooth module initialized');
+                        // console.log('Bluetooth module initialized');
                     });
             };
             initialize();
@@ -93,7 +93,7 @@ export default function SearchPrinter() {
             PermissionsAndroid.check(
                 PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
             ).then(result => {
-                console.log(result);
+                // console.log(result);
                 if (result) {
                 } else {
                     PermissionsAndroid.request(
@@ -186,7 +186,7 @@ export default function SearchPrinter() {
                     store.dispatch(setLan({ lan: [] }))
                     store.dispatch(resetBluetooth({ bluetooth: [] }))
                     if (title === "Bluetooth") {
-                        console.log(permissions);
+                        // console.log(permissions);
                         if (permissions) {
                             bluetoothScan()
                         } else {
@@ -198,7 +198,7 @@ export default function SearchPrinter() {
                     } else {
                         store.dispatch(setRootLoading(true));
                         const scanNetwork = await NativeModules.MyNativeModule.scanNetwork()
-                        console.log(scanNetwork);
+                        // console.log(scanNetwork);
                         let formattedData = []
                         for (let i = 0; i < scanNetwork.length; i++) {
                             formattedData[i] = scanNetwork[i]

@@ -75,7 +75,7 @@ export default function SelectStore() {
                     style={styles.button}
                     onPress={
                         () => {
-                            console.log(selectedStore);
+                            // console.log(selectedStore);
                             if (selectedStore) {
                                 for (let i = 0; i < stores.stores.length; i++) {
                                     if (stores.stores[i]._id === selectedStore) {

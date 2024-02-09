@@ -12,6 +12,7 @@ import { store } from './src/shared';
 import { setSelectedLanguage } from './src/shared/slices/Languages/LanguagesSlice';
 import Toast from 'react-native-toast-message';
 
+import SplashScreen from 'react-native-splash-screen';
 
 const Stack = createNativeStackNavigator();
 const navigationRef = React.createRef();
@@ -23,6 +24,8 @@ export default function App() {
 
 
     useEffect(() => {
+        // Hide splash screen
+        SplashScreen.hide();
         // initilize the language (by default english)
         store.dispatch(setSelectedLanguage({ selectedlanguage: selectedlanguage }))
 

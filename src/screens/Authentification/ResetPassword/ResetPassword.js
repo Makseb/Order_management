@@ -51,7 +51,6 @@ export default function ResetPassword({ route }) {
     }
     return (
         <>
-            {showToast && <Toast />}
             <View style={styles.container}>
                 <Image source={Logo} style={styles.image} />
 
@@ -87,6 +86,8 @@ export default function ResetPassword({ route }) {
                     </TouchableOpacity>
                 </View>
             </View>
+            {showToast && <Toast />}
+
         </>
     );
 }

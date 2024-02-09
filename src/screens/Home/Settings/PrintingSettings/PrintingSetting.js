@@ -19,9 +19,9 @@ export default function PrintingSetting() {
     const bluetoothreceipt = useSelector((state) => state.printer.bluetoothreceipt)
     const bluetoothkitchen = useSelector((state) => state.printer.bluetoothkitchen)
 
-    console.log("---");
-    console.log(bluetoothreceipt);
-    console.log("---");
+    // console.log("---");
+    // console.log(bluetoothreceipt);
+    // console.log("---");
 
     return (
         <View style={styles.container}>

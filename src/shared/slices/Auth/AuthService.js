@@ -71,7 +71,7 @@ export const forgotpassword = (data, translation) => {
 };
 // change store status
 export const resetpassword = (data, token) => {
-    console.log(token);
+    // console.log(token);
     return Executor({
         method: 'put',
         head: {

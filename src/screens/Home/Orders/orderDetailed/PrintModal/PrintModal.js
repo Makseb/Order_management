@@ -24,7 +24,7 @@ export default function PrintModal({ modalProps }) {
 
     const store = useSelector((state) => state.authentification.storeSelected.store)
 
-    console.log(store);
+    // console.log(store);
 
     const [checkedKitchen, setCheckedKitchen] = useState()
     const [checkedReceipt, setCheckedReceipt] = useState()

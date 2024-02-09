@@ -93,6 +93,8 @@ export default {
     "Order has been changed from another interface.": "Order has been changed from another interface.",
     "Order missed.": "Order missed.",
     "Order received. 3 minutes and it will be missed.": "Order received. 3 minutes and it will be missed.",
+    "Paid" : "Paid",
+    "Unpaid" : "Unpaid",
 
     // All
     "View": "View",
@@ -114,18 +116,22 @@ export default {
     "Total price": "Total price",
     "Fulfillment": "Fulfillment",
 
-    "Mode, Reserved table, Source, Date and time, Address": "Mode, Reserved table, Source, Date and time, Address",
-    "Created at": "Créé le",
+    "Mode, Reserved table, Source, Date and time, Delivery address": "Mode, Reserved table, Source, Date and time, Delivery address",
+    "Created at": "Created at",
     "Last update": "Last update",
     "Prepared at": "Prepared at",
     "Mode": "Mode",
     "Reserved table": "Reserved table",
     "Source": "Source",
-    "Address": "Address",
+    "Delivery address": "Delivery address",
     "Payment": "Payment",
     "Status, Method": "Status, Method",
     "Status": "Status",
     "Method": "Method",
+    "Non-Promotional Products" : "Non-Promotional Products",
+    "Free" : "Free",
+    "Subtotal" : "Subtotal",
+    "As soon as possible" : "As soon as possible",
 
     // PrintModal
     "Print": "Print",

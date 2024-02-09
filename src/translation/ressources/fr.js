@@ -14,8 +14,8 @@ export default {
     "Email sent successfully.": "Courriel envoyé avec succès.",
     "Forgot password": "Mot de passe oublié",
     // ResetPassword page
-    "Confirm Password": "Confirmer le mot de passe",
-    "Reset Password": "Réinitialiser le mot de passe",
+    "Confirm Password": "Confirmer mot de passe",
+    "Reset Password": "Réinitialiser mot de passe",
     "Your password didn't match.": "Votre mot de passe ne correspond pas.",
     "Your password is too short.": "Votre mot de passe est trop court.",
     "Password already used.": "Mot de passe déjà utilisé.",
@@ -91,10 +91,13 @@ export default {
     "Missed": "Manqué",
     "Pending": "En attente",
     "Order ID": "ID de commande",
-    "Accepted" : "Accepté",
-    "Order has been changed from another interface." : "La commande a été modifiée depuis une autre interface.",
-    "Order missed." : "Commande manquée.",
-    "Order received. 3 minutes and it will be missed." : "Commande reçue. 3 minutes et elle sera manquée.",
+    "Accepted": "Accepté",
+    "Order has been changed from another interface.": "La commande a été modifiée depuis une autre interface.",
+    "Order missed.": "Commande manquée.",
+    "Order received. 3 minutes and it will be missed.": "Commande reçue. 3 minutes et elle sera manquée.",
+    "Paid" : "Payé",
+    "Unpaid" : "Non payé",
+
 
     // All
     "View": "Vue",
@@ -116,18 +119,22 @@ export default {
     "Total price": "Prix total",
     "Fulfillment": "Exécution",
 
-    "Mode, Reserved table, Source, Date and time, Address": "Mode, Table réservée, Source, Date et heure, Adresse",
+    "Mode, Reserved table, Source, Date and time, Delivery address": "Mode, Table réservée, Source, Date et heure, Adresse de livraison",
     "Created at": "Créé le",
     "Last update": "Dernière mise à jour",
     "Prepared at": "Préparé le",
     "Mode": "Mode",
     "Reserved table": "Table réservée",
     "Source": "Source",
-    "Address": "Adresse",
+    "Delivery address": "Adresse de livraison",
     "Payment": "Paiement",
     "Status, Method": "Statut, Méthode",
     "Status": "Statut",
     "Method": "Méthode",
+    "Non-Promotional Products": "Produits sans promotion",
+    "Free" : "Gratuit",
+    "Subtotal" : "Sous-total",
+    "As soon as possible" : "Dès que possible",
 
     // PrintModal
     "Print": "Imprimer",

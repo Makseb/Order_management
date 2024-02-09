@@ -30,6 +30,10 @@
       "sha1": "62442a18a9fe9457c1afeabf683d263a691b7798"
     },
     {
+      "path": "src/assets/fonts/Roboto-BoldItalic.ttf",
+      "sha1": "2f10ad9e8cab0880182705c4e0fbaeabae706e64"
+    },
+    {
       "path": "src/assets/fonts/Roboto-Light.ttf",
       "sha1": "18788c5d630fa695f9283f6393bfa541b2031508"
     },

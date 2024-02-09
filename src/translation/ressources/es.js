@@ -96,6 +96,9 @@ export default {
     "Order has been changed from another interface.": " El pedido ha sido modificado desde otra interfaz.",
     "Order missed." : "Pedido perdido.",
     "Commande reçue. Encore 3 minutes et elle sera manquée." : "Pedido recibido. En 3 minutos será perdido.",
+    "Paid" : "Pagada",
+    "Unpaid" : "No pagado",
+
 
     // All
     "View": "Ver",
@@ -118,19 +121,22 @@ export default {
     "Total price": "Precio total",
     "Fulfillment": "Cumplimiento",
 
-    "Mode, Reserved table, Source, Date and time, Address": "Modo, Mesa reservada, Origen, Fecha y hora, Dirección",
+    "Mode, Reserved table, Source, Date and time, Delivery address": "Modo, Mesa reservada, Origen, Fecha y hora, Dirección de entrega",
     "Created at": "Creado en",
     "Last update": "Última actualización",
     "Prepared at": "Preparado en",
     "Mode": "Modo",
     "Reserved table": "Mesa reservada",
     "Source": "Origen",
-    "Address": "Dirección",
+    "Delivery address": "dirección de entrega",
     "Payment": "Pago",
     "Status, Method": "Estado, Método",
     "Status": "Estado",
     "Method": "Método",
-
+    "Non-Promotional Products": "Productos sin promoción",
+    "Free" : "Gratis",
+    "Subtotal" : "Subtotal",
+    "As soon as possible" : "Lo antes posible",
     // PrintModal
     "Print": "Imprimir",
     "Please select at least one.": "Por favor, seleccione al menos uno."

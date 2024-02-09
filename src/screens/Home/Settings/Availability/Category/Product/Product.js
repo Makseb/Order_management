@@ -27,7 +27,7 @@ export default function Product({ route }) {
     })
 
 
-    console.log(productSelected.state);
+    // console.log(productSelected.state);
     useEffect(() => {
         const fetchAllProductByCategoryByStoreId = async () => {
             await getAllProductByCategoryByStoreId(storeSelected, categoryId).then(res => {
@@ -69,7 +69,7 @@ export default function Product({ route }) {
                                                 value={product.availability}
                                                 onValueChange={async () => {
                                                     await updateProductAvailabilty({ storeId: storeSelected, value: !product.availability, idCategory: categoryId, idProduct: product._id }).then(res => {
-                                                        console.log(res.products);
+                                                        // console.log(res.products);
                                                         store.dispatch(setProducts({ products: res.products }))
                                                     })
                                                 }}

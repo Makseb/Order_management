@@ -16,10 +16,10 @@ export default function BluetoothModal({ modalProps }) {
 
     const bluetoothreceipt = useSelector((state) => state.printer.bluetoothreceipt)
     const bluetoothkitchen = useSelector((state) => state.printer.bluetoothkitchen)
-    console.log("bluetoothreceipt");
-    console.log(bluetoothreceipt);
-    console.log("bluetoothkitchen");
-    console.log(bluetoothkitchen);
+    // console.log("bluetoothreceipt");
+    // console.log(bluetoothreceipt);
+    // console.log("bluetoothkitchen");
+    // console.log(bluetoothkitchen);
 
     const connectToPeripheral = id => {
         BleManager.createBond(id)

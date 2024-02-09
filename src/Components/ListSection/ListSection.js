@@ -16,6 +16,7 @@ export default function ListSection({ listProps }) {
     const [toggleModal, setToggleModal] = useState(false)
     const { t: translation } = useTranslation();
 
+    // console.log("order", order);
     return (
         <View>
             {/* call print modal */}
@@ -45,14 +46,128 @@ export default function ListSection({ listProps }) {
                             justifyContent: 'space-between'
                         }}>
                             <View />
-                            <MaterialCommunityIcons name="printer" size={30} color="#424242" onPress={async () => {
+                            <MaterialCommunityIcons name="printer" size={35} color="#424242" onPress={async () => {
                                 setToggleModal(!toggleModal)
                             }} style={{
+                                // backgroundColor  :"red",
                                 paddingTop: 8,
-                                marginBottom: -10,
-                                paddingRight: 24,
+                                marginBottom: -10, // without shadow -10
+                                marginRight: 24,
                             }} />
                         </View>
+                        {/* promo */}
+                        {
+                            order.promo.map((promo, i) => (
+                                <View key={promo.promo._id}>
+                                    <List.Item title={`${promo.promo.name.charAt(0).toUpperCase() + promo.promo.name.slice(1)}`} titleStyle={{
+                                        fontFamily: 'Roboto-BoldItalic',
+                                        fontSize: 20,
+                                        color: '#424242',
+                                        textAlign: "center",
+                                        // fontStyle: "italic"
+                                    }} />
+                                    {promo.items.map((item, itemIndex) => (
+
+                                        <React.Fragment key={itemIndex}>
+                                            <View style={{
+                                                flexDirection: 'row',
+                                                justifyContent: 'space-between',
+                                                alignItems: 'center',
+                                            }}>
+                                                <List.Item title={`${item.quantity}x ${item.name.charAt(0).toUpperCase() + item.name.slice(1)} ${item.size !== "S" ? `(${item.size})` : ""}`} titleStyle={{
+                                                    fontFamily: 'Roboto-Regular',
+                                                    fontSize: 20,
+                                                    color: '#424242',
+                                                }} />
+
+                                                <View style={{
+                                                    flexDirection: "row"
+                                                }}>
+                                                    <List.Item title={
+                                                        `${item.item_price} ${currency}`
+                                                    } titleStyle={{
+                                                        fontFamily: 'Roboto-Regular',
+                                                        fontSize: 16,
+                                                        color: '#424242',
+                                                        fontStyle: 'italic',
+                                                        textDecorationLine: item.item_price_after_discount === item.item_price ? "none" : "line-through"
+                                                    }} />
+                                                    {item.item_price_after_discount !== item.item_price && <List.Item title={
+                                                        `${item.item_price_after_discount === 0 ? translation("Free") : `${item.item_price_after_discount} ${currency}`}`
+                                                    } titleStyle={{
+                                                        fontFamily: 'Roboto-Regular',
+                                                        fontSize: 16,
+                                                        color: '#424242',
+                                                        fontStyle: 'italic',
+                                                    }} />}
+
+                                                </View>
+
+                                            </View>
+                                            {/* {console.log("item.optionsGrou", item.optionsGroup)} */}
+                                            {item.optionsGroup.map((optionGroup) => (
+                                                <React.Fragment key={optionGroup.optionGroupeId}>
+                                                    <List.Item
+                                                        title={`${optionGroup.optionGroupeName.charAt(0).toUpperCase() + optionGroup.optionGroupeName.slice(1)}`}
+                                                        titleStyle={{
+                                                            paddingLeft: 18,
+                                                            fontFamily: 'Roboto-Light',
+                                                            fontSize: 16,
+                                                            color: '#7f7f7f',
+                                                        }}
+                                                        description={
+                                                            <View>
+                                                                {optionGroup.options.map((option, ind) => (
+                                                                    <View key={option._id} style={{
+                                                                        flexDirection: 'row',
+                                                                        justifyContent: 'space-between',
+                                                                        paddingLeft: 18,
+                                                                    }}>
+                                                                        <Text style={{
+                                                                            fontFamily: 'Roboto-Regular',
+                                                                            fontSize: 16,
+                                                                            color: '#424242',
+                                                                            fontStyle: 'italic',
+                                                                        }}>{`+${option.name.charAt(0).toUpperCase() + option.name.slice(1)}`}</Text>
+                                                                        <Text style={{
+                                                                            fontFamily: 'Roboto-Regular',
+                                                                            fontSize: 16,
+                                                                            color: '#424242',
+                                                                            fontStyle: 'italic',
+                                                                            marginLeft: 10
+                                                                        }}>{`(+${option.price} ${currency})`}</Text>
+
+                                                                    </View>
+                                                                ))}
+                                                            </View>
+                                                        }
+                                                    />
+                                                </React.Fragment>
+                                            ))}
+                                            <List.Item title={
+                                                `${translation("Subtotal")} : ${item.subtotal} ${currency}`
+                                            } titleStyle={{
+                                                alignSelf: "flex-end",
+                                                fontFamily: 'Roboto-BoldItalic',
+                                                fontSize: 16,
+                                                color: '#424242',
+                                                // fontStyle: 'italic',
+                                            }} />
+                                            {/* <View style={{borderBottomColor: 'black',borderBottomWidth: 0.5,}}></View> */}
+                                        </React.Fragment>
+                                    ))}
+                                </View>
+                            ))
+                        }
+                        {order.items.length > 0 && order.promo.length > 0 && <List.Item title={`${translation("Non-Promotional Products")}`} titleStyle={{
+                            fontFamily: 'Roboto-BoldItalic',
+                            fontSize: 20,
+                            color: '#424242',
+                            textAlign: "center",
+                            // fontStyle: "italic"
+                        }} />}
+
+                        {/* items */}
                         {
                             order.items.map((item, itemIndex) => (
                                 <React.Fragment key={itemIndex}>
@@ -61,12 +176,13 @@ export default function ListSection({ listProps }) {
                                         justifyContent: 'space-between',
                                         alignItems: 'center',
                                     }}>
-                                        <List.Item title={`${item.quantity}x ${item.name.charAt(0).toUpperCase() + item.name.slice(1)}`} titleStyle={{
+                                        <List.Item title={`${item.quantity}x ${item.name.charAt(0).toUpperCase() + item.name.slice(1)} ${item.size !== "S" ? `(${item.size})` : ""}`} titleStyle={{
                                             fontFamily: 'Roboto-Regular',
                                             fontSize: 20,
                                             color: '#424242',
                                         }} />
-                                        <List.Item title={`${item.price} ${currency}`} titleStyle={{
+                                        {console.log(item)}
+                                        <List.Item title={`${item.item_price} ${currency}`} titleStyle={{
                                             fontFamily: 'Roboto-Regular',
                                             fontSize: 16,
                                             color: '#424242',
@@ -115,17 +231,25 @@ export default function ListSection({ listProps }) {
                                 </React.Fragment>
                             ))
                         }
+
+
                         <View style={{
                             flexDirection: 'row',
                             justifyContent: 'space-between'
                         }}>
                             <Text></Text>
                             <List.Item title={`${translation("Total price")} : ${order.price_total} ${currency}`} titleStyle={{
-                                fontFamily: 'Roboto-Regular',
+                                fontFamily: 'Roboto-BoldItalic',
                                 fontSize: 20,
                                 color: '#424242',
-                                fontStyle: 'italic',
                             }} />
+                            {/* <List.Item title={`${order.price_total} ${currency}`} titleStyle={{
+                                fontFamily: 'Roboto-Bold',
+                                fontSize: 20,
+                                color: '#424242',
+                                // fontStyle: 'italic',
+                            }} /> */}
+
                         </View>
 
                     </View>
@@ -156,7 +280,7 @@ export default function ListSection({ listProps }) {
                     expanded={expandeds[2]}
                     onPress={() => handlePress(2)}
                     descriptionStyle={{ fontFamily: 'Roboto-Light', fontSize: 12 }}
-                    title={translation("Fulfillment")} description={translation("Mode, Reserved table, Source, Date and time, Address")} titleStyle={{ color: expandeds[2] ? "#df8f17" : "#7f7f7f", fontFamily: 'Roboto-Regular' }}
+                    title={translation("Fulfillment")} description={translation("Mode, Reserved table, Source, Date and time, Delivery address")} titleStyle={{ color: expandeds[2] ? "#df8f17" : "#7f7f7f", fontFamily: 'Roboto-Regular' }}
                     left={props => <List.Icon {...props} icon="check-circle" color={expandeds[2] ? "#df8f17" : "#7f7f7f"} />} rippleColor={"#df8f17"}
                     style={[
                         {
@@ -164,13 +288,13 @@ export default function ListSection({ listProps }) {
                             backgroundColor: '#fafafa'
                         },
                     ]}>
-                    <List.Item titleStyle={{ fontFamily: 'Roboto-Regular' }} title={`${translation("Created at")} : ${order.createdAt.date} ${order.createdAt.time}`} />
-                    {order.status !== "pending" && <List.Item titleStyle={{ fontFamily: 'Roboto-Regular' }} title={`${translation("Last update")} : ${order.updatedAt.date} ${order.updatedAt.time}`} />}
-                    {order.status !== "rejected" && <List.Item titleStyle={{ fontFamily: 'Roboto-Regular' }} title={`${translation("Prepared at")} : ${order.preparedAt ? `${order.preparedAt.date} ${order.preparedAt.time}` : "still not chosen by you"}`} />}
+                    {/* <List.Item titleStyle={{ fontFamily: 'Roboto-Regular' }} title={`${translation("Created at")} : ${order.createdAt.date} ${order.createdAt.time}`} />
+                    {order.status !== "pending" && <List.Item titleStyle={{ fontFamily: 'Roboto-Regular' }} title={`${translation("Last update")} : ${order.updatedAt.date} ${order.updatedAt.time}`} />} */}
+                    {order.status !== "rejected" && <List.Item titleStyle={{ fontFamily: 'Roboto-Regular' }} title={`${translation("Prepared at")} : ${order.preparedAt ? `${order.preparedAt.date} ${order.preparedAt.time}` : translation("As soon as possible")}`} />}
                     <List.Item titleStyle={{ fontFamily: 'Roboto-Regular' }} title={`${translation("Mode")} : ${order.type}`} />
-                    <List.Item titleStyle={{ fontFamily: 'Roboto-Regular' }} title={`${translation("Reserved table")} : ${order.table}`} />
+                    {order.table !== 0 && <List.Item titleStyle={{ fontFamily: 'Roboto-Regular' }} title={`${translation("Reserved table")} : ${order.table}`} />}
                     <List.Item titleStyle={{ fontFamily: 'Roboto-Regular' }} title={`${translation("Source")} : ${order.source}`} />
-                    <List.Item titleStyle={{ fontFamily: 'Roboto-Regular' }} title={`${translation("Address")} : ${order.deliveryAdress}`} />
+                    {order.type === "Delivery" && <List.Item titleStyle={{ fontFamily: 'Roboto-Regular' }} title={`${translation("Delivery address")} : ${order.deliveryAdress}`} />}
 
                 </List.Accordion>
                 {/* Payment */}
@@ -179,15 +303,17 @@ export default function ListSection({ listProps }) {
                     expanded={expandeds[3]}
                     onPress={() => handlePress(3)}
                     descriptionStyle={{ fontFamily: 'Roboto-Light', fontSize: 12 }}
-                    title={translation("Payment")} description={translation("Status, Method")} titleStyle={{ color: expandeds[3] ? "#df8f17" : "#7f7f7f", fontFamily: 'Roboto-Regular' }}
+                    title={translation("Payment")}
+                    description={translation("Status, Method")} titleStyle={{ color: expandeds[3] ? "#df8f17" : "#7f7f7f", fontFamily: 'Roboto-Regular' }}
+
                     left={props => <List.Icon {...props} icon="cash" color={expandeds[3] ? "#df8f17" : "#7f7f7f"} />} rippleColor={"#df8f17"}
                     style={
                         {
                             backgroundColor: '#fafafa'
                         }
                     }>
-                    <List.Item titleStyle={{ fontFamily: 'Roboto-Regular' }} title={`${translation("Status")} : `} />
-                    <List.Item titleStyle={{ fontFamily: 'Roboto-Regular' }} title={`${translation("Method")} : `} />
+                    <List.Item titleStyle={{ fontFamily: 'Roboto-Regular' }} title={`${translation("Method")} : ${order.paymentMethod}`} />
+                    <List.Item titleStyle={{ fontFamily: 'Roboto-Regular' }} title={`${translation("Status")} : ${order.paymentStatus}`} />
                 </List.Accordion>
             </List.Section>
         </View>
