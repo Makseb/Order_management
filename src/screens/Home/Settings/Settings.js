@@ -1,7 +1,7 @@
 import { StyleSheet, TouchableOpacity, View, Text, TouchableWithoutFeedback } from "react-native";
 import React from "react";
 import Icon from 'react-native-vector-icons/Ionicons';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import { CommonActions, useNavigation } from '@react-navigation/native';
 
@@ -46,6 +46,16 @@ export default function Settings() {
                     <Text style={styles.textBesideIcon}>{translation("Printing Settings")}</Text>
                 </View>
             </TouchableWithoutFeedback>
+
+            <TouchableWithoutFeedback onPress={() => {
+                navigation.navigate("DeliverySettings")
+            }}>
+                <View style={styles.containerIconAndText}>
+                    <MaterialIcons name="delivery-dining" size={24} color={'#333'} />
+                    <Text style={styles.textBesideIcon}>{translation("Delivery Settings")}</Text>
+                </View>
+            </TouchableWithoutFeedback>
+
 
 
             <TouchableWithoutFeedback onPress={() => {

@@ -5,13 +5,12 @@ import { useSelector } from 'react-redux';
 
 
 import { Loader } from "./src/Components/exports"
-import { Login, Home, SelectStore, OrderDetailed, Category, Product, PrintingSetting, SearchPrinter, DetailedPrinterSelected, ForgotPassword, ResetPassword, Languages } from "./src/screens/exports"
-import { Linking, View } from 'react-native';
+import { Login, Home, SelectStore, OrderDetailed, Category, Product, PrintingSetting, SearchPrinter, DetailedPrinterSelected, ForgotPassword, ResetPassword, Languages, DeliverySettings } from "./src/screens/exports"
+import { Linking } from 'react-native';
 import { useEffect } from 'react';
 import { store } from './src/shared';
 import { setSelectedLanguage } from './src/shared/slices/Languages/LanguagesSlice';
 import Toast from 'react-native-toast-message';
-
 import SplashScreen from 'react-native-splash-screen';
 
 const Stack = createNativeStackNavigator();
@@ -21,8 +20,6 @@ export default function App() {
     const isLoading = useSelector((state) => state.root.isLoading)
     const state = useSelector((state) => state.authentification)
     const selectedlanguage = useSelector((state) => state.languages.selectedlanguage)
-
-
     useEffect(() => {
         // Hide splash screen
         SplashScreen.hide();
@@ -48,6 +45,7 @@ export default function App() {
         // Clean up the event listener when the component unmounts
         return () => urlListener.remove()
     }, []);
+
 
     return (
         <>
@@ -85,6 +83,7 @@ export default function App() {
                         <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
                         <Stack.Screen name="ResetPassword" component={ResetPassword} />
                         <Stack.Screen name="Languages" component={Languages} />
+                        <Stack.Screen name="DeliverySettings" component={DeliverySettings} />
                     </Stack.Group>
                 </Stack.Navigator>
             </NavigationContainer>

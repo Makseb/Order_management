@@ -37,6 +37,7 @@ export default {
     "Languages": "Languages",
     "Availability": "Availability",
     "Printing Settings": "Printing Settings",
+    "Delivery Settings" : "Delivery Settings",
     "Logout": "Logout",
 
     // Category
@@ -132,7 +133,9 @@ export default {
     "Free" : "Free",
     "Subtotal" : "Subtotal",
     "As soon as possible" : "As soon as possible",
+    "Fees" : "Fees",
 
+    "Price HT" : "Price HT",
     // PrintModal
     "Print": "Print",
     "Please select at least one.": "Please select at least one."

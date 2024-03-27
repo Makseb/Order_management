@@ -29,4 +29,6 @@ export { default as ResetPassword } from './Authentification/ResetPassword/Reset
 
 
 export { default as Languages } from './Home/Settings/Languages/Languages'
+export { default as DeliverySettings } from './Home/Settings/DeliverySettings/DeliverySettings'
+export { default as DeliverySettingsModal } from './Home/Settings/DeliverySettings/DeliverySettingsModal/DeliverySettingsModal'
 

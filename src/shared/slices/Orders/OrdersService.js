@@ -6,8 +6,9 @@ export const getAllOrdersByStroreId = (storeSelected, page, isSilent, frombegini
     return Executor({
         method: 'get',
         url: BaseUrl + '/manager/order/allorders/' + storeSelected + "/" + page + "/" + frombegining,
-        isSilent: isSilent,
+        isSilent: true,
         successFun: () => {
+            // console.log("aaaaa");
         },
         withErrorToast: false,
         withSuccessToast: false,
@@ -18,7 +19,7 @@ export const getAcceptedOrdersByStroreId = (storeSelected, page, isSilent, fromb
     return Executor({
         method: 'get',
         url: BaseUrl + '/manager/order/acceptedorders/' + storeSelected + "/" + page + "/" + frombegining,
-        isSilent: isSilent,
+        isSilent: true,
         successFun: () => {
         },
         withErrorToast: false,
@@ -30,7 +31,7 @@ export const getReadyOrdersByStroreId = (storeSelected, page, isSilent, frombegi
     return Executor({
         method: 'get',
         url: BaseUrl + '/manager/order/readydorders/' + storeSelected + "/" + page + "/" + frombegining,
-        isSilent: isSilent,
+        isSilent: true,
         successFun: () => {
         },
         withErrorToast: false,
@@ -43,7 +44,7 @@ export const updateOrderStatus = (data, notificationId) => {
         method: 'put',
         data,
         url: BaseUrl + '/sse/order/updatestatus/' + notificationId,
-        isSilent: false,
+        isSilent: true,
         successFun: () => {
         },
         withErrorToast: false,

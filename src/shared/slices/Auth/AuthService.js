@@ -8,7 +8,7 @@ export const login = (data, translation) => {
         method: 'post',
         url: BaseUrl + '/manager/login-',
         data,
-        isSilent: false,
+        isSilent: true,
         successFun: (data) => {
             // console.log(data)
             saveUserData(data);
@@ -32,7 +32,7 @@ export const getStoresNameAndIdByUserId = (userId) => {
     return Executor({
         method: 'get',
         url: BaseUrl + '/manager/getstoresnameandidbyuserid/' + userId,
-        isSilent: false,
+        isSilent: true,
         successFun: (data) => {
 
         },
@@ -47,7 +47,7 @@ export const changeStoreStatus = (data) => {
         method: 'put',
         data,
         url: BaseUrl + '/manager/store/changestatus',
-        isSilent: false,
+        isSilent: true,
         successFun: () => {
         },
         withErrorToast: false,
@@ -62,7 +62,7 @@ export const forgotpassword = (data, translation) => {
         method: 'post',
         data,
         url: BaseUrl + '/manager/forgotpassword',
-        isSilent: false,
+        isSilent: true,
         successFun: () => {
         },
         withErrorToast: false,
@@ -79,7 +79,7 @@ export const resetpassword = (data, token) => {
         },
         data,
         url: BaseUrl + '/manager/resetpassword',
-        isSilent: false,
+        isSilent: true,
         successFun: () => {
         },
         withErrorToast: false,

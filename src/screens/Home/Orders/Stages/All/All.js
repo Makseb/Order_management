@@ -15,6 +15,7 @@ import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import Sound from 'react-native-sound';
 import { FlashList } from "@shopify/flash-list";
 import { useTranslation } from "react-i18next";
+import CryptoJS from 'react-native-crypto-js';
 
 export default function All() {
     const { t: translation } = useTranslation();
@@ -31,6 +32,12 @@ export default function All() {
     // navigate between screens
     const navigation = useNavigation()
 
+    const organizations = useSelector((state) => state.delivery.organizations)
+    const indexOfCheckedOrganization = organizations.findIndex((org) =>
+        org.options.some((option) => option.checked)
+    );
+
+
     const [state, setState] = useState({
         page: 1,
         isLoading: false,
@@ -42,6 +49,7 @@ export default function All() {
 
     // get the orders from redux
     const orders = useSelector((state) => state.orders.all)
+    // console.log(orders);
 
     useEffect(() => {
         const eventSource = new EventSource(BaseUrl + "/sse/sse/" + storeSelected + "/" + notificationId);
@@ -49,7 +57,7 @@ export default function All() {
         const handleEventMessage = (data) => {
             if (!data.data.toLowerCase().includes("welcome")) {
                 const fetchAllOrdersByStroreId = async () => {
-                    console.log("data :",data.data);
+                    console.log("data :", data.data);
                     if (data.data.includes("{")) {
                         flatListRef.current.scrollToOffset({ offset: 0 })
                         requestAnimationFrame(async () => {
@@ -101,9 +109,8 @@ export default function All() {
                         })
 
                     } else {
-                        // console.log("new :", state.page)
-
                         flatListRef.current.scrollToOffset({ offset: 0 })
+
                         requestAnimationFrame(async () => {
                             await getAllOrdersByStroreId(storeSelected, state.page + 1, false, true).then(res => {
                                 store.dispatch(setOrders({ orders: res.orders, currency: currency, stage: "all", firstUpdate: true }))
@@ -131,6 +138,15 @@ export default function All() {
                                 console.log(err);
                             })
                         })
+
+                        // if (organizations[indexOfCheckedOrganization].name === "Uber direct" && data.data.type === "Delivery") {
+
+                        // }
+                        // const decrypt = (encryptionKey,encryptedValue) => CryptoJS.AES.decrypt(encryptedValue, encryptionKey).toString(CryptoJS.enc.Utf8);
+                        // console.log(decrypt(data.data[0],data.data[1]));
+
+
+
 
                     }
                 }

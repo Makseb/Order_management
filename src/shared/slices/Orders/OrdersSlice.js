@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { format } from 'date-fns';
-import { reformulateItems,reformulatePromo } from '../../../utils/utils-function';
+import { reformulateItems, reformulatePromo } from '../../../utils/utils-function';
 export const OrdersState = {
     all: [],
     inprogress: [],
@@ -109,6 +109,31 @@ export const ordersSlice = createSlice({
         },
         deleteOrderFromInProgressStage: (state, action) => {
             state.inprogress = state.inprogress.filter((item) => item._id !== action.payload.id)
+        },
+        updateOneOrder: (state, action) => {
+            const { order } = action.payload;
+            const indexAll = state.all.findIndex(o => o._id === order._id);
+            const indexInProgress = state.inprogress.findIndex(o => o._id === order._id);
+            const indexReady = state.ready.findIndex(o => o._id === order._id);
+
+            if (indexAll !== -1) {
+                let data = state.all
+                data[indexAll].uberId = order.uberId;
+                console.log(data[indexAll].uberId);
+                state.all = data
+            }
+
+            if (indexInProgress !== -1) {
+                let data = state.inprogress
+                data[indexInProgress].uberId = order.uberId;
+                state.inprogress = data
+            }
+
+            if (indexReady !== -1) {
+                let data = state.ready
+                data[indexReady].uberId = order.uberId;
+                state.ready = data
+            }
         }
         // decrementCounter: (state, action) => {
 
@@ -133,5 +158,5 @@ export const ordersSlice = createSlice({
 
 
 
-export const { setOrders, updateState, deleteOrderFromInProgressStage, resetIncrement, setIncrement, resetIsNotification } = ordersSlice.actions;
+export const { setOrders, updateState, deleteOrderFromInProgressStage, resetIncrement, setIncrement, resetIsNotification, updateOneOrder } = ordersSlice.actions;
 // decrementCounter

@@ -8,6 +8,7 @@ import { Checkbox } from "react-native-paper";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import Toast from "react-native-toast-message";
+// import BleManager from 'react-native-ble-manager';
 
 export default function PrintModal({ modalProps }) {
     const { t: translation } = useTranslation();
@@ -16,6 +17,9 @@ export default function PrintModal({ modalProps }) {
     // print the ips selected
     const lankitchen = useSelector((state) => state.printer.lankitchen)
     const lanreceipt = useSelector((state) => state.printer.lanreceipt)
+    console.log(lankitchen);
+    // print the bluetooth selected
+    const bluetoothreceipt = useSelector((state) => state.printer.bluetoothreceipt)
 
     // get currency
     const currency = useSelector((state) => state.authentification.storeSelected.currency)
@@ -31,80 +35,101 @@ export default function PrintModal({ modalProps }) {
 
     return (
 
-            <Modal
-                isVisible={toggleModal}
-                onBackdropPress={() => setToggleModal(false)}
-                style={{ justifyContent: 'flex-end', margin: 0 }}>
-                <Toast />
-                <View
-                    style={styles.container}>
-                    <TouchableWithoutFeedback onPress={() => setToggleModal(!toggleModal)}>
-                        <AntDesign
-                            style={styles.iconClock}
-                            name="arrowleft"
-                            size={20}
-                        />
-                    </TouchableWithoutFeedback>
-                    <View style={{
-                        flexDirection: 'row'
-                    }}>
-                        <Checkbox.Item status={checkedKitchen ? 'checked' : 'unchecked'} label={translation("Kitchen printer")} color="#df8f17" onPress={() => { setCheckedKitchen(!checkedKitchen) }} labelStyle={{
-                            color: '#030303',
-                            fontFamily: 'Montserrat-Light',
-                            borderRadius: 24,
-                            fontSize: 12,
-                            lineHeight: 45,
-                        }} />
-                        <Checkbox.Item status={checkedReceipt ? 'checked' : 'unchecked'} label={translation("Receipt printer")} color="#df8f17" onPress={() => { setCheckedReceipt(!checkedReceipt) }} labelStyle={{
-                            color: '#030303',
-                            fontFamily: 'Montserrat-Light',
-                            borderRadius: 24,
-                            fontSize: 12,
-                            lineHeight: 45,
-                        }} />
-                    </View>
-                    <View style={styles.printContainer}>
-                        <TouchableOpacity style={styles.printButton} onPress={async () => {
-                            if (checkedKitchen || checkedReceipt) {
-                                setToggleModal(false)
-                                try {
-                                    if (checkedKitchen) {
-                                        for (let i = 0; i < lankitchen.length; i++) {
-                                            await ThermalPrinterModule.printTcp({
-                                                ip: lankitchen[i].ip,
-                                                port: 9100,
-                                                payload: kitchen(order, currency, store),
-                                                timeout: 30000, // in milliseconds 
-                                            });
-                                        }
-                                    }
-                                    if (checkedReceipt) {
-                                        for (let i = 0; i < lanreceipt.length; i++) {
-                                            await ThermalPrinterModule.printTcp({
-                                                ip: lanreceipt[i].ip,
-                                                port: 9100,
-                                                payload: receipt(order, currency, store),
-                                                timeout: 30000, // in milliseconds 
-                                            });
-                                        }
-                                    }
-
-                                } catch (err) {
-                                    //error handling
-                                    console.log(err.message);
-                                }
-                            } else {
-                                Toast.show({
-                                    type: 'error',
-                                    text1: translation("Please select at least one."),
-                                });
-                            }
-                        }}>
-                            <Text style={styles.textPrintButton}>{translation("Print")}</Text>
-                        </TouchableOpacity>
-                    </View>
+        <Modal
+            isVisible={toggleModal}
+            onBackdropPress={() => setToggleModal(false)}
+            style={{ justifyContent: 'flex-end', margin: 0 }}>
+            <Toast />
+            <View
+                style={styles.container}>
+                <TouchableWithoutFeedback onPress={() => setToggleModal(!toggleModal)}>
+                    <AntDesign
+                        style={styles.iconClock}
+                        name="arrowleft"
+                        size={20}
+                    />
+                </TouchableWithoutFeedback>
+                <View style={{
+                    flexDirection: 'row'
+                }}>
+                    <Checkbox.Item status={checkedKitchen ? 'checked' : 'unchecked'} label={translation("Kitchen printer")} color="#df8f17" onPress={() => { setCheckedKitchen(!checkedKitchen) }} labelStyle={{
+                        color: '#030303',
+                        fontFamily: 'Montserrat-Light',
+                        borderRadius: 24,
+                        fontSize: 12,
+                        lineHeight: 45,
+                    }} />
+                    <Checkbox.Item status={checkedReceipt ? 'checked' : 'unchecked'} label={translation("Receipt printer")} color="#df8f17" onPress={() => { setCheckedReceipt(!checkedReceipt) }} labelStyle={{
+                        color: '#030303',
+                        fontFamily: 'Montserrat-Light',
+                        borderRadius: 24,
+                        fontSize: 12,
+                        lineHeight: 45,
+                    }} />
                 </View>
-            </Modal >
+                <View style={styles.printContainer}>
+                    <TouchableOpacity style={styles.printButton} onPress={async () => {
+                        if (checkedKitchen || checkedReceipt) {
+                            setToggleModal(false)
+                            try {
+                                const a = await ThermalPrinterModule.printTcp({
+                                    ip: "192.168.1.100",
+                                    port: 9100,
+                                    payload: kitchen(order, currency),
+                                    timeout: 30000,
+                                }); 
+                                console.log(a);
+                                // if (checkedKitchen) {
+                                //     for (let i = 0; i < lankitchen.length; i++) {
+                                //         const a = await ThermalPrinterModule.printTcp({
+                                //             ip: "192.168.1.100",
+                                //             port: 9100,
+                                //             payload: kitchen(order, currency),
+                                //             timeout: 30000,
+                                //         });
+                                //         console.log(a);
+                                //     }
+                                // }
+                                // if (checkedReceipt) {
+                                //     for (let i = 0; i < lanreceipt.length; i++) {
+                                //         await ThermalPrinterModule.printTcp({
+                                //             ip: lanreceipt[i].ip,
+                                //             port: 9100,
+                                //             payload: receipt(order, currency, store),
+                                //             timeout: 30000,
+                                //         });
+                                //     }
+                                //     // const deviceId = bluetoothreceipt[0].id; // Example device ID
+                                //     // const serviceUUID = "0000180f-0000-1000-8000-00805f9b34fb"; // Example service UUID
+                                //     // const characteristicUUID = "00002a19-0000-1000-8000-00805f9b34fb"; // Example characteristic UUID
+                                //     // const data = [0x01, 0x02, 0x03]; // Example data to write (as an array of bytes)
+
+                                //     // BleManager.write(deviceId, serviceUUID, characteristicUUID, data)
+                                //     //     .then(() => {
+                                //     //         console.log("Data written successfully.");
+                                //     //     })
+                                //     //     .catch(error => {
+                                //     //         console.error("Error writing data:", error);
+                                //     //     });
+
+                                // }
+
+                            } catch (err) {
+                                //error handling
+                                console.log("err.message",err.message);
+                            }
+                        } else {
+                            Toast.show({
+                                type: 'error',
+                                text1: translation("Please select at least one."),
+                            });
+                        }
+                    }}>
+                        <Text style={styles.textPrintButton}>{translation("Print")}</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+        </Modal >
 
     )
 

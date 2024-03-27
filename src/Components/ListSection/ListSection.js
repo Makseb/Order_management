@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { View } from "react-native";
 
 import { List, Text } from 'react-native-paper';
@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { PrintModal } from "../../screens/exports";
 import { useTranslation } from "react-i18next";
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 
 export default function ListSection({ listProps }) {
@@ -81,8 +82,30 @@ export default function ListSection({ listProps }) {
                                                 }} />
 
                                                 <View style={{
-                                                    flexDirection: "row"
+                                                    flexDirection: "row",
+                                                    // justifyContent  : "center",
+                                                    // alignItems : "center"
                                                 }}>
+                                                    {/* <Text style={{
+                                                        fontFamily: 'Roboto-Regular',
+                                                        fontSize: 16,
+                                                        color: '#424242',
+                                                        fontStyle: 'italic',
+                                                        textDecorationLine: item.price_after_discount === item.item_price ? "none" : "line-through",
+                                                        marginLeft : item.price_after_discount !== item.item_price && -10
+                                                    }}>{item.item_price} {currency}</Text>
+                                                    {item.price_after_discount !== item.item_price &&
+                                                        <Text style={{
+                                                            fontFamily: 'Roboto-Regular',
+                                                            fontSize: 16,
+                                                            color: '#424242',
+                                                            fontStyle: 'italic',
+                                                            marginLeft : item.price_after_discount !== item.item_price && 10
+
+                                                        }} >
+                                                            {item.price_after_discount === 0 ? translation("Free") : `${item.price_after_discount} ${currency}`}
+                                                        </Text>} */}
+
                                                     <List.Item title={
                                                         `${item.item_price} ${currency}`
                                                     } titleStyle={{
@@ -90,10 +113,11 @@ export default function ListSection({ listProps }) {
                                                         fontSize: 16,
                                                         color: '#424242',
                                                         fontStyle: 'italic',
-                                                        textDecorationLine: item.item_price_after_discount === item.item_price ? "none" : "line-through"
+                                                        textDecorationLine: item.price_after_discount === item.item_price ? "none" : "line-through"
                                                     }} />
-                                                    {item.item_price_after_discount !== item.item_price && <List.Item title={
-                                                        `${item.item_price_after_discount === 0 ? translation("Free") : `${item.item_price_after_discount} ${currency}`}`
+
+                                                    {item.price_after_discount !== item.item_price && <List.Item title={
+                                                        `${item.price_after_discount === 0 ? translation("Free") : `${item.price_after_discount} ${currency}`}`
                                                     } titleStyle={{
                                                         fontFamily: 'Roboto-Regular',
                                                         fontSize: 16,
@@ -105,6 +129,7 @@ export default function ListSection({ listProps }) {
 
                                             </View>
                                             {/* {console.log("item.optionsGrou", item.optionsGroup)} */}
+
                                             {item.optionsGroup.map((optionGroup) => (
                                                 <React.Fragment key={optionGroup.optionGroupeId}>
                                                     <List.Item
@@ -119,24 +144,56 @@ export default function ListSection({ listProps }) {
                                                             <View>
                                                                 {optionGroup.options.map((option, ind) => (
                                                                     <View key={option._id} style={{
-                                                                        flexDirection: 'row',
-                                                                        justifyContent: 'space-between',
-                                                                        paddingLeft: 18,
+                                                                        flexDirection: "column",
                                                                     }}>
-                                                                        <Text style={{
-                                                                            fontFamily: 'Roboto-Regular',
-                                                                            fontSize: 16,
-                                                                            color: '#424242',
-                                                                            fontStyle: 'italic',
-                                                                        }}>{`+${option.name.charAt(0).toUpperCase() + option.name.slice(1)}`}</Text>
-                                                                        <Text style={{
-                                                                            fontFamily: 'Roboto-Regular',
-                                                                            fontSize: 16,
-                                                                            color: '#424242',
-                                                                            fontStyle: 'italic',
-                                                                            marginLeft: 10
-                                                                        }}>{`(+${option.price} ${currency})`}</Text>
+                                                                        <View key={option._id} style={{
+                                                                            flexDirection: 'row',
+                                                                            justifyContent: 'space-between',
+                                                                            paddingLeft: 18,
+                                                                        }}>
+                                                                            <Text style={{
+                                                                                fontFamily: 'Roboto-Regular',
+                                                                                fontSize: 16,
+                                                                                color: '#424242',
+                                                                                fontStyle: 'italic',
+                                                                            }}>{`+${option.quantity}x ${option.name.charAt(0).toUpperCase() + option.name.slice(1)}`}</Text>
+                                                                            <Text style={{
+                                                                                fontFamily: 'Roboto-Regular',
+                                                                                fontSize: 16,
+                                                                                color: '#424242',
+                                                                                fontStyle: 'italic',
+                                                                                marginLeft: 10
+                                                                            }}>{`(+${option.price_opt} ${currency})`}</Text>
 
+                                                                        </View>
+                                                                        <View style={{
+                                                                            display: "flex",
+                                                                            flexDirection: 'column',
+                                                                            paddingLeft: 18
+                                                                        }}>
+                                                                            {
+                                                                                option.options.map((opt) => (
+                                                                                    <View key={opt._id} style={{
+                                                                                        flexDirection: 'row',
+                                                                                        marginLeft: 18
+                                                                                    }}>
+                                                                                        <Text style={{
+                                                                                            fontFamily: 'QuickSand',
+                                                                                            fontSize: 16,
+                                                                                            color: '#424242',
+                                                                                            fontStyle: 'italic',
+                                                                                        }}>+{opt.quantity}x {opt.name}</Text>
+                                                                                        <Text style={{
+                                                                                            fontFamily: 'QuickSand',
+                                                                                            fontSize: 16,
+                                                                                            color: '#424242',
+                                                                                            fontStyle: 'italic',
+                                                                                            marginLeft: 10
+                                                                                        }}>(+{opt.price} {currency})</Text>
+                                                                                    </View>
+                                                                                ))
+                                                                            }
+                                                                        </View>
                                                                     </View>
                                                                 ))}
                                                             </View>
@@ -144,6 +201,29 @@ export default function ListSection({ listProps }) {
                                                     />
                                                 </React.Fragment>
                                             ))}
+
+                                            {item.note && <List.Item
+                                                titleStyle={
+                                                    {
+                                                        marginTop: 20,
+                                                        marginBottom: 10,
+                                                        width: "100%",
+                                                        backgroundColor: "#F7E4C6",
+                                                        padding: 10,
+                                                        borderRadius: 10,
+                                                    }
+                                                }
+                                                title={
+                                                    <View style={{
+                                                        justifyContent: "flex-start",
+                                                        alignItems: "center",
+                                                        flexDirection: "row",
+                                                    }}>
+                                                        <Ionicons name="information-circle-outline" style={{ color: "#D2691E", fontSize: 20, marginRight: 5 }} />
+                                                        <Text style={{ color: "#D2691E", fontSize: 13 }}>Note: {item.note}</Text>
+                                                    </View>
+                                                }
+                                            />}
                                             <List.Item title={
                                                 `${translation("Subtotal")} : ${item.subtotal} ${currency}`
                                             } titleStyle={{
@@ -203,24 +283,56 @@ export default function ListSection({ listProps }) {
                                                     <View>
                                                         {optionGroup.options.map((option, ind) => (
                                                             <View key={option._id} style={{
-                                                                flexDirection: 'row',
-                                                                justifyContent: 'space-between',
-                                                                paddingLeft: 18,
+                                                                flexDirection: "column",
                                                             }}>
-                                                                <Text style={{
-                                                                    fontFamily: 'Roboto-Regular',
-                                                                    fontSize: 16,
-                                                                    color: '#424242',
-                                                                    fontStyle: 'italic',
-                                                                }}>{`+${option.name.charAt(0).toUpperCase() + option.name.slice(1)}`}</Text>
-                                                                <Text style={{
-                                                                    fontFamily: 'Roboto-Regular',
-                                                                    fontSize: 16,
-                                                                    color: '#424242',
-                                                                    fontStyle: 'italic',
-                                                                    marginLeft: 10
-                                                                }}>{`(+${option.price} ${currency})`}</Text>
+                                                                <View key={option._id} style={{
+                                                                    flexDirection: 'row',
+                                                                    justifyContent: 'space-between',
+                                                                    paddingLeft: 18,
+                                                                }}>
+                                                                    <Text style={{
+                                                                        fontFamily: 'Roboto-Regular',
+                                                                        fontSize: 16,
+                                                                        color: '#424242',
+                                                                        fontStyle: 'italic',
+                                                                    }}>{`+${option.quantity}x ${option.name.charAt(0).toUpperCase() + option.name.slice(1)}`}</Text>
+                                                                    <Text style={{
+                                                                        fontFamily: 'Roboto-Regular',
+                                                                        fontSize: 16,
+                                                                        color: '#424242',
+                                                                        fontStyle: 'italic',
+                                                                        marginLeft: 10
+                                                                    }}>{`(+${option.price_opt} ${currency})`}</Text>
 
+                                                                </View>
+                                                                <View style={{
+                                                                    display: "flex",
+                                                                    flexDirection: 'column',
+                                                                    paddingLeft: 18
+                                                                }}>
+                                                                    {
+                                                                        option.options.map((opt) => (
+                                                                            <View key={opt._id} style={{
+                                                                                flexDirection: 'row',
+                                                                                paddingLeft: 18
+                                                                            }}>
+                                                                                <Text style={{
+                                                                                    fontFamily: 'QuickSand',
+                                                                                    fontSize: 16,
+                                                                                    color: '#424242',
+                                                                                    fontStyle: 'italic',
+                                                                                }}>+{opt.quantity}x {opt.name}</Text>
+                                                                                <Text style={{
+                                                                                    fontFamily: 'QuickSand',
+                                                                                    fontSize: 16,
+                                                                                    color: '#424242',
+                                                                                    fontStyle: 'italic',
+                                                                                    marginLeft: 10
+                                                                                }}>(+{opt.price} {currency})</Text>
+                                                                            </View>
+                                                                        ))
+                                                                    }
+                                                                </View>
                                                             </View>
                                                         ))}
                                                     </View>
@@ -228,10 +340,57 @@ export default function ListSection({ listProps }) {
                                             />
                                         </React.Fragment>
                                     ))}
+
+                                    {item.note && <List.Item
+                                        titleStyle={
+                                            {
+                                                marginTop: 20,
+                                                marginBottom: 10,
+                                                width: "100%",
+                                                backgroundColor: "#F7E4C6",
+                                                padding: 10,
+                                                borderRadius: 10,
+                                            }
+                                        }
+                                        title={
+                                            <View style={{
+                                                justifyContent: "flex-start",
+                                                alignItems: "center",
+                                                flexDirection: "row",
+                                            }}>
+                                                <Ionicons name="information-circle-outline" style={{ color: "#D2691E", fontSize: 20, marginRight: 5 }} />
+                                                <Text style={{ color: "#D2691E", fontSize: 13 }}>Note: {item.note}</Text>
+                                            </View>
+                                        }
+                                    />}
                                 </React.Fragment>
                             ))
                         }
 
+
+                        <View style={{
+                            flexDirection: 'row',
+                            justifyContent: 'space-between'
+                        }}>
+                            <Text></Text>
+                            <List.Item title={`${translation("Fees")} : ${order.price_total - order.priceWithoutFee} ${currency}`} titleStyle={{
+                                fontFamily: 'Roboto-BoldItalic',
+                                fontSize: 16,
+                                color: '#424242',
+                            }} />
+                        </View>
+
+                        <View style={{
+                            flexDirection: 'row',
+                            justifyContent: 'space-between'
+                        }}>
+                            <Text></Text>
+                            <List.Item title={`${translation("Price HT")} : ${order.priceHt_total} ${currency}`} titleStyle={{
+                                fontFamily: 'Roboto-BoldItalic',
+                                fontSize: 16,
+                                color: '#424242',
+                            }} />
+                        </View>
 
                         <View style={{
                             flexDirection: 'row',
@@ -243,14 +402,8 @@ export default function ListSection({ listProps }) {
                                 fontSize: 20,
                                 color: '#424242',
                             }} />
-                            {/* <List.Item title={`${order.price_total} ${currency}`} titleStyle={{
-                                fontFamily: 'Roboto-Bold',
-                                fontSize: 20,
-                                color: '#424242',
-                                // fontStyle: 'italic',
-                            }} /> */}
-
                         </View>
+
 
                     </View>
 

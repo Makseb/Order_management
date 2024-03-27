@@ -38,7 +38,8 @@ export default function SearchPrinter() {
 
     // get connected bluetooth
     const bluetooth = useSelector((state) => state.printer.bluetooth)
-
+    console.log(bluetooth);
+    console.log(showText.state && showText.value);
     // if bluetooth initilize it
     if (title === "Bluetooth") {
         useEffect(() => {
@@ -47,10 +48,10 @@ export default function SearchPrinter() {
 
                 // Event listener for discovered peripherals
                 NativeAppEventEmitter.addListener('BleManagerDiscoverPeripheral', (data) => {
-                    if (data.name !== null) {
-                        // console.log(data.name);
-                        // console.log(data.id);
-                        store.dispatch(setBluetooth({ name: data.name, id: data.id }));
+                    // console.log(data.id);
+                    if (data.id !== null) {
+                        console.log(data);
+                        store.dispatch(setBluetooth({ name: data?.name, id: data.id }));
                     }
                 });
                 NativeAppEventEmitter.addListener('BleManagerStopScan', () => {
@@ -165,7 +166,7 @@ export default function SearchPrinter() {
                                         paddingVertical: '2%',
                                         marginHorizontal: '5%',
                                     }}>
-                                        <Text style={styles.textHostname}>{item.name}</Text>
+                                        <Text style={styles.textHostname}>{item.id}</Text>
                                     </View>
                                 </TouchableWithoutFeedback>
                             )

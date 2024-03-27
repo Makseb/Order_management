@@ -22,11 +22,13 @@ export default function BluetoothModal({ modalProps }) {
     // console.log(bluetoothkitchen);
 
     const connectToPeripheral = id => {
-        BleManager.createBond(id)
+        BleManager.connect(id)
             .then(() => {
-                peripheral.connected = true
+                console.log("aa");
+                // peripheral.connected = true
             })
-            .catch(() => {
+            .catch((err) => {
+                console.log(err);
                 Toast.show({
                     type: 'error',
                     text1: translation("Failed to connect on printer"),
@@ -76,7 +78,7 @@ export default function BluetoothModal({ modalProps }) {
                                 if (exist || (bluetoothkitchen.length < 1 && bluetoothreceipt.length < 1)) {
                                     // the first connection between two devices
                                     if (!exist) {
-                                        // connectToPeripheral(toggleModalBluetooth.value.id)
+                                        connectToPeripheral(toggleModalBluetooth.value.id)
                                     }
                                     store.dispatch(removeBluetoothKitchen({ id: toggleModalBluetooth.value.id }))
                                     store.dispatch(setBluetoothReceipt({ bluetoothreceipt: toggleModalBluetooth.value }))
@@ -101,7 +103,7 @@ export default function BluetoothModal({ modalProps }) {
 
                                     // the first connection between two devices
                                     if (!exist) {
-                                        // connectToPeripheral(toggleModalBluetooth.value.id)
+                                        connectToPeripheral(toggleModalBluetooth.value.id)
                                     }
                                     store.dispatch(removeBluetoothReceipt({ id: toggleModalBluetooth.value.id }))
                                     store.dispatch(setBluetoothKitchen({ bluetoothkitchen: toggleModalBluetooth.value }))

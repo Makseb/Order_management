@@ -1,29 +1,4 @@
-import React, { useRef } from "react";
-
-
-import { format, differenceInSeconds, parse, addSeconds } from 'date-fns';
-
-export function getDifference(startTimeParam) {
-  // start time
-  const startTime = parse(startTimeParam, 'HH:mm:ss', new Date());
-
-  // Add 180 seconds to the start time
-  const newTime = addSeconds(startTime, 180);
-
-  // Get the current time in HH:mm:ss format
-  const currentTimeString = format(new Date(), 'HH:mm:ss');
-
-  // Parse the current time string into a Date object
-  const currentTime = parse(currentTimeString, 'HH:mm:ss', new Date());
-
-  // Calculate the difference in seconds
-  const difference = differenceInSeconds(newTime, currentTime);
-
-  return difference
-
-}
-
-// reformulate items in order schema 
+// // reformulate items in order schema 
 export function reformulateItems(items) {
   let data = []
   for (let i = 0; i < items.length; i++) {
@@ -33,7 +8,12 @@ export function reformulateItems(items) {
         _id: items[i].options[j]._id,
         id: items[i].options[j].id,
         name: items[i].options[j].name,
-        price: items[i].options[j].price,
+        price_opt: items[i].options[j].price_opt,
+        options: items[i].options[j].options,
+
+        // 
+        quantity: items[i].options[j].quantity,
+
       }
       const idExistsIndex = optionsGroup.findIndex(item => item.optionGroupeId === items[i].options[j].optionGroupeId);
       if (idExistsIndex === -1) {
@@ -48,16 +28,17 @@ export function reformulateItems(items) {
     }
 
     data.push({
+      item_price: items[i].item_price,
       id: items[i].id,
       _id: items[i]._id,
       name: items[i].name,
       description: items[i].description,
-      price: items[i].price,
-      size : items[i].size,
-      item_price: items[i].item_price,
+      // price: items[i].price,
+      size: items[i].size,
       quantity: items[i].quantity,
       tax: items[i].tax,
-      optionsGroup: optionsGroup
+      optionsGroup: optionsGroup,
+      note: items[i].note
     })
   }
   return data
@@ -67,7 +48,6 @@ export function reformulatePromo(promo) {
   let promos = []
   for (let k = 0; k < promo.length; k++) {
     let items = promo[k].items
-    // console.log('items', items);
     let data = []
     for (let i = 0; i < items.length; i++) {
       const optionsGroup = []
@@ -76,10 +56,12 @@ export function reformulatePromo(promo) {
           _id: items[i].options[j]._id,
           id: items[i].options[j].id,
           name: items[i].options[j].name,
-          price: items[i].options[j].price,
+          price_opt: items[i].options[j].price_opt,
+          options: items[i].options[j].options,
+          // 
+          quantity: items[i].options[j].quantity,
         }
         const idExistsIndex = optionsGroup.findIndex(item => item.optionGroupeId === items[i].options[j].optionGroupeId);
-        // console.log("items[i].options[j].optionGroupeId", items[i].options[j].optionGroupeId);
         if (idExistsIndex === -1) {
           optionsGroup.push({
             optionGroupeId: items[i].options[j].optionGroupeId,
@@ -92,18 +74,19 @@ export function reformulatePromo(promo) {
       }
       // console.log("optionsGroup", optionsGroup);
       data.push({
+        item_price: items[i].item_price,
+        subtotal: items[i].subtotal,
+        price_after_discount: items[i].price_after_discount,
         id: items[i].id,
         _id: items[i]._id,
         name: items[i].name,
         description: items[i].description,
-        price: items[i].price,
-        item_price: items[i].item_price,
-        subtotal: items[i].subtotal,
-        size : items[i].size,
-        item_price_after_discount: items[i].item_price_after_discount,
+        // price: items[i].price,
+        size: items[i].size,
         quantity: items[i].quantity,
         tax: items[i].tax,
-        optionsGroup: optionsGroup
+        optionsGroup: optionsGroup,
+        note: items[i].note
       })
     }
     promos.push({ "items": data, "promo": promo[k].promoId })
@@ -112,73 +95,75 @@ export function reformulatePromo(promo) {
 
   return promos
 }
-// export const PrintScreen = (order, currency) => {
-//   return `<html>
-//   <head>
-//     <style>
-//       /* Add your styles here */
-//       body {
-//         font-family: 'Roboto-Regular';
-//       }
-//       /* Add more styles as needed */
-//     </style>
-//   </head>
-//   <body>
-//     ${order.items.map((item, itemIndex) => `
-//       <div key=${itemIndex}>
-//         <div style="flex-direction : row; display : flex;justify-content: space-between;${itemIndex !== 0 && "padding-top : 8px"}">
-//       <div style="font-size: 20px; color: #424242;font-family: Roboto-Regular;">
-//         ${item.quantity}x ${item.name.charAt(0).toUpperCase() + item.name.slice(1)}
-//       </div>
-//       <div style="font-size: 16px; color: #424242; font-style: italic;font-family: Roboto-Regular">
-//         ${item.price} ${currency}
-//       </div>
-//     </div>  
-//     ${item.optionsGroup.map((optionGroup) => `
-//           <div key=${optionGroup.optionGroupeId}>
-//             <div style="padding-left: 18px; font-size: 16px; color: #7f7f7f;font-family : Roboto-Light;padding-top : 8px">
-//               ${optionGroup.optionGroupeName.charAt(0).toUpperCase() + optionGroup.optionGroupeName.slice(1)}
-//             </div>
-//             ${optionGroup.options.map((option) => `
-//               <div key=${option._id} style="flex-direction: row; justify-content: space-between; padding-left: 18px;">
-//                 <span style="font-size: 16px; color: #424242; font-style: italic;Roboto-Regular;">
-//                   +${option.name.charAt(0).toUpperCase() + option.name.slice(1)}
-//                 </span>
-//                 <span style="font-size: 16px; color: #424242; font-style: italic;Roboto-Regular;margin-left: 10px;">(+${option.price} ${currency})</span>
-//               </div>
-//             `).join('')}
-//           </div>
-//         `).join('')}
-//       </div>
-//     `).join('')}
-//   </body>
-//   <div style="display : flex;flex-direction : row;justify-content : space-between">
-// <div></div>
-// <div style="font-size: 20; color: #424242; font-style: italic;Roboto-Regular;padding-top:8px">Total price : ${order.price_total} ${currency}</div>
-// </div>
-// </html>
-// `
-// }
+// Helper function to capitalize the first letter of a string
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
 
 export function receipt(order, currency, store) {
   let escPosCommands = '';
 
+  if (order.items.length > 0 && order.promo.length > 0) {
+    escPosCommands +=
+      '[C]<b>Non-Promotional Products\n\n';
+  }
+
   order.items.forEach((item) => {
     escPosCommands +=
-      '[L]<b>' + item.quantity + 'x ' + item.name.charAt(0).toUpperCase() + item.name.slice(1) + '</b>[R]' + item.price + ' ' + currency + '\n';
-    escPosCommands += '[L]\n' // i want to add another line here how ?
+      '[L]<b>' + item.quantity + 'x ' + capitalizeFirstLetter(item.name) + '</b>[R]' + item.item_price + ' ' + currency + '\n';
+    escPosCommands += '[L]\n'
 
     item.optionsGroup.forEach((optionGroup) => {
-      escPosCommands += '[L]  ' + optionGroup.optionGroupeName.charAt(0).toUpperCase() + optionGroup.optionGroupeName.slice(1) + '\n';
+      escPosCommands += '[L] ' + capitalizeFirstLetter(optionGroup.optionGroupeName) + '\n';
 
-      escPosCommands += optionGroup.options.map((option, ind) => {
-        return '[L]  +' + option.name.charAt(0).toUpperCase() + option.name.slice(1) + '[R]' + option.price + ' ' + currency + '\n';
+      escPosCommands += optionGroup.options.map((option) => {
+        let optionString = '[L]  +' + option.quantity + "x " + capitalizeFirstLetter(option.name) + '[R]' + option.price_opt + ' ' + currency + '\n';
+        escPosCommands += '[L]\n'
+
+        if (option.options.length > 0) {
+          optionString += option.options.map((opt) => {
+            return '[L]    -' + opt.quantity + 'x ' + capitalizeFirstLetter(opt.name) + '[R]' + opt.price + ' ' + currency + '\n';
+          }).join('');
+        }
+        return optionString;
       }).join('');
-
-      escPosCommands += '[L]\n';
     });
   });
-  // ORDER N°045</font>
+
+  if (order.items.length > 0 && order.promo.length > 0) {
+    escPosCommands +=
+      '[L]\n';
+  }
+
+  order.promo.forEach((promo) => {
+    escPosCommands +=
+      '[C]<b>' + promo.promo.name + '\n';
+    escPosCommands += '[L]\n'
+
+    promo.items.forEach((item) => {
+      escPosCommands +=
+        '[L]<b>' + item.quantity + 'x ' + capitalizeFirstLetter(item.name) + '</b>[R]' + item.price_after_discount + ' ' + currency + '\n';
+      escPosCommands += '[L]\n'
+
+      item.optionsGroup.forEach((optionGroup) => {
+        escPosCommands += '[L] ' + capitalizeFirstLetter(optionGroup.optionGroupeName) + '\n';
+
+        escPosCommands += optionGroup.options.map((option) => {
+          let optionString = '[L]  +' + option.quantity + "x " + capitalizeFirstLetter(option.name) + '[R]' + option.price_opt + ' ' + currency + '\n';
+          escPosCommands += '[L]\n'
+
+          if (option.options.length > 0) {
+            optionString += option.options.map((opt) => {
+              return '[L]    -' + opt.quantity + 'x ' + capitalizeFirstLetter(opt.name) + '[R]' + opt.price + ' ' + currency + '\n';
+            }).join('');
+          }
+          return optionString;
+        }).join('');
+      });
+      escPosCommands += '[R]Subtotal : ' + item.subtotal + ' ' + currency + "\n"
+      escPosCommands += '[L]\n';
+    });
+  })
   return "[L]<u><font size='tall'>ORDER ID : " + order._id.substring(order._id.length - 4) + "</font></u>[R]for <b>" + order.type + "</b>\n" +
     '[L]\n' +
     '[L]Order at : ' + order.createdAt.date + " " + order.createdAt.time + "\n" +
@@ -195,8 +180,9 @@ export function receipt(order, currency, store) {
     '[L]\n' +
     escPosCommands +
     '[C]--------------------------------\n' +
+    '[R]' + order.type + ' FEE :[R]' + (order.price_total - order.priceWithoutFee) + ' ' + currency + '\n' +
+    '[R]PRICE HT :[R]' + order.priceHt_total + ' ' + currency + '\n' +
     '[R]TOTAL PRICE :[R]' + order.price_total + ' ' + currency + '\n' +
-    '[R]TAX :[R]4.23e\n' +
     '[L]\n' +
     '[C]================================\n' +
     '[L]\n' +
@@ -212,24 +198,70 @@ export function receipt(order, currency, store) {
     '[L]\n' +
     '[L]\n'
 }
-export function kitchen(order, currency, store) {
+export function kitchen(order, currency) {
   let escPosCommands = '';
+
+  if (order.items.length > 0 && order.promo.length > 0) {
+    escPosCommands +=
+      '[C]<b>Non-Promotional Products\n\n';
+  }
 
   order.items.forEach((item) => {
     escPosCommands +=
-      '[L]<b>' + item.quantity + 'x ' + item.name.charAt(0).toUpperCase() + item.name.slice(1) + '</b>[R]' + item.price + ' ' + currency + '\n';
-    escPosCommands += '[L]\n' // i want to add another line here how ?
+      '[L]<b>' + item.quantity + 'x ' + capitalizeFirstLetter(item.name) + '</b>[R]' + item.item_price + ' ' + currency + '\n';
+    escPosCommands += '[L]\n'
 
     item.optionsGroup.forEach((optionGroup) => {
-      escPosCommands += '[L]  ' + optionGroup.optionGroupeName.charAt(0).toUpperCase() + optionGroup.optionGroupeName.slice(1) + '\n';
+      escPosCommands += '[L] ' + capitalizeFirstLetter(optionGroup.optionGroupeName) + '\n';
 
-      escPosCommands += optionGroup.options.map((option, ind) => {
-        return '[L]  +' + option.name.charAt(0).toUpperCase() + option.name.slice(1) + '[R]' + option.price + ' ' + currency + '\n';
+      escPosCommands += optionGroup.options.map((option) => {
+        let optionString = '[L]  +' + option.quantity + "x " + capitalizeFirstLetter(option.name) + '[R]' + option.price_opt + ' ' + currency + '\n';
+        escPosCommands += '[L]\n'
+
+        if (option.options.length > 0) {
+          optionString += option.options.map((opt) => {
+            return '[L]    -' + opt.quantity + 'x ' + capitalizeFirstLetter(opt.name) + '[R]' + opt.price + ' ' + currency + '\n';
+          }).join('');
+        }
+        return optionString;
       }).join('');
-
-      escPosCommands += '[L]\n';
     });
   });
+
+  if (order.items.length > 0 && order.promo.length > 0) {
+    escPosCommands +=
+      '[L]\n';
+  }
+
+  order.promo.forEach((promo) => {
+    escPosCommands +=
+      '[C]<b>' + promo.promo.name + '\n';
+    escPosCommands += '[L]\n'
+
+    promo.items.forEach((item) => {
+      escPosCommands +=
+        '[L]<b>' + item.quantity + 'x ' + capitalizeFirstLetter(item.name) + '</b>[R]' + item.price_after_discount + ' ' + currency + '\n';
+      escPosCommands += '[L]\n'
+
+      item.optionsGroup.forEach((optionGroup) => {
+        escPosCommands += '[L] ' + capitalizeFirstLetter(optionGroup.optionGroupeName) + '\n';
+
+        escPosCommands += optionGroup.options.map((option) => {
+          let optionString = '[L]  +' + option.quantity + "x " + capitalizeFirstLetter(option.name) + '[R]' + option.price_opt + ' ' + currency + '\n';
+          escPosCommands += '[L]\n'
+
+          if (option.options.length > 0) {
+            optionString += option.options.map((opt) => {
+              return '[L]    -' + opt.quantity + 'x ' + capitalizeFirstLetter(opt.name) + '[R]' + opt.price + ' ' + currency + '\n';
+            }).join('');
+          }
+          return optionString;
+        }).join('');
+      });
+      escPosCommands += '[R]Subtotal : ' + item.subtotal + ' ' + currency + "\n"
+      escPosCommands += '[L]\n';
+    });
+  })
 
   return "[L]<u><font size='tall'>ORDER ID : " + order._id.substring(order._id.length - 4) + "</font></u>[R]for <b>" + order.type + "</b>\n" +
     '[L]\n' +
@@ -241,8 +273,9 @@ export function kitchen(order, currency, store) {
     '[L]\n' +
     escPosCommands +
     '[C]--------------------------------\n' +
+    '[R]' + order.type + ' FEE :[R]' + (order.price_total - order.priceWithoutFee) + ' ' + currency + '\n' +
+    '[R]PRICE HT :[R]' + order.priceHt_total + ' ' + currency + '\n' +
     '[R]TOTAL PRICE :[R]' + order.price_total + ' ' + currency + '\n' +
-    '[R]TAX :[R]4.23e\n' +
     '[L]\n' +
     '[C]================================\n' +
     '[L]\n' +
@@ -258,36 +291,3 @@ export function kitchen(order, currency, store) {
     '[L]\n' +
     '[L]\n'
 }
-
-
-
-/*
-
-
-  return '[C]<img>' + image + '</img>\n' +
-    '[L]\n' +
-    "[L]      <u><font size='big'>ORDER ID : " + order._id.substring(order._id.length - 4) + "</font></u>\n" +
-    '[L]\n' +
-    '[C]================================\n' +
-    '[L]\n' +
-    escPosCommands +
-    '[C]--------------------------------\n' +
-    '[R]TOTAL PRICE :[R]' + order.price_total + ' ' + currency + '\n' +
-    '[R]TAX :[R]4.23e\n' +
-    '[L]\n' +
-    '[C]================================\n' +
-    '[L]\n' +
-    "[L]<font size='tall'>Customer infos :</font>\n" +
-    '[L]Name : ' + order.name + '\n' +
-    '[L]Phone : ' + order.client_phone + '\n' +
-    '[L]Email : ' + order.client_email + '\n' +
-    '[L]Type : ' + order.type + '\n' +
-    '[L]DeliveryAddress : ' + order.deliveryAdress + '\n' +
-    '[L]Table : ' + order.table + '\n' +
-    '[L]\n' +
-    '[L]\n' +
-    '[L]\n' +
-    '[L]\n' +
-    '[L]\n'
-
-*/

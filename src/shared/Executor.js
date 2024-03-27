@@ -9,7 +9,6 @@ export function Executor(config,translation) {
     return new Promise((resolve, reject) => {
 
         !config.isSilent && store.dispatch(setRootLoading(true));
-
         Intersptor[config.method](config.url, config.data, {
             headers: config.head && {
                 ...config.head

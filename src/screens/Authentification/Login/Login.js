@@ -20,6 +20,7 @@ export default function Login() {
                 navigation.navigate('SelectStore')
                 // res.user.stores > 1 ? navigation.navigate('Home') : navigation.navigate('SelectStore')
             }).catch(err => {
+                console.log(err);
             });
         } else {
             Toast.show({
