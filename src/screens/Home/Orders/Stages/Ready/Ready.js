@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { BaseUrl, store } from "../../../../../shared";
 import { getReadyOrdersByStroreId } from "../../../../../shared/slices/Orders/OrdersService";
-import { setOrders } from "../../../../../shared/slices/Orders/OrdersSlice";
+import { setOrders, updateOneOrder } from "../../../../../shared/slices/Orders/OrdersSlice";
 import { ActivityIndicator, FlatList, ScrollView, StyleSheet, TouchableWithoutFeedback, View } from "react-native";
 import { Order } from "../../../../../Components/exports";
 import { useNavigation } from "@react-navigation/native";
@@ -11,6 +11,8 @@ import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import { FlashList } from "@shopify/flash-list";
 import Sound from "react-native-sound";
 import { useTranslation } from "react-i18next";
+import { setUberCreate, setUberToken } from "../../../../../shared/slices/Delivery/DeliverySlice";
+import { createdelivery, getUberToken } from "../../../../../shared/slices/Delivery/DeliveryService";
 
 export default function Ready() {
     // get notification id
@@ -39,13 +41,21 @@ export default function Ready() {
 
     const { t: translation } = useTranslation();
 
+    const organizations = useSelector((state) => state.delivery.organizations)
+    const indexOfCheckedOrganization = organizations.findIndex((org) =>
+        org.options.some((option) => option.checked)
+    );
+
+    // get store storeInfos
+    const storeInfos = useSelector((state) => state.authentification.storeSelected.store)
+
     useEffect(() => {
         const eventSource = new EventSource(BaseUrl + "/sse/sse/" + storeSelected + "/" + notificationId);
 
         const handleEventMessage = (data) => {
             if (!data.data.toLowerCase().includes("welcome")) {
                 const fetchReadyOrdersByStroreId = async () => {
-                    if (data.data.includes("{")) {
+                    if (data.data[0]==="{") {
                         flatListRef.current.scrollToOffset({ offset: 0 })
                         requestAnimationFrame(async () => {
                             await getReadyOrdersByStroreId(storeSelected, state.page + 1, false, true).then(res => {
@@ -99,6 +109,69 @@ export default function Ready() {
                                 }
                             });
                         });
+                        const order = JSON.parse(data.data.substring(1))
+                        if (organizations[indexOfCheckedOrganization].name === "Uber direct" && order.type === "Delivery") {
+                            // console.log(organizations[indexOfCheckedOrganization].options);
+                            let isAutomaticDelivery = false;
+                            for (let i = 0; i < organizations[indexOfCheckedOrganization].options.length; i++) {
+                                if (organizations[indexOfCheckedOrganization].options[i].name === "Automatic" &&
+                                    organizations[indexOfCheckedOrganization].options[i].checked === true) {
+                                    isAutomaticDelivery = true;
+                                }
+                            }
+                            if (isAutomaticDelivery) {
+                                const adddelivery = async () => {
+                                    try {
+                                        let productArray = []
+                                        for (let i = 0; i < order.items.length; i++) {
+                                            const obj = { must_be_upright: true, size: order.items[i].size === "S" ? "small" : order.items[i].size === "M" ? "medium" : "large" }
+                                            obj.name = order.items[i].name
+                                            obj.quantity = order.items[i].quantity
+                                            productArray.push(obj)
+                                        }
+                                        for (let i = 0; i < order.promo.length; i++) {
+                                            for (let j = 0; j < order.promo[i].items.length; j++) {
+                                                const obj = { must_be_upright: true, size: order.promo[i].items[j].size === "S" ? "small" : order.promo[i].items[j].size === "M" ? "medium" : "large" }
+                                                obj.name = order.promo[i].items[j].name
+                                                obj.quantity = order.promo[i].items[j].quantity
+                                                productArray.push(obj)
+                                            }
+                                        }
+                                        const token = await getUberToken()
+                                        store.dispatch(setUberToken({ ubertoken: token.accessToken }))
+
+                                        const deliveryData = {
+                                            external_store_id: order.storeId,
+                                            pickup_name: storeInfos.name,
+                                            pickup_address: order.restaurantAdress,
+                                            pickup_phone_number: storeInfos.phoneNumber,
+                                            dropoff_name: order.client_first_name + " " + order.client_last_name,
+                                            dropoff_address: order.deliveryAdress,
+                                            dropoff_phone_number: order.client_phone,
+                                            manifest_items: productArray,
+                                            test_specifications: {
+                                                robo_courier_specification: {
+                                                    mode: "auto",
+                                                }
+                                            },
+                                            signature_requirement: {
+                                                enabled: true,
+                                                collect_signer_name: true,
+                                                collect_signer_relationship: false
+                                            }
+                                        };
+
+                                        const deliveryResponse = await createdelivery(deliveryData, token.accessToken, order._id)
+                                        console.log("ready deliveryResponse",deliveryResponse);
+                                        store.dispatch(updateOneOrder({ order: deliveryResponse.updatedOrder }))
+                                        store.dispatch(setUberCreate({ create: deliveryResponse.uberDelivery }))
+                                    } catch (error) {
+                                        console.log(error.response.message);
+                                    }
+                                }
+                                adddelivery()
+                            }
+                        }
                     }
                 }
                 fetchReadyOrdersByStroreId()
@@ -152,7 +225,7 @@ export default function Ready() {
             eventSource.close();
         };
 
-    }, [state.page]);
+    }, [state.page,organizations]);
 
     const showButtonViewAndReject = (id) => {
         navigation.navigate('OrderDetailed', { id, stage: "ready" })

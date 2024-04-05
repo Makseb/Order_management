@@ -5,7 +5,7 @@ import AntDesign from "react-native-vector-icons/AntDesign"
 import { store } from "../../../shared/index";
 import Toast from "react-native-toast-message";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { useState } from "react";
+import React, { useState } from "react";
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import { resetUber } from "../../../shared/slices/Delivery/DeliverySlice";
 import { UberDelivery } from "./../../exports"
@@ -28,8 +28,6 @@ export default function DeliveryModal({ toggleModal, setToggleModal }) {
                     orderId: undefined
                 })
                 store.dispatch(resetUber())
-                // console.log("disconnect");
-                // disconnectSocket()
             }
             }
             style={{ justifyContent: 'flex-end', margin: 0 }}>
@@ -42,7 +40,6 @@ export default function DeliveryModal({ toggleModal, setToggleModal }) {
                         orderId: undefined
                     })
                     store.dispatch(resetUber())
-                    // disconnectSocket()
                 }
                 }>
                     <AntDesign
@@ -62,7 +59,7 @@ export default function DeliveryModal({ toggleModal, setToggleModal }) {
                     <View style={styles.containerHeader}>
                         {
                             organizations.map((organization, index) => {
-                                return (<>
+                                return (<React.Fragment key={index}> 
                                     <View style={[styles.containerAll,
                                     ]}>
                                         <MaterialIcons name="schedule" size={24} color={organizations[indexOfCheckedOrganization].name === organization.name ? '#5cd964' : '#b7b7b7'} />
@@ -75,7 +72,7 @@ export default function DeliveryModal({ toggleModal, setToggleModal }) {
                                             <View style={styles.barrHeader} />
                                         </View>
                                     }
-                                </>)
+                                </React.Fragment>)
                             })
                         }
                     </View>

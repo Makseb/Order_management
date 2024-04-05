@@ -128,6 +128,10 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+
+
+    // bluettoth print
+    implementation project(':react-native-bluetooth-escpos-printer')
 }
 
 // this is for icons (default icons not displayed correctly)

@@ -1,14 +1,14 @@
 import Modal from "react-native-modal";
-import { View, Text, StyleSheet, TouchableWithoutFeedback, TouchableOpacity } from "react-native"
+import { View, Text, StyleSheet, TouchableWithoutFeedback, TouchableOpacity, Platform, PermissionsAndroid } from "react-native"
 import AntDesign from "react-native-vector-icons/AntDesign"
 import ThermalPrinterModule from 'react-native-thermal-printer';
-import { kitchen, receipt } from "../../../../../utils/utils-function";
+import { kitchen, kitchenbluetooth, receipt, receiptbluetooth } from "../../../../../utils/utils-function";
 import { useSelector } from "react-redux";
 import { Checkbox } from "react-native-paper";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import Toast from "react-native-toast-message";
-// import BleManager from 'react-native-ble-manager';
+import { BluetoothManager, BluetoothEscposPrinter } from 'react-native-bluetooth-escpos-printer';
 
 export default function PrintModal({ modalProps }) {
     const { t: translation } = useTranslation();
@@ -20,6 +20,8 @@ export default function PrintModal({ modalProps }) {
     console.log(lankitchen);
     // print the bluetooth selected
     const bluetoothreceipt = useSelector((state) => state.printer.bluetoothreceipt)
+
+    const bluetoothkitchen = useSelector((state) => state.printer.bluetoothkitchen)
 
     // get currency
     const currency = useSelector((state) => state.authentification.storeSelected.currency)
@@ -34,7 +36,6 @@ export default function PrintModal({ modalProps }) {
     const [checkedReceipt, setCheckedReceipt] = useState()
 
     return (
-
         <Modal
             isVisible={toggleModal}
             onBackdropPress={() => setToggleModal(false)}
@@ -71,52 +72,43 @@ export default function PrintModal({ modalProps }) {
                     <TouchableOpacity style={styles.printButton} onPress={async () => {
                         if (checkedKitchen || checkedReceipt) {
                             setToggleModal(false)
-                            try {
-                                const a = await ThermalPrinterModule.printTcp({
-                                    ip: "192.168.1.100",
-                                    port: 9100,
-                                    payload: kitchen(order, currency),
-                                    timeout: 30000,
-                                }); 
-                                console.log(a);
-                                // if (checkedKitchen) {
-                                //     for (let i = 0; i < lankitchen.length; i++) {
-                                //         const a = await ThermalPrinterModule.printTcp({
-                                //             ip: "192.168.1.100",
-                                //             port: 9100,
-                                //             payload: kitchen(order, currency),
-                                //             timeout: 30000,
-                                //         });
-                                //         console.log(a);
-                                //     }
-                                // }
-                                // if (checkedReceipt) {
-                                //     for (let i = 0; i < lanreceipt.length; i++) {
-                                //         await ThermalPrinterModule.printTcp({
-                                //             ip: lanreceipt[i].ip,
-                                //             port: 9100,
-                                //             payload: receipt(order, currency, store),
-                                //             timeout: 30000,
-                                //         });
-                                //     }
-                                //     // const deviceId = bluetoothreceipt[0].id; // Example device ID
-                                //     // const serviceUUID = "0000180f-0000-1000-8000-00805f9b34fb"; // Example service UUID
-                                //     // const characteristicUUID = "00002a19-0000-1000-8000-00805f9b34fb"; // Example characteristic UUID
-                                //     // const data = [0x01, 0x02, 0x03]; // Example data to write (as an array of bytes)
-
-                                //     // BleManager.write(deviceId, serviceUUID, characteristicUUID, data)
-                                //     //     .then(() => {
-                                //     //         console.log("Data written successfully.");
-                                //     //     })
-                                //     //     .catch(error => {
-                                //     //         console.error("Error writing data:", error);
-                                //     //     });
-
-                                // }
-
-                            } catch (err) {
-                                //error handling
-                                console.log("err.message",err.message);
+                            if (checkedKitchen) {
+                                for (let i = 0; i < lankitchen.length; i++) {
+                                    await ThermalPrinterModule.printTcp({
+                                        ip: lankitchen[i].ip,
+                                        port: 9100,
+                                        payload: kitchen(order, currency),
+                                        timeout: 30000,
+                                    }).catch(err => { })
+                                }
+                                if (bluetoothkitchen.length > 0) {
+                                    await BluetoothEscposPrinter.printText(kitchenbluetooth(order, currency), {})
+                                        .then((resp) => {
+                                            console.log(resp);
+                                        },
+                                            (err) => {
+                                                console.log(err);
+                                            })
+                                }
+                            }
+                            if (checkedReceipt) {
+                                for (let i = 0; i < lanreceipt.length; i++) {
+                                    await ThermalPrinterModule.printTcp({
+                                        ip: lanreceipt[i].ip,
+                                        port: 9100,
+                                        payload: receipt(order, currency, store),
+                                        timeout: 30000,
+                                    }).catch(err => { })
+                                }
+                                if (bluetoothreceipt.length > 0) {
+                                    await BluetoothEscposPrinter.printText(receiptbluetooth(order, currency, store), {})
+                                        .then((resp) => {
+                                            console.log(resp);
+                                        },
+                                            (err) => {
+                                                console.log(err);
+                                            })
+                                }
                             }
                         } else {
                             Toast.show({

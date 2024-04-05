@@ -8,17 +8,18 @@ import { format } from "date-fns";
 
 import { WayPointModal } from "./../../../exports"
 import { createdelivery, createuberdevis, deletedeliverybyid, getUberToken, getdeliverybyid } from "../../../../shared/slices/Delivery/DeliveryService";
-import { resetWebhook, setUberCreate, setUberQuote, setUberToken, setWebhook } from "../../../../shared/slices/Delivery/DeliverySlice";
+import { resetUber, resetWebhook, setUberCreate, setUberQuote, setUberToken, setWebhook } from "../../../../shared/slices/Delivery/DeliverySlice";
 import { useEffect, useState, } from "react"
 import { View, Text, TouchableOpacity, ScrollView } from "react-native"
 import { store } from "../../../../shared";
 import Toast from "react-native-toast-message";
-import useSocket from "../../../../shared/socket";
+import io from 'socket.io-client';
+
+const socket = io("https://api.eatorder.fr")
 
 export default function UberDelivery({ toggleModal }) {
     const storeSelected = useSelector((state) => state.authentification.storeSelected.store)
     const uberResponse = useSelector((state) => state.delivery.uber)
-
     let order = useSelector((state) => state.orders.all).find((order) => order._id === toggleModal.orderId)
     if (!order) {
         order = useSelector((state) => state.orders.inprogress).find((order) => order._id === toggleModal.orderId)
@@ -26,15 +27,21 @@ export default function UberDelivery({ toggleModal }) {
             order = useSelector((state) => state.orders.ready).find((order) => order._id === toggleModal.orderId)
         }
     }
-    const { joinRoom, listenSocket } = useSocket()
+    useEffect(() => {
+        socket.on("receive_data", (data) => {
+            console.log(data);
+            store.dispatch(setWebhook({ uberId: data.data.delivery_id }))
+        })
+    }, [socket])
+
+    console.log(socket.id);
 
     useEffect(() => {
         const fetchuber = async () => {
             await getUberToken().then(res => {
                 store.dispatch(setUberToken({ ubertoken: res.accessToken }))
                 if (order.uberId !== null) {
-                    joinRoom(order.uberId)
-
+                    // socket.emit("join_room", order.uberId)
                     const fetchcreate = async () => {
                         await getdeliverybyid(order.uberId, res.accessToken).then(resp => {
                             store.dispatch(setUberCreate({ create: resp.uberDelivery }))
@@ -45,11 +52,11 @@ export default function UberDelivery({ toggleModal }) {
                     fetchcreate()
                 }
             }).catch(err => {
-                console.log("err.message", err.message);
+                // console.log("err.message", err.message);
             })
         }
-        listenSocket()
         fetchuber()
+
     }, [])
 
     const [expandeds, setExpandeds] = useState([true, true, true, true])
@@ -124,16 +131,16 @@ export default function UberDelivery({ toggleModal }) {
                                         mode: "auto",
                                     }
                                 },
-                                signature_requirement: {
-                                    enabled: true,
-                                    collect_signer_name: true,
-                                    collect_signer_relationship: false
-                                }
+                                dropoff_verification: {
+                                    picture: true
+                                },
+                                pickup_verification: {
+                                    picture: true
+                                },
                             }, uberResponse.token, order._id).then(res => {
                                 store.dispatch(updateOneOrder({ order: res.updatedOrder }))
                                 store.dispatch(setUberCreate({ create: res.uberDelivery }))
-                                joinRoom(res.updatedOrder.uberId)
-                                listenSocket()
+                                socket.emit("join_room", res.updatedOrder.uberId)
 
                             }).catch(err => {
                                 console.log(err);
@@ -149,6 +156,7 @@ export default function UberDelivery({ toggleModal }) {
                     onPress={async () => {
                         store.dispatch(resetWebhook({ uberId: order.uberId }))
                         await getdeliverybyid(uberResponse.create.id, uberResponse.token).then(res => {
+                            console.log("xd.");
                             store.dispatch(setUberCreate({ create: res.uberDelivery }))
                         }).catch(err => {
                             console.log(err.message);
@@ -165,6 +173,7 @@ export default function UberDelivery({ toggleModal }) {
                     style={{ marginLeft: "2%", borderRadius: 10, backgroundColor: "gray", flexDirection: "row", justifyContent: "center", alignItems: "center", width: 170, height: 40 }}
                     onPress={async () => {
                         await deletedeliverybyid(uberResponse.create.id, uberResponse.token, order?._id).then(res => {
+                            console.log(res);
                             store.dispatch(updateOneOrder({ order: res.updatedOrder }))
                             store.dispatch(resetUber())
                         }).catch(err => {

@@ -291,3 +291,211 @@ export function kitchen(order, currency) {
     '[L]\n' +
     '[L]\n'
 }
+
+
+export function kitchenbluetooth(order, currency) {
+  let escPosCommands = '';
+
+  if (order.items.length > 0 && order.promo.length > 0) {
+    escPosCommands +=
+      'Non-Promotional Products\n\n';
+  }
+
+  order.items.forEach((item) => {
+    escPosCommands +=
+      item.quantity + 'x ' + capitalizeFirstLetter(item.name) + '    ' + item.item_price + ' ' + currency + '\n';
+    escPosCommands += '\n'
+
+    item.optionsGroup.forEach((optionGroup) => {
+      escPosCommands += ' ' + capitalizeFirstLetter(optionGroup.optionGroupeName) + '\n';
+
+      escPosCommands += optionGroup.options.map((option) => {
+        let optionString = '  +' + option.quantity + "x " + capitalizeFirstLetter(option.name) + '    ' + option.price_opt + ' ' + currency + '\n';
+        escPosCommands += '\n'
+
+        if (option.options.length > 0) {
+          optionString += option.options.map((opt) => {
+            return '    -' + opt.quantity + 'x ' + capitalizeFirstLetter(opt.name) + '    ' + opt.price + ' ' + currency + '\n';
+          }).join('');
+        }
+        return optionString;
+      }).join('');
+    });
+  });
+
+  if (order.items.length > 0 && order.promo.length > 0) {
+    escPosCommands +=
+      '\n';
+  }
+
+  order.promo.forEach((promo) => {
+    escPosCommands +=
+      promo.promo.name + '\n';
+    escPosCommands += '\n'
+
+    promo.items.forEach((item) => {
+      escPosCommands +=
+        item.quantity + 'x ' + capitalizeFirstLetter(item.name) + '    ' + item.price_after_discount + ' ' + currency + '\n';
+      escPosCommands += '\n'
+
+      item.optionsGroup.forEach((optionGroup) => {
+        escPosCommands += ' ' + capitalizeFirstLetter(optionGroup.optionGroupeName) + '\n';
+
+        escPosCommands += optionGroup.options.map((option) => {
+          let optionString = '  +' + option.quantity + "x " + capitalizeFirstLetter(option.name) + '    ' + option.price_opt + ' ' + currency + '\n';
+          escPosCommands += '\n'
+
+          if (option.options.length > 0) {
+            optionString += option.options.map((opt) => {
+              return '    -' + opt.quantity + 'x ' + capitalizeFirstLetter(opt.name) + '    ' + opt.price + ' ' + currency + '\n';
+            }).join('');
+          }
+          return optionString;
+        }).join('');
+      });
+      escPosCommands += 'Subtotal : ' + item.subtotal + ' ' + currency + "\n"
+      escPosCommands += '\n';
+    });
+  })
+
+  return "ORDER ID : " + order._id.substring(order._id.length - 4) + "               for " + order.type + "\n" +
+    '\n' +
+    'Order at : ' + order.createdAt.date + " " + order.createdAt.time + "\n" +
+    'Prepared for : ' + order.preparedAt.date + " " + order.preparedAt.time + "\n" +
+    '\n' +
+    '\n' +
+    '================================\n' +
+    '\n' +
+    escPosCommands +
+    '--------------------------------\n' +
+    '' + order.type + ' FEE :' + (order.price_total - order.priceWithoutFee) + ' ' + currency + '\n' +
+    'PRICE HT :' + order.priceHt_total + ' ' + currency + '\n' +
+    'TOTAL PRICE :' + order.price_total + ' ' + currency + '\n' +
+    '\n' +
+    '================================\n' +
+    '\n' +
+    "Customer infos :\n" +
+    'Name : ' + order.name + '\n' +
+    'Phone : ' + order.client_phone + '\n' +
+    'Email : ' + order.client_email + '\n' +
+    'DeliveryAddress : ' + order.deliveryAdress + '\n' +
+    'Table : ' + order.table + '\n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    '\n' +
+
+    '\n'
+}
+
+export function receiptbluetooth(order, currency,store) {
+  let escPosCommands = '';
+
+  if (order.items.length > 0 && order.promo.length > 0) {
+    escPosCommands +=
+      'Non-Promotional Products\n\n';
+  }
+
+  order.items.forEach((item) => {
+    escPosCommands +=
+      item.quantity + 'x ' + capitalizeFirstLetter(item.name) + '    ' + item.item_price + ' ' + currency + '\n';
+    escPosCommands += '\n'
+
+    item.optionsGroup.forEach((optionGroup) => {
+      escPosCommands += ' ' + capitalizeFirstLetter(optionGroup.optionGroupeName) + '\n';
+
+      escPosCommands += optionGroup.options.map((option) => {
+        let optionString = '  +' + option.quantity + "x " + capitalizeFirstLetter(option.name) + '    ' + option.price_opt + ' ' + currency + '\n';
+        escPosCommands += '\n'
+
+        if (option.options.length > 0) {
+          optionString += option.options.map((opt) => {
+            return '    -' + opt.quantity + 'x ' + capitalizeFirstLetter(opt.name) + '    ' + opt.price + ' ' + currency + '\n';
+          }).join('');
+        }
+        return optionString;
+      }).join('');
+    });
+  });
+
+  if (order.items.length > 0 && order.promo.length > 0) {
+    escPosCommands +=
+      '\n';
+  }
+
+  order.promo.forEach((promo) => {
+    escPosCommands +=
+      promo.promo.name + '\n';
+    escPosCommands += '\n'
+
+    promo.items.forEach((item) => {
+      escPosCommands +=
+        item.quantity + 'x ' + capitalizeFirstLetter(item.name) + '    ' + item.price_after_discount + ' ' + currency + '\n';
+      escPosCommands += '\n'
+
+      item.optionsGroup.forEach((optionGroup) => {
+        escPosCommands += ' ' + capitalizeFirstLetter(optionGroup.optionGroupeName) + '\n';
+
+        escPosCommands += optionGroup.options.map((option) => {
+          let optionString = '  +' + option.quantity + "x " + capitalizeFirstLetter(option.name) + '    ' + option.price_opt + ' ' + currency + '\n';
+          escPosCommands += '\n'
+
+          if (option.options.length > 0) {
+            optionString += option.options.map((opt) => {
+              return '    -' + opt.quantity + 'x ' + capitalizeFirstLetter(opt.name) + '    ' + opt.price + ' ' + currency + '\n';
+            }).join('');
+          }
+          return optionString;
+        }).join('');
+      });
+      escPosCommands += 'Subtotal : ' + item.subtotal + ' ' + currency + "\n"
+      escPosCommands += '\n';
+    });
+  })
+
+  return "ORDER ID : " + order._id.substring(order._id.length - 4) + "               for " + order.type + "\n" +
+    '\n' +
+    'Order at : ' + order.createdAt.date + " " + order.createdAt.time + "\n" +
+    'Prepared for : ' + order.preparedAt.date + " " + order.preparedAt.time + "\n" +
+    '\n' +
+    '\n' +
+    store.name + "\n" +
+    store.address + "\n" +
+    'Phone : ' + store.phoneNumber + "\n" +
+    'SIRET : TVX301B\n' +
+    '\n'+
+    '\n'+
+    '================================\n' +
+    '\n' +
+    escPosCommands +
+    '--------------------------------\n' +
+    '' + order.type + ' FEE :' + (order.price_total - order.priceWithoutFee) + ' ' + currency + '\n' +
+    'PRICE HT :' + order.priceHt_total + ' ' + currency + '\n' +
+    'TOTAL PRICE :' + order.price_total + ' ' + currency + '\n' +
+    '\n' +
+    '================================\n' +
+    '\n' +
+    "Customer infos :\n" +
+    'Name : ' + order.name + '\n' +
+    'Phone : ' + order.client_phone + '\n' +
+    'Email : ' + order.client_email + '\n' +
+    'DeliveryAddress : ' + order.deliveryAdress + '\n' +
+    'Table : ' + order.table + '\n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    '\n'
+}

@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 export const DeliveryInitialState = {
     uber: { token: undefined, quote: undefined, create: undefined, webhook: [] },
-    organizations: [{ name: "Uber direct", options: [{ name: "Automatic", checked: false }, { name: "Manual", checked: true }] }, { name: "Test 1", options: [{ name: "Automatic", checked: false }, { name: "Manual", checked: false }] },{ name: "AAA", options: [{ name: "Automatic", checked: false }, { name: "Manual", checked: true }] }],
+    organizations: [{ name: "Uber direct", options: [{ name: "Automatic", checked: false }, { name: "Manual", checked: true }] }, { name: "Test 1", options: [{ name: "Automatic", checked: false }, { name: "Manual", checked: false }] },{ name: "AAA", options: [{ name: "Automatic", checked: false }, { name: "Manual", checked: false }] }],
 };
 
 export const deliverySlice = createSlice({
@@ -65,6 +65,7 @@ export const deliverySlice = createSlice({
                     }
                 }
                 state.organizations[index].options = data
+                // console.log(state.organizations[index].options);
             }
         },
         setOptionsOff: (state) => {

@@ -6,23 +6,29 @@ import { Header } from "../../../../exports"
 import { store } from "../../../../../shared";
 import { removeBluetoothKitchen, removeBluetoothReceipt, removeLanKitchen, removeLanReceipt } from "../../../../../shared/slices/Printer/PrinterSlice";
 import { useTranslation } from "react-i18next";
+import { BluetoothManager } from 'react-native-bluetooth-escpos-printer';
+
 export default function DetailedPrinterSelected() {
     const route = useRoute();
     const { printer, from, technology } = route.params;
     const navigation = useNavigation()
     const { t: translation } = useTranslation();
 
-    const disconnectFromPeripheral = id => {
-        BleManager.removeBond(id)
-            .then(() => {
-                peripheral.connected = false;
-            })
-            .catch(() => {
-                Toast.show({
-                    type: 'error',
-                    text1: translation("Failed to disconnect from printer"),
+    const disconnectFromPeripheral = async (address) => {
+        // from java library is (unpaire)
+        await BluetoothManager.unpaire(address)
+            .then((s) => {
+                console.log("sss",s);
+                // if device disconnected remove the variable from redux
+                if (from === "Receipt printer") {
+                    store.dispatch(removeBluetoothReceipt({ address: printer.address }))
+                } else {
+                    store.dispatch(removeBluetoothKitchen({ address: printer.address }))
+                }
+            },
+                (err) => {
+
                 })
-            });
     };
 
     return (
@@ -41,8 +47,15 @@ export default function DetailedPrinterSelected() {
                     <Text style={styles.textFrom}>{translation(from)}</Text>
                 </View>
 
-                {technology === "lan" && <View><Text style={styles.textIpAddress}>{translation("Ip address")}</Text>
-                    <Text style={styles.textPrinterIp}>{printer.ip}</Text></View>}
+                {technology === "lan" ?
+                    <View>
+                        <Text style={styles.textIpAddress}>{translation("Ip address")}</Text>
+                        <Text style={styles.textPrinterIp}>{printer.ip}</Text>
+                    </View> : <View>
+                        <Text style={styles.textIpAddress}>{translation("Mac address")}</Text>
+                        <Text style={styles.textPrinterIp}>{printer.address}</Text>
+                    </View>
+                }
 
                 <View style={styles.barVerticale} />
 
@@ -55,12 +68,7 @@ export default function DetailedPrinterSelected() {
                             store.dispatch(removeLanKitchen(({ ip: printer.ip })))
                         }
                     } else {
-                        // disconnectFromPeripheral(printer.id)
-                        if (from === "Receipt printer") {
-                            store.dispatch(removeBluetoothReceipt({ id: printer.id }))
-                        } else {
-                            store.dispatch(removeBluetoothKitchen({ id: printer.id }))
-                        }
+                        disconnectFromPeripheral(printer.address)
                     }
                 }}>
                     <View style={{

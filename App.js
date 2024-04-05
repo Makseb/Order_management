@@ -12,6 +12,7 @@ import { store } from './src/shared';
 import { setSelectedLanguage } from './src/shared/slices/Languages/LanguagesSlice';
 import Toast from 'react-native-toast-message';
 import SplashScreen from 'react-native-splash-screen';
+import { BluetoothManager } from 'react-native-bluetooth-escpos-printer';
 
 const Stack = createNativeStackNavigator();
 const navigationRef = React.createRef();
@@ -20,6 +21,10 @@ export default function App() {
     const isLoading = useSelector((state) => state.root.isLoading)
     const state = useSelector((state) => state.authentification)
     const selectedlanguage = useSelector((state) => state.languages.selectedlanguage)
+
+    const bluetoothreceipt = useSelector((state) => state.printer.bluetoothreceipt)
+    const bluetoothkitchen = useSelector((state) => state.printer.bluetoothkitchen)
+
     useEffect(() => {
         // Hide splash screen
         SplashScreen.hide();
@@ -41,6 +46,29 @@ export default function App() {
 
         // Add the event listener
         const urlListener = Linking.addEventListener('url', handleDeepLink);
+
+
+        const initilizeBluetooth = async () => {
+            if (bluetoothreceipt.length > 0) {
+                await BluetoothManager.connect(bluetoothreceipt[0].address)
+                    .then((s) => {
+                        console.log("s", s);
+                    }, (e) => {
+                        console.log(e);
+                        alert(e);
+                    })
+            }
+            if (bluetoothkitchen.length > 0) {
+                await BluetoothManager.connect(bluetoothkitchen[0].address)
+                    .then((s) => {
+                        console.log("s", s);
+                    }, (e) => {
+                        console.log(e);
+                        alert(e);
+                    })
+            }
+        }
+        initilizeBluetooth()
 
         // Clean up the event listener when the component unmounts
         return () => urlListener.remove()

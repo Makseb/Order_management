@@ -24,7 +24,7 @@ export default function DeliverySettings() {
     }, 0);
 
     console.log(checkedCount);
-    
+
     return (
         <ScrollView style={{
             flex: 1,
@@ -40,8 +40,8 @@ export default function DeliverySettings() {
             }}>Delivery Settings</Text>
             <View style={{
                 flexDirection: "row",
-                alignItems :"center",
-                marginBottom : "2%",
+                alignItems: "center",
+                marginBottom: "2%",
             }}>
                 <Text style={{
                     marginLeft: '5%',
@@ -52,17 +52,17 @@ export default function DeliverySettings() {
 
                 <Switch value={checkedCount > 0 ? true : false}
 
-                color="#df8f17"
-                onValueChange={() => {
-                    if (checkedCount > 0) {
-                        store.dispatch(setOptionsOff())
-                    } else {
-                        Toast.show({
-                            type: 'error',
-                            text1: "Please choose one of the delivery organization",
-                        })
-                    }
-                }} />
+                    color="#df8f17"
+                    onValueChange={() => {
+                        if (checkedCount > 0) {
+                            store.dispatch(setOptionsOff())
+                        } else {
+                            Toast.show({
+                                type: 'error',
+                                text1: "Please choose one of the delivery organization",
+                            })
+                        }
+                    }} />
 
             </View>
             {
@@ -81,13 +81,15 @@ export default function DeliverySettings() {
                                 })
                             }}>
                                 <Text style={{
+                                    width: 110,
                                     marginBottom: '2%',
                                     color: 'white',
                                     fontSize: 16,
-                                    fontFamily: 'Roboto-Light',
-                                    backgroundColor : "grey",
-                                    borderRadius : 12,
-                                    padding : 4
+                                    fontFamily: 'Roboto-Regular',
+                                    backgroundColor: "grey",
+                                    borderRadius: 12,
+                                    padding: 6,
+                                    // textAlign: 'center'
                                 }}>{option.name}</Text>
                             </TouchableWithoutFeedback>
                         </View>

@@ -10,7 +10,7 @@ import { printerSlice } from "./slices/Printer/PrinterSlice";
 import { languagesSlice } from "./slices/Languages/LanguagesSlice";
 import { deliverySlice } from "./slices/Delivery/DeliverySlice";
 
-export const BaseUrl = 'https://api.eatorder.fr';
+export const BaseUrl = 'http://192.168.1.114:8000';
 // https://api.eatorder.fr
 // 'http://192.168.1.114:8000'
 const persistConfig = {

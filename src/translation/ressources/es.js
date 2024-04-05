@@ -84,6 +84,7 @@ export default {
     "Type": "Tipo",
     "Ip address": "Dirección Ip",
     "Remove printer": "Quitar impresora",
+    "Mac address" : "Dirección Mac", 
 
     // Orders
     "All": "Todos",

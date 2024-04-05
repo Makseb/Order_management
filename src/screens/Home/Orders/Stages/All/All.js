@@ -2,7 +2,7 @@ import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TouchableWithoutF
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 
-import { setOrders } from "../../../../../shared/slices/Orders/OrdersSlice";
+import { setOrders, updateOneOrder } from "../../../../../shared/slices/Orders/OrdersSlice";
 import { useSelector } from "react-redux";
 import { Order } from "../../../../../Components/exports";
 import { getAllOrdersByStroreId } from "../../../../../shared/slices/Orders/OrdersService";
@@ -16,12 +16,17 @@ import Sound from 'react-native-sound';
 import { FlashList } from "@shopify/flash-list";
 import { useTranslation } from "react-i18next";
 import CryptoJS from 'react-native-crypto-js';
+import { setUberCreate, setUberQuote, setUberToken } from "../../../../../shared/slices/Delivery/DeliverySlice";
+import { createdelivery, createuberdevis, getUberToken } from "../../../../../shared/slices/Delivery/DeliveryService";
 
 export default function All() {
     const { t: translation } = useTranslation();
 
     // get store selected
     const storeSelected = useSelector((state) => state.authentification.storeSelected.store._id)
+
+    // get store storeInfos
+    const storeInfos = useSelector((state) => state.authentification.storeSelected.store)
 
     // get currency
     const currency = useSelector((state) => state.authentification.storeSelected.currency)
@@ -32,10 +37,12 @@ export default function All() {
     // navigate between screens
     const navigation = useNavigation()
 
+
     const organizations = useSelector((state) => state.delivery.organizations)
     const indexOfCheckedOrganization = organizations.findIndex((org) =>
         org.options.some((option) => option.checked)
     );
+    // console.log("organizations : ", organizations[indexOfCheckedOrganization]);
 
 
     const [state, setState] = useState({
@@ -57,8 +64,8 @@ export default function All() {
         const handleEventMessage = (data) => {
             if (!data.data.toLowerCase().includes("welcome")) {
                 const fetchAllOrdersByStroreId = async () => {
-                    console.log("data :", data.data);
-                    if (data.data.includes("{")) {
+                    // console.log("data 1:", data.data);
+                    if (data.data[0] === "{") {
                         flatListRef.current.scrollToOffset({ offset: 0 })
                         requestAnimationFrame(async () => {
                             await getAllOrdersByStroreId(storeSelected, state.page, false, true).then(res => {
@@ -110,7 +117,6 @@ export default function All() {
 
                     } else {
                         flatListRef.current.scrollToOffset({ offset: 0 })
-
                         requestAnimationFrame(async () => {
                             await getAllOrdersByStroreId(storeSelected, state.page + 1, false, true).then(res => {
                                 store.dispatch(setOrders({ orders: res.orders, currency: currency, stage: "all", firstUpdate: true }))
@@ -137,13 +143,69 @@ export default function All() {
                             }).catch(err => {
                                 console.log(err);
                             })
-                        })
+                        }) 
+                        const order = JSON.parse(data.data.substring(1))
+                        if (organizations[indexOfCheckedOrganization].name === "Uber direct" && order.type === "Delivery") {
+                            // console.log(organizations[indexOfCheckedOrganization].options);
+                            let isAutomaticDelivery = false;
+                            for (let i = 0; i < organizations[indexOfCheckedOrganization].options.length; i++) {
+                                if (organizations[indexOfCheckedOrganization].options[i].name === "Automatic" &&
+                                    organizations[indexOfCheckedOrganization].options[i].checked === true) {
+                                    isAutomaticDelivery = true;
+                                }
+                            }
+                            if (isAutomaticDelivery) {
+                                const adddelivery = async () => {
+                                    try {
+                                        let productArray = []
+                                        for (let i = 0; i < order.items.length; i++) {
+                                            const obj = { must_be_upright: true, size: order.items[i].size === "S" ? "small" : order.items[i].size === "M" ? "medium" : "large" }
+                                            obj.name = order.items[i].name
+                                            obj.quantity = order.items[i].quantity
+                                            productArray.push(obj)
+                                        }
+                                        for (let i = 0; i < order.promo.length; i++) {
+                                            for (let j = 0; j < order.promo[i].items.length; j++) {
+                                                const obj = { must_be_upright: true, size: order.promo[i].items[j].size === "S" ? "small" : order.promo[i].items[j].size === "M" ? "medium" : "large" }
+                                                obj.name = order.promo[i].items[j].name
+                                                obj.quantity = order.promo[i].items[j].quantity
+                                                productArray.push(obj)
+                                            }
+                                        }
+                                        const token = await getUberToken()
+                                        store.dispatch(setUberToken({ ubertoken: token.accessToken }))
 
-                        // if (organizations[indexOfCheckedOrganization].name === "Uber direct" && data.data.type === "Delivery") {
+                                        const deliveryData = {
+                                            external_store_id: order.storeId,
+                                            pickup_name: storeInfos.name,
+                                            pickup_address: order.restaurantAdress,
+                                            pickup_phone_number: storeInfos.phoneNumber,
+                                            dropoff_name: order.client_first_name + " " + order.client_last_name,
+                                            dropoff_address: order.deliveryAdress,
+                                            dropoff_phone_number: order.client_phone,
+                                            manifest_items: productArray,
+                                            test_specifications: {
+                                                robo_courier_specification: {
+                                                    mode: "auto",
+                                                }
+                                            },
+                                            signature_requirement: {
+                                                enabled: true,
+                                                collect_signer_name: true,
+                                                collect_signer_relationship: false
+                                            }
+                                        };
 
-                        // }
-                        // const decrypt = (encryptionKey,encryptedValue) => CryptoJS.AES.decrypt(encryptedValue, encryptionKey).toString(CryptoJS.enc.Utf8);
-                        // console.log(decrypt(data.data[0],data.data[1]));
+                                        const deliveryResponse = await createdelivery(deliveryData, token.accessToken, order._id)
+                                        console.log("all deliveryResponse",deliveryResponse);
+                                        store.dispatch(updateOneOrder({ order: deliveryResponse.updatedOrder }))
+                                        store.dispatch(setUberCreate({ create: deliveryResponse.uberDelivery }))
+                                    } catch (error) {
+                                    }
+                                }
+                                adddelivery()
+                            }
+                        }
 
 
 
@@ -201,7 +263,10 @@ export default function All() {
             eventSource.close();
         };
 
-    }, [state.page]);
+        // i add organization as dependency in useEffect cauz if the user in 'all' screen and go to setting nd change the organization or
+        // option in organization, in that changes the useEffect will work another time nd redefine the new options of organization directly ...
+    }, [state.page, organizations]);
+
 
 
     // this function is used to show or not show buttons view and reject

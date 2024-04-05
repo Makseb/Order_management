@@ -81,7 +81,8 @@ export default {
     "Type": "Type",
     "Ip address": "Ip address",
     "Remove printer": "Remove printer",
-
+    "Mac address" : "Mac address",
+    
     // Orders
     "All": "All",
     "In progress": "In progress",

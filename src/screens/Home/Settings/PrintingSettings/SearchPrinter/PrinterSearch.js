@@ -4,11 +4,12 @@ import { store } from "../../../../../shared";
 import { useSelector } from "react-redux";
 import { resetBluetooth, setBluetooth, setLan } from "../../../../../shared/slices/Printer/PrinterSlice";
 import React, { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, Image, NativeModules, StyleSheet, TouchableWithoutFeedback, ScrollView, Platform, PermissionsAndroid, NativeAppEventEmitter } from "react-native";
+import { View, Text, TouchableOpacity, Image, NativeModules, StyleSheet, TouchableWithoutFeedback, ScrollView, Platform, PermissionsAndroid } from "react-native";
 import { setRootLoading } from "../../../../../shared/slices/rootSlice";
-import BleManager from 'react-native-ble-manager';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import { useTranslation } from "react-i18next";
+import { BluetoothManager, BluetoothEscposPrinter, BluetoothTscPrinter } from 'react-native-bluetooth-escpos-printer';
+import BleManager from 'react-native-ble-manager';
 
 
 export default function SearchPrinter() {
@@ -16,6 +17,7 @@ export default function SearchPrinter() {
 
     const route = useRoute();
     const { title, description, img } = route.params;
+
     const [showText, setShowText] = useState({
         value: null,
         state: false
@@ -38,77 +40,62 @@ export default function SearchPrinter() {
 
     // get connected bluetooth
     const bluetooth = useSelector((state) => state.printer.bluetooth)
-    console.log(bluetooth);
-    console.log(showText.state && showText.value);
-    // if bluetooth initilize it
-    if (title === "Bluetooth") {
-        useEffect(() => {
-            const initialize = async () => {
-                await requestPermissions()
 
-                // Event listener for discovered peripherals
-                NativeAppEventEmitter.addListener('BleManagerDiscoverPeripheral', (data) => {
-                    // console.log(data.id);
-                    if (data.id !== null) {
-                        console.log(data);
-                        store.dispatch(setBluetooth({ name: data?.name, id: data.id }));
-                    }
-                });
-                NativeAppEventEmitter.addListener('BleManagerStopScan', () => {
-                    store.dispatch(setRootLoading(false))
-                    setShowText({
-                        value: "bluetooth",
-                        state: true
-                    })
-                });
-                BleManager.start({ showAlert: false })
-                    .then(() => {
-                        // console.log('Bluetooth module initialized');
-                    });
-            };
-            initialize();
-        }, []);
 
-    }
-    // Function to initiate Bluetooth scan
     const bluetoothScan = async () => {
         store.dispatch(setRootLoading(true))
-        await BleManager.scan([], 15);
-    };
+        await BluetoothManager.scanDevices()
+            .then((s) => {
+                const ss = JSON.parse(s);
+                store.dispatch(setBluetooth({ bluetooth: ss.found }));
+            }, (er) => {
+                alert('error' + JSON.stringify(er));
+            });
+        store.dispatch(setRootLoading(false))
+        setShowText({
+            value: "bluetooth",
+            state: true
+        })
+    }
 
 
-    const [permissions, setPermissions] = useState(true)
     const requestPermissions = async () => {
-        await BleManager.checkState()
-            .then(async (currentState) => {
-                if (currentState === 'on') {
+        let result = true
+        await BluetoothManager.enableBluetooth().then((r) => {
+        }).catch(err => {
+            result = false
+        })
+        if (Platform.OS === 'android') {
+            if (Platform.Version >= 23) {
+                const granted = await PermissionsAndroid.check(
+                    PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+                );
+                if (granted) {
                 } else {
-                    await BleManager.enableBluetooth().then(() => {
-                    }).catch((err) => {
-                        setPermissions(false)
-                    })
-                }
-            })
-
-        if (Platform.OS === 'android' && Platform.Version >= 23) {
-            PermissionsAndroid.check(
-                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-            ).then(result => {
-                // console.log(result);
-                if (result) {
-                } else {
-                    PermissionsAndroid.request(
+                    const grantedRequest = await PermissionsAndroid.request(
                         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-                    ).then(result => {
-                        if (result === "denied" || result === "never_ask_again") {
-                            setPermissions(false)
-                        }
-                    });
+                    );
+                    if (grantedRequest === "granted") {
+                        console.log('User accepted the location permission');
+                    } else {
+                        result = false
+                    }
                 }
-            })
-
+            } else {
+                // Handle permissions for Android versions below 6.0
+                const granted = await PermissionsAndroid.request(
+                    PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+                );
+                if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                    console.log('User accepted the location permission');
+                } else {
+                    result = false
+                }
+            }
         }
+        return result
     };
+
 
 
     return (
@@ -166,7 +153,8 @@ export default function SearchPrinter() {
                                         paddingVertical: '2%',
                                         marginHorizontal: '5%',
                                     }}>
-                                        <Text style={styles.textHostname}>{item.id}</Text>
+                                        <Text style={styles.textHostname}>{item.name}</Text>
+                                        <Text style={styles.textIp}>{item.address}</Text>
                                     </View>
                                 </TouchableWithoutFeedback>
                             )
@@ -187,8 +175,7 @@ export default function SearchPrinter() {
                     store.dispatch(setLan({ lan: [] }))
                     store.dispatch(resetBluetooth({ bluetooth: [] }))
                     if (title === "Bluetooth") {
-                        // console.log(permissions);
-                        if (permissions) {
+                        if (await requestPermissions() === true) {
                             bluetoothScan()
                         } else {
                             Toast.show({

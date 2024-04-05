@@ -13,7 +13,7 @@ export default function DeliverySettingsModal({ toggleModal, setToggleModal }) {
 
     const organizations = useSelector((state) => state.delivery.organizations)
     const organizationIndex = organizations.findIndex(organization => organization.name === toggleModal.data)
-
+    // console.log(organizations[organizationIndex]);
     return (
 
         <Modal

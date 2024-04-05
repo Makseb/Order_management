@@ -6,8 +6,8 @@ import { useSelector } from "react-redux";
 import { store } from "../../../../../../shared";
 import { setBluetoothKitchen, removeBluetoothKitchen, setBluetoothReceipt, removeBluetoothReceipt } from "../../../../../../shared/slices/Printer/PrinterSlice";
 import Toast from "react-native-toast-message";
-import BleManager from 'react-native-ble-manager';
 import { useTranslation } from "react-i18next";
+import { BluetoothManager, BluetoothEscposPrinter, BluetoothTscPrinter } from 'react-native-bluetooth-escpos-printer';
 
 export default function BluetoothModal({ modalProps }) {
     const { t: translation } = useTranslation();
@@ -16,24 +16,19 @@ export default function BluetoothModal({ modalProps }) {
 
     const bluetoothreceipt = useSelector((state) => state.printer.bluetoothreceipt)
     const bluetoothkitchen = useSelector((state) => state.printer.bluetoothkitchen)
-    // console.log("bluetoothreceipt");
-    // console.log(bluetoothreceipt);
-    // console.log("bluetoothkitchen");
-    // console.log(bluetoothkitchen);
 
-    const connectToPeripheral = id => {
-        BleManager.connect(id)
-            .then(() => {
-                console.log("aa");
-                // peripheral.connected = true
+    const connectToPeripheral = async (address,type) => {
+        await BluetoothManager.connect(address)
+            .then((s) => {
+                if(type==="receipt"){
+                    store.dispatch(setBluetoothReceipt({ bluetoothreceipt: toggleModalBluetooth.value }))
+                }else{
+                    store.dispatch(setBluetoothKitchen({ bluetoothkitchen: toggleModalBluetooth.value }))
+                }
+            }, (e) => {
+                console.log(e);
+                alert(e);
             })
-            .catch((err) => {
-                console.log(err);
-                Toast.show({
-                    type: 'error',
-                    text1: translation("Failed to connect on printer"),
-                })
-            });
     };
 
     return (
@@ -72,16 +67,17 @@ export default function BluetoothModal({ modalProps }) {
                             label={translation("Receipt printer")}
                             value="Receipt printer"
                             labelStyle={styles.radioButton}
-                            status={bluetoothreceipt?.find(printer => printer?.id === toggleModalBluetooth.value?.id) ? 'checked' : 'unchecked'}
+                            status={bluetoothreceipt?.find(printer => printer?.address === toggleModalBluetooth.value?.address) ? 'checked' : 'unchecked'}
                             onPress={async () => {
-                                const exist = bluetoothkitchen?.find(printer => printer?.id === toggleModalBluetooth.value?.id)
+                                const exist = bluetoothkitchen?.find(printer => printer?.address === toggleModalBluetooth.value?.address)
                                 if (exist || (bluetoothkitchen.length < 1 && bluetoothreceipt.length < 1)) {
                                     // the first connection between two devices
                                     if (!exist) {
-                                        connectToPeripheral(toggleModalBluetooth.value.id)
+                                        connectToPeripheral(toggleModalBluetooth.value.address,"receipt")
+                                    } else {
+                                        store.dispatch(removeBluetoothKitchen({ address: toggleModalBluetooth.value.address }))
+                                        store.dispatch(setBluetoothReceipt({ bluetoothreceipt: toggleModalBluetooth.value }))
                                     }
-                                    store.dispatch(removeBluetoothKitchen({ id: toggleModalBluetooth.value.id }))
-                                    store.dispatch(setBluetoothReceipt({ bluetoothreceipt: toggleModalBluetooth.value }))
                                 } else {
                                     Toast.show({
                                         type: 'error',
@@ -96,17 +92,18 @@ export default function BluetoothModal({ modalProps }) {
                             label={translation("Kitchen printer")}
                             labelStyle={styles.radioButton}
                             value="Kitchen printer"
-                            status={bluetoothkitchen?.find(printer => printer?.id === toggleModalBluetooth.value?.id) ? 'checked' : 'unchecked'}
+                            status={bluetoothkitchen?.find(printer => printer?.address === toggleModalBluetooth.value?.address) ? 'checked' : 'unchecked'}
                             onPress={async () => {
-                                const exist = bluetoothreceipt?.find(printer => printer?.id === toggleModalBluetooth.value?.id)
+                                const exist = bluetoothreceipt?.find(printer => printer?.address === toggleModalBluetooth.value?.address)
                                 if (exist || (bluetoothkitchen.length < 1 && bluetoothreceipt.length < 1)) {
 
                                     // the first connection between two devices
                                     if (!exist) {
-                                        connectToPeripheral(toggleModalBluetooth.value.id)
+                                        connectToPeripheral(toggleModalBluetooth.value.address,"kitchen")
+                                    } else {
+                                        store.dispatch(removeBluetoothReceipt({ address: toggleModalBluetooth.value.address }))
+                                        store.dispatch(setBluetoothKitchen({ bluetoothkitchen: toggleModalBluetooth.value }))
                                     }
-                                    store.dispatch(removeBluetoothReceipt({ id: toggleModalBluetooth.value.id }))
-                                    store.dispatch(setBluetoothKitchen({ bluetoothkitchen: toggleModalBluetooth.value }))
                                 } else {
                                     Toast.show({
                                         type: 'error',

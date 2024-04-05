@@ -51,6 +51,7 @@ export default function WayPointModal({ modalProps }) {
                                 await getproofofdelivery(wayPointModal.data.uberId, wayPointModal.data.token, "pickup").then(res => {
                                     setData(`data:image/jpeg;base64,${res.data.document}`)
                                 }).catch(err => {
+                                    console.log(err);
                                     Toast.show({
                                         type: 'error',
                                         text1: err.response.data.message,

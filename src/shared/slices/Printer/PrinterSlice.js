@@ -46,37 +46,48 @@ export const printerSlice = createSlice({
 
         // set bluetooth by id device
         setBluetooth: (state, action) => {
-            let data = state.bluetooth ? state.bluetooth : [];
-            const isDuplicate = data.some(item => item.id === action.payload.id);
-            if (!isDuplicate) {
-                data.push({ name: action.payload.name, id: action.payload.id });
-            }
-            state.bluetooth = data;
+            // let data = state.bluetooth ? state.bluetooth : [];
+            // const isDuplicate = data.some(item => item.id === action.payload.id);
+            // if (!isDuplicate) {
+            //     data.push({ name: action.payload.name, id: action.payload.id });
+            // }
+            // state.bluetooth = data;
+            let data = []
+            action.payload.bluetooth.map((device)=>{
+                if(device?.name===undefined){
+                    data.push({name : "undefined name", address : device.address})
+                }else{
+                    data.push(device)
+                }
+            })
+            state.bluetooth = data
+
         },
         resetBluetooth : (state,action)=>{
             state.bluetooth = action.payload.bluetooth
         },
+
         setBluetoothKitchen: (state, action) => {
             let data = state.bluetoothkitchen ? state.bluetoothkitchen : []
-            const isDuplicate = data.some(item => item.id === action.payload.bluetoothkitchen.id);
+            const isDuplicate = data.some(item => item.address === action.payload.bluetoothkitchen.address);
             if (!isDuplicate) {
                 data.push(action.payload.bluetoothkitchen);
             }
             state.bluetoothkitchen = data;
         },
         removeBluetoothKitchen: (state, action) => {
-            state.bluetoothkitchen = state.bluetoothkitchen.filter(bluetoothkitchen => bluetoothkitchen.id !== action.payload.id);
+            state.bluetoothkitchen = state.bluetoothkitchen.filter(bluetoothkitchen => bluetoothkitchen.address !== action.payload.address);
         },
         setBluetoothReceipt: (state, action) => {
             let data = state.bluetoothreceipt ? state.bluetoothreceipt : [];
-            const isDuplicate = data.some(item => item.id === action.payload.bluetoothreceipt.id);
+            const isDuplicate = data.some(item => item.address === action.payload.bluetoothreceipt.address);
             if (!isDuplicate) {
                 data.push(action.payload.bluetoothreceipt);
             }
             state.bluetoothreceipt = data;
         },
         removeBluetoothReceipt: (state, action) => {
-            state.bluetoothreceipt = state.bluetoothreceipt.filter(bluetoothreceipt => bluetoothreceipt.id !== action.payload.id);
+            state.bluetoothreceipt = state.bluetoothreceipt.filter(bluetoothreceipt => bluetoothreceipt.address !== action.payload.address);
         },
 
     },
